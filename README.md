@@ -84,9 +84,34 @@ Skills are automatically available once installed. The agent will use them when 
 
 ```text
 Set up @suigar/sdk in this app
+```
+
+```text
 Build a coinflip transaction with @suigar/sdk
+```
+
+```text
 Configure the Suigar MCP server
+```
+
+```text
 Add a PvP coinflip lobby flow
+```
+
+```text
+Use the Suigar MCP to read the testnet config and list supported games
+```
+
+```text
+Build a read-only Suigar MCP transaction plan for a 1 SUI coinflip on heads
+```
+
+```text
+Dry-run a Suigar MCP limbo transaction for this wallet with a 2.5x target multiplier
+```
+
+```text
+Use Suigar MCP to build an unsigned PvP coinflip create transaction for 1 SUI on tails
 ```
 
 ## Skill Structure
