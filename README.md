@@ -21,7 +21,7 @@ Set up `@suigar/sdk` in an application, wire the `suigar()` client extension, re
 
 ### create-standard-games
 
-Build standard single-player casino game flows on top of `@suigar/sdk`.
+Build standard single-player Suigar game flows on top of `@suigar/sdk`.
 
 **Use when:**
 

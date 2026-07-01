@@ -1,6 +1,6 @@
 ---
 name: create-standard-games
-description: Use when building, scaffolding, or fixing AI-generated standard casino game flows on top of @suigar/sdk, especially coinflip, limbo, plinko, range, or wheel bet transactions.
+description: Use when building, scaffolding, or fixing AI-generated standard Suigar game flows on top of @suigar/sdk, especially coinflip, limbo, plinko, range, or wheel bet transactions.
 license: MIT
 metadata:
   author: suigar
@@ -10,15 +10,12 @@ metadata:
     - suigar
     - sui
     - sdk
-    - casino-games
+    - standard-games
 ---
 
 # Create Standard Games
 
-If the user is working through `@suigar/mcp` tools instead of application code
-that imports `@suigar/sdk`, use the `suigar-mcp` skill. MCP `stake` and
-`cashStake` inputs are currency amounts, and the MCP server converts them to
-base units before calling SDK builders.
+If the user is working through `@suigar/mcp` tools instead of application code that imports `@suigar/sdk`, use the `suigar-mcp` skill. MCP `stake` and `cashStake` inputs are currency amounts, and the MCP server converts them to base units before calling SDK builders.
 
 ## Standard game workflow
 
@@ -36,10 +33,7 @@ Supported game ids:
 - `range`
 - `wheel`
 
-When app code needs typed game ids, import `GAMES`, `Game`, or
-`StandardGame` from `@suigar/sdk/games` instead of redefining game unions.
-Use the exported `CoinSide` type for coinflip side values when a named type is
-useful.
+When app code needs typed game ids, import `GAMES`, `Game`, or `StandardGame` from `@suigar/sdk/games` instead of redefining game unions. Use the exported `CoinSide` type for coinflip side values when a named type is useful.
 
 ## Shared options
 
@@ -52,10 +46,7 @@ useful.
 - `gasBudget?: number | bigint`
 - `useGasCoin?: boolean`
 
-The SDK builds the bet coin from the owner's balance with Mysten
-`coinWithBalance` transaction arguments. Do not preselect, split, or pass coin
-objects from application code for standard game bets. Set `useGasCoin` only
-when the app needs to override Mysten's default coin intent behavior.
+The SDK builds the bet coin from the owner's balance with Mysten `coinWithBalance` transaction arguments. Do not preselect, split, or pass coin objects from application code for standard game bets. Set `useGasCoin` only when the app needs to override Mysten's default coin intent behavior.
 
 Extension-level option:
 
@@ -203,7 +194,7 @@ Guardrails:
 - `configId` must match a valid wheel setup.
 - Keep frontend labels and backend configuration ids in sync.
 
-## Guardrails for casino apps
+## Guardrails for game apps
 
 - Treat `stake` as the logical wager passed to Move.
 - Use `cashStake` only when the withdrawn coin amount must differ from the game stake.
@@ -214,8 +205,7 @@ Guardrails:
 - Treat `partner` as a wallet address, not a slug, label, or display string.
 - Keep amounts as `bigint` once they leave the UI layer.
 - Ensure the same connected wallet address is used as `owner`.
-- Use `client.suigar.getConfig().coins` when the UI needs supported coin
-  `coinType` and `decimals`; do not duplicate decimal constants in app code.
+- Use `client.suigar.getConfig().coins` when the UI needs supported coin `coinType` and `decimals`; do not duplicate decimal constants in app code.
 
 ## Event decoding
 

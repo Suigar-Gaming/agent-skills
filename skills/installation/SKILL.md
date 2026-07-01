@@ -1,6 +1,6 @@
 ---
 name: installation
-description: Use when setting up, scaffolding, or fixing the base @suigar/sdk installation, Sui client extension wiring, config, or serialization layer for an AI-generated casino app.
+description: Use when setting up, scaffolding, or fixing the base @suigar/sdk installation, Sui client extension wiring, config, or serialization layer for an AI-generated Suigar game app.
 license: MIT
 metadata:
   author: suigar
@@ -15,8 +15,7 @@ metadata:
 
 # Installation
 
-If the task is about installing, configuring, or operating the Suigar MCP
-server or MCP App, use the `suigar-mcp` skill instead.
+If the task is about installing, configuring, or operating the Suigar MCP server or MCP App, use the `suigar-mcp` skill instead.
 
 ## Public package surface
 
@@ -34,8 +33,7 @@ The package root exports:
 - `SuigarCoin`
 - `SuigarNetwork`
 
-Do not assume individual game builders are exported from `@suigar/sdk`.
-Use the registered extension instance for runtime transaction builders.
+Do not assume individual game builders are exported from `@suigar/sdk`. Use the registered extension instance for runtime transaction builders.
 
 Game-specific public types are exported from `@suigar/sdk/games`:
 
@@ -71,26 +69,13 @@ Parser and helper utilities are exported from `@suigar/sdk/utils`:
 
 Utility behavior:
 
-- `toBigInt(value)` accepts `bigint`, finite `number`, non-negative integer
-  `string`, and `boolean` inputs and returns a normalized non-negative `bigint`
-  while throwing `TypeError` for invalid input shapes and `RangeError` for
-  negative values
-- `toU8(value)` accepts a finite integer `number` or plain integer `string` in
-  the inclusive `0..255` range, throwing `TypeError` for non-numeric input and
-  `RangeError` for booleans, fractional values, or out-of-range integers
-- `toU16(value)` accepts a finite integer `number` or plain integer `string`
-  in the inclusive `0..65535` range, throwing `TypeError` for non-numeric
-  input and `RangeError` for booleans, fractional values, or out-of-range
-  integers
-- `fromMoveI64(value)` converts a generated Move `i64` wrapper into a JavaScript
-  `number`
-- `fromMoveFloat(value)` converts a generated Move float struct into a
-  JavaScript `number`
-- `parseCoinType(type)` extracts the normalized first generic coin type from a
-  Move object type string and throws `TypeError` when no coin type can be parsed
-- `parseGameDetails(gameId, gameDetails)` decodes standard `BetResultEvent.game_details`
-  byte arrays into the expected string, number, and boolean values while
-  preserving the original on-chain keys
+- `toBigInt(value)` accepts `bigint`, finite `number`, non-negative integer `string`, and `boolean` inputs and returns a normalized non-negative `bigint` while throwing `TypeError` for invalid input shapes and `RangeError` for negative values
+- `toU8(value)` accepts a finite integer `number` or plain integer `string` in the inclusive `0..255` range, throwing `TypeError` for non-numeric input and `RangeError` for booleans, fractional values, or out-of-range integers
+- `toU16(value)` accepts a finite integer `number` or plain integer `string` in the inclusive `0..65535` range, throwing `TypeError` for non-numeric input and `RangeError` for booleans, fractional values, or out-of-range integers
+- `fromMoveI64(value)` converts a generated Move `i64` wrapper into a JavaScript `number`
+- `fromMoveFloat(value)` converts a generated Move float struct into a JavaScript `number`
+- `parseCoinType(type)` extracts the normalized first generic coin type from a Move object type string and throws `TypeError` when no coin type can be parsed
+- `parseGameDetails(gameId, gameDetails)` decodes standard `BetResultEvent.game_details` byte arrays into the expected string, number, and boolean values while preserving the original on-chain keys
 
 Internal config and metadata helpers are not part of the intended public import surface.
 
@@ -108,9 +93,7 @@ const client = new SuiGrpcClient({
 }).$extend(suigar());
 ```
 
-> **Important:** `partner` is a wallet address. If the app needs partner
-> attribution on all supported bet flows, configure that wallet address at
-> extension registration time:
+> **Important:** `partner` is a wallet address. If the app needs partner attribution on all supported bet flows, configure that wallet address at extension registration time:
 
 ```ts
 const client = new SuiGrpcClient({ baseUrl, network }).$extend(
@@ -118,21 +101,18 @@ const client = new SuiGrpcClient({ baseUrl, network }).$extend(
 );
 ```
 
-> Do not pass a partner slug, label, or display name. Use the wallet address
-> that should be recorded on-chain.
+> Do not pass a partner slug, label, or display name. Use the wallet address that should be recorded on-chain.
 
 If the app uses a custom extension name, preserve it consistently:
 
 ```ts
 const client = new SuiGrpcClient({ baseUrl, network }).$extend(
-	suigar({ name: 'casino' }),
+	suigar({ name: 'suigarGames' }),
 );
-client.casino;
+client.suigarGames;
 ```
 
-If the published SDK defaults lag behind a deployment, or if the app needs to
-provide package, coin, or price object ids from environment/runtime config,
-patch them through the extension config instead of forking package internals:
+If the published SDK defaults lag behind a deployment, or if the app needs to provide package, coin, or price object ids from environment/runtime config, patch them through the extension config instead of forking package internals:
 
 ```ts
 const client = new SuiGrpcClient({ baseUrl, network }).$extend(
@@ -182,14 +162,9 @@ const base64 = await client.suigar.serializeTransactionToBase64(tx);
 
 ## On-chain parameters
 
-Use `client.suigar.getGameParameters(game, options?)` when an app needs live
-on-chain game bounds or RTP parameters. The SDK first reads the selected game's
-settings object from SweetHouse, then reads that game's coin-specific
-`Parameters<T>` object and parses it.
+Use `client.suigar.getGameParameters(game, options?)` when an app needs live on-chain game bounds or RTP parameters. The SDK first reads the selected game's settings object from SweetHouse, then reads that game's coin-specific `Parameters<T>` object and parses it.
 
-If a returned parameter field is a generated Move float struct, such as
-`min_target_multiplier`, `max_target_multiplier`, `min_rtp`, or `max_rtp`, run
-it through `fromMoveFloat()` before using it as a normal JavaScript number.
+If a returned parameter field is a generated Move float struct, such as `min_target_multiplier`, `max_target_multiplier`, `min_rtp`, or `max_rtp`, run it through `fromMoveFloat()` before using it as a normal JavaScript number.
 
 ```ts
 const parameters = await client.suigar.getGameParameters('coinflip', {
@@ -197,10 +172,7 @@ const parameters = await client.suigar.getGameParameters('coinflip', {
 });
 ```
 
-The return type is inferred from the game id. The SDK caches the parsed
-parameters for `cacheTtl`, which defaults to 30 minutes. Pass
-`ignoreCache: true` to force the on-chain read to refresh and replace the cached
-value.
+The return type is inferred from the game id. The SDK caches the parsed parameters for `cacheTtl`, which defaults to 30 minutes. Pass `ignoreCache: true` to force the on-chain read to refresh and replace the cached value.
 
 ## Event parsing
 
