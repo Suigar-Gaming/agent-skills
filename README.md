@@ -21,7 +21,7 @@ Set up `@suigar/sdk` in an application, wire the `suigar()` client extension, re
 
 ### create-standard-games
 
-Build standard single-player casino game flows on top of `@suigar/sdk`.
+Build standard single-player Suigar game flows on top of `@suigar/sdk`.
 
 **Use when:**
 
@@ -51,16 +51,6 @@ Install, configure, operate, or troubleshoot the `@suigar/mcp` server and bundle
 - Reading Suigar config or game metadata through MCP tools
 - Building unsigned transactions in read-only, build, or dry-run mode
 - Explaining MCP support boundaries for Suigar games
-
-### find-skills
-
-Discover and install reusable agent skills from the skills ecosystem.
-
-**Use when:**
-
-- Users ask whether a skill exists for a workflow
-- Searching skills.sh-compatible packages
-- Installing skills globally
 
 ## Installation
 

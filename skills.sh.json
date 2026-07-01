@@ -17,13 +17,6 @@
       "skills": [
         "suigar-mcp"
       ]
-    },
-    {
-      "title": "Skill Discovery",
-      "description": "Skills for discovering and installing reusable agent skills.",
-      "skills": [
-        "find-skills"
-      ]
     }
   ]
 }
