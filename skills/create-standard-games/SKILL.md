@@ -1,11 +1,19 @@
 ---
 name: create-standard-games
 description: Use when building, scaffolding, or fixing AI-generated standard casino game flows on top of @suigar/sdk, especially coinflip, limbo, plinko, range, or wheel bet transactions.
+license: MIT
+metadata:
+  author: suigar
+  version: "1.0.0"
+  short-description: Build standard Suigar game flows
+  tags:
+    - suigar
+    - sui
+    - sdk
+    - casino-games
 ---
 
 # Create Standard Games
-
-Use this skill for standard single-player game transactions.
 
 If the user is working through `@suigar/mcp` tools instead of application code
 that imports `@suigar/sdk`, use the `suigar-mcp` skill. MCP `stake` and

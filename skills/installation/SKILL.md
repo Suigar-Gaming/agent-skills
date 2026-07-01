@@ -1,11 +1,19 @@
 ---
 name: installation
 description: Use when setting up, scaffolding, or fixing the base @suigar/sdk installation, Sui client extension wiring, config, or serialization layer for an AI-generated casino app.
+license: MIT
+metadata:
+  author: suigar
+  version: "1.0.0"
+  short-description: Set up the Suigar SDK
+  tags:
+    - suigar
+    - sui
+    - sdk
+    - installation
 ---
 
 # Installation
-
-Use this skill when the task is about integrating `@suigar/sdk` into an app before game-specific bet logic is added.
 
 If the task is about installing, configuring, or operating the Suigar MCP
 server or MCP App, use the `suigar-mcp` skill instead.
@@ -84,7 +92,7 @@ Utility behavior:
   byte arrays into the expected string, number, and boolean values while
   preserving the original on-chain keys
 
-Internal config and metadata helpers stay under `packages/sdk/src/helpers/*` and are not part of the intended public import surface.
+Internal config and metadata helpers are not part of the intended public import surface.
 
 ## Default setup
 

@@ -52,16 +52,6 @@ Install, configure, operate, or troubleshoot the `@suigar/mcp` server and bundle
 - Building unsigned transactions in read-only, build, or dry-run mode
 - Explaining MCP support boundaries for Suigar games
 
-### find-skills
-
-Discover and install reusable agent skills from the skills ecosystem.
-
-**Use when:**
-
-- Users ask whether a skill exists for a workflow
-- Searching skills.sh-compatible packages
-- Installing skills globally
-
 ## Installation
 
 Install all skills:

@@ -1,12 +1,19 @@
 ---
 name: suigar-mcp
 description: Use when installing, configuring, operating, or troubleshooting the @suigar/mcp server or MCP App for Suigar game metadata, unsigned transaction builders, read-only plans, build mode, and dry-run flows.
+license: MIT
+metadata:
+  author: suigar
+  version: "1.0.0"
+  short-description: Operate the Suigar MCP server
+  tags:
+    - suigar
+    - sui
+    - mcp
+    - transactions
 ---
 
 # Suigar MCP
-
-Use this skill when a user wants an MCP client or coding agent to work with
-Suigar through `@suigar/mcp`.
 
 The MCP server is a thin layer over `@suigar/sdk`. It reads Suigar config and
 game metadata, builds unsigned transactions, and can dry-run those unsigned
@@ -29,15 +36,6 @@ Configure MCP clients with the published package:
 
 After changing MCP client config, tell the user to restart or reload the client
 so it starts the server.
-
-For local workspace development, use:
-
-```bash
-pnpm --dir packages/mcp start:local
-```
-
-This builds the local SDK dependency, builds the MCP package, and starts the
-stdio server from the workspace output.
 
 ## Tool routing
 

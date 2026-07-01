@@ -1,11 +1,19 @@
 ---
 name: create-pvp-games
 description: Use when building or fixing AI-generated PvP game flows on top of @suigar/sdk, especially match creation, joins, cancellations, lobby flows, match handling, and settlement features.
+license: MIT
+metadata:
+  author: suigar
+  version: "1.0.0"
+  short-description: Build PvP Suigar game flows
+  tags:
+    - suigar
+    - sui
+    - sdk
+    - pvp-games
 ---
 
 # Create PvP Games
-
-Use this skill for PvP game flows built on the SDK.
 
 If the user is working through `@suigar/mcp` tools instead of application code
 that imports `@suigar/sdk`, use the `suigar-mcp` skill. The MCP PvP create
