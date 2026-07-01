@@ -44,8 +44,6 @@ The `description` is the trigger surface. Include the concrete Suigar task there
 - Use `create-standard-games` for standard single-player game transactions: `coinflip`, `limbo`, `plinko`, `range`, and `wheel`.
 - Use `create-pvp-games` for PvP game flows, currently PvP coinflip create, join, cancel, lobby listing, and object/event parsing.
 - Use `suigar-mcp` for installing, configuring, operating, or troubleshooting `@suigar/mcp` and the bundled MCP App.
-- Use `find-skills` when users ask for installable skills or reusable agent capabilities.
-
 Keep SDK and MCP guidance separate. MCP skills should describe tool usage, read-only/build/dry-run modes, and unsigned transaction behavior. SDK skills should describe application code that imports `@suigar/sdk`.
 
 ### Context Efficiency
@@ -53,7 +51,7 @@ Keep SDK and MCP guidance separate. MCP skills should describe tool usage, read-
 - Keep each `SKILL.md` concise and under 500 lines.
 - Move detailed reference material to directly linked files under `references/`.
 - Prefer public Suigar imports: `@suigar/sdk`, `@suigar/sdk/games`, and `@suigar/sdk/utils`.
-- Avoid duplicating repository-wide SDK architecture that already belongs in the Suigar SDK repository `AGENTS.md`.
+- Keep SDK architecture details out of these skills unless they are needed for public usage guidance.
 - Do not add README files inside individual skills.
 
 ### Script Requirements
@@ -75,4 +73,4 @@ npx skills add Suigar-Gaming/agent-skills
 npx skills add Suigar-Gaming/agent-skills --skill suigar-mcp
 ```
 
-For manual installs, copy a skill folder into the agent-native skills directory, for example `~/.codex/skills/` or `~/.claude/skills/`.
+For manual installs, copy a skill folder into the target agent's native skills directory.
