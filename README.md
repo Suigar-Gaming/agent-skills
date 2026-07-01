@@ -1,55 +1,102 @@
-# Suigar Skill
+# Suigar Agent Skills
 
-Agent skill for configuring and operating the Suigar MCP server.
+A collection of skills for AI coding agents working with Suigar on Sui. Skills are packaged instructions that extend agent capabilities.
 
-The skill teaches compatible coding agents how to use `@suigar/mcp`, the Suigar MCP server package for Sui casino game metadata and transaction builders.
+Skills follow the [Agent Skills](https://agentskills.io/) format.
 
-## Install
+[![skills.sh](https://skills.sh/b/Suigar-Gaming/agent-skills)](https://skills.sh/Suigar-Gaming/agent-skills)
 
-From GitHub:
+## Available Skills
+
+### installation
+
+Set up `@suigar/sdk` in an application, wire the `suigar()` client extension, resolve config, serialize transactions, and use public SDK exports correctly.
+
+**Use when:**
+
+- Installing or scaffolding the base Suigar SDK integration
+- Configuring `SuiGrpcClient` with `suigar()`
+- Working with SDK config, supported coins, partner attribution, or serialization
+- Parsing Suigar events through public SDK utilities
+
+### create-standard-games
+
+Build standard single-player casino game flows on top of `@suigar/sdk`.
+
+**Use when:**
+
+- Building `coinflip`, `limbo`, `plinko`, `range`, or `wheel` bet transactions
+- Mapping UI inputs to `client.suigar.tx.createBetTransaction`
+- Reviewing standard game amount, metadata, coin, or partner handling
+- Fixing AI-generated standard Suigar game code
+
+### create-pvp-games
+
+Build PvP game flows on top of `@suigar/sdk`, currently focused on PvP coinflip.
+
+**Use when:**
+
+- Creating, joining, or canceling PvP coinflip matches
+- Listing unresolved PvP coinflip lobby games
+- Reading PvP coinflip game objects or events
+- Keeping PvP transaction flows separate from standard game builders
+
+### suigar-mcp
+
+Install, configure, operate, or troubleshoot the `@suigar/mcp` server and bundled MCP App.
+
+**Use when:**
+
+- Adding the Suigar MCP server to an MCP client
+- Reading Suigar config or game metadata through MCP tools
+- Building unsigned transactions in read-only, build, or dry-run mode
+- Explaining MCP support boundaries for Suigar games
+
+### find-skills
+
+Discover and install reusable agent skills from the skills ecosystem.
+
+**Use when:**
+
+- Users ask whether a skill exists for a workflow
+- Searching skills.sh-compatible packages
+- Installing skills globally
+
+## Installation
+
+Install all skills:
 
 ```bash
-npx skills add Suigar-Gaming/suigar-skill
+npx skills add Suigar-Gaming/agent-skills
 ```
 
-For Codex, globally:
+Install one skill:
 
 ```bash
-npx skills add Suigar-Gaming/suigar-skill --agent codex --global --yes
+npx skills add Suigar-Gaming/agent-skills --skill suigar-mcp
 ```
 
-For a local checkout:
+## Usage
 
-```bash
-npx skills add .
+Skills are automatically available once installed. The agent will use them when relevant tasks are detected.
+
+**Examples:**
+
+```text
+Set up @suigar/sdk in this app
+Build a coinflip transaction with @suigar/sdk
+Configure the Suigar MCP server
+Add a PvP coinflip lobby flow
 ```
 
-## What It Configures
+## Skill Structure
 
-The skill tells agents to configure MCP clients with:
+Each skill contains:
 
-```json
-{
-	"mcpServers": {
-		"suigar": {
-			"command": "npx",
-			"args": ["-y", "@suigar/mcp"]
-		}
-	}
-}
-```
+- `SKILL.md` - Instructions for the agent
+- `scripts/` - Helper scripts for automation (optional)
+- `references/` - Supporting documentation (optional)
 
-The MCP server builds and dry-runs transactions. It does not sign, submit, or custody private keys.
+## License
 
-## Supported Games
-
-On-chain MCP builders:
-
-- `coinflip`
-- `limbo`
-- `plinko`
-- `wheel`
-- `range`
-- `pvp-coinflip`
-
-`slots` is intentionally unsupported in MCP for now because it is backend-driven.
+MIT
