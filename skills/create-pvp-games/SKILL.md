@@ -1,10 +1,10 @@
 ---
 name: create-pvp-games
-description: Use when building or fixing AI-generated PvP game flows on top of @suigar/sdk, especially match creation, joins, cancellations, lobby flows, match handling, and settlement features.
+description: Build, scaffold, review, or fix PvP Suigar game flows using @suigar/sdk. Use when creating, joining, canceling, listing, or parsing PvP coinflip matches; implementing lobby cards; preserving creator side and privacy flags; fetching PvP game objects; decoding PvP coinflip events; or correcting code that incorrectly uses standard createBetTransaction for PvP actions.
 license: MIT
 metadata:
   author: suigar
-  version: "1.0.0"
+  version: "1.1.0"
   short-description: Build PvP Suigar game flows
   tags:
     - suigar
@@ -13,17 +13,23 @@ metadata:
     - pvp-games
 ---
 
-# Create PvP Games
+# Create PvP Suigar Games
 
-If the user is working through `@suigar/mcp` tools instead of application code that imports `@suigar/sdk`, use the `suigar-mcp` skill. The MCP PvP create tool uses the input name `creatorSide`, which maps to the SDK `side` option.
+Use this skill for application code that imports `@suigar/sdk` and builds PvP flows. Today the concrete PvP runtime surface is PvP coinflip. If the user is using MCP tools instead of SDK code, use `suigar-mcp`; the MCP create input is `creatorSide`, which maps to SDK `side`.
 
-Today, the concrete PvP runtime surface in this SDK is PvP coinflip, so the transaction builders and runtime helpers below are coinflip-specific.
+> Source constraint: Treat the SDK PvP coinflip builders, BCS helpers, and registry lookup behavior as authoritative. Do not adapt standard bet builders for PvP.
 
-## Public entrypoint
+## Default Workflow
 
-PvP transactions are created through game-specific PvP transaction builders.
+1. Identify the PvP action: `create`, `join`, or `cancel`.
+2. Use `client.suigar.tx.createPvPCoinflipTransaction(action, options)`.
+3. Pass `gameId` for join and cancel flows.
+4. Use `client.suigar.getPvPCoinflipGames(options?)` for unresolved lobby state.
+5. Use `client.suigar.bcs.PvPCoinflipGame.get({ client, objectId })` when one live pending game object is needed.
+6. Decode PvP events with generated BCS helpers.
+7. Decode any accompanying standard `BetResultEvent.game_details` with `parseGameEvent` and `parseGameDetails`.
 
-For PvP coinflip, use:
+## Public Surface
 
 ```ts
 client.suigar.getPvPCoinflipGames(options?);
@@ -31,37 +37,17 @@ client.suigar.tx.createPvPCoinflipTransaction(action, options);
 client.suigar.bcs.PvPCoinflipGame;
 ```
 
-`getPvPCoinflipGames()` lists unresolved matches by reading the PvP registry for the active network, then bulk-loading the referenced game objects with `client.core.getObjects()`. Joined and resolved games are removed from that registry and their live `Game` objects are deleted. By default, per-object fetch or parse failures are skipped so one stale registry entry does not reject the full lookup. Pass `throwOnError: true` when the caller wants strict rejection. Any supported `listDynamicFields()` options such as `limit`, `cursor`, or `signal` can be forwarded through `options`.
+Use `PvPCoinflipAction` and `PvPGame` from `@suigar/sdk/games` when app code needs typed action or game values.
 
-## PvP Coinflip
+## Actions
 
-PvP coinflip supports these actions:
+### Create
 
-- `create`
-- `join`
-- `cancel`
+Use `create` when the first player opens a PvP coinflip match.
 
-When app code needs typed PvP action values, import `PvPCoinflipAction` from `@suigar/sdk/games` instead of redefining the action union. Use `PvPGame` from the same subpath when typing supported PvP game ids.
+Required: `owner`, `coinType`, `stake`, `side`.
 
-## Create Game
-
-Use `create` when the first player opens a new PvP coinflip match.
-
-Required fields:
-
-- `owner`
-- `coinType`
-- `stake`
-- `side`
-
-Optional fields:
-
-- `isPrivate`
-- `metadata`
-- `gasBudget`
-- `useGasCoin` only when overriding Mysten's default coin intent behavior
-
-Example:
+Optional: `isPrivate`, `metadata`, `gasBudget`, `useGasCoin`.
 
 ```ts
 const tx = client.suigar.tx.createPvPCoinflipTransaction('create', {
@@ -73,29 +59,15 @@ const tx = client.suigar.tx.createPvPCoinflipTransaction('create', {
 });
 ```
 
-Guardrails:
+Preserve the creator-selected side and privacy flag exactly.
 
-- Preserve the creator-selected side.
-- Keep `isPrivate` explicit in product state if the UI exposes it.
-- Let the SDK build the stake coin from `coinType` and `stake` with Mysten `coinWithBalance` transaction arguments; do not preselect or split coin objects in application code. Set `useGasCoin` only when the app needs to override Mysten's default coin intent behavior.
+### Join
 
-## Join Game
+Use `join` when a second player accepts an unresolved match.
 
-Use `join` when a second player accepts an existing PvP match.
+Required: `owner`, `coinType`, `gameId`.
 
-Required fields:
-
-- `owner`
-- `coinType`
-- `gameId`
-
-Optional fields:
-
-- `metadata`
-- `gasBudget`
-- `useGasCoin` only when overriding Mysten's default coin intent behavior
-
-Example:
+Optional: `metadata`, `gasBudget`, `useGasCoin`.
 
 ```ts
 const tx = client.suigar.tx.createPvPCoinflipTransaction('join', {
@@ -105,31 +77,15 @@ const tx = client.suigar.tx.createPvPCoinflipTransaction('join', {
 });
 ```
 
-Guardrails:
+Join derives the stake from `gameId` and uses the configured price info object id for `coinType`. Do not pass stake, side, or custom coin callbacks for join.
 
-- Join derives the stake from `gameId`.
-- Join uses the configured price info object id for `coinType`.
-- Let the SDK fetch the on-chain stake and build the join coin input from the owner's balance.
-- Do not pass custom bet coin callbacks or manually call `tx.add()` for join; the SDK resolves the on-chain stake and supplies the transaction argument.
-- Prefer `client.suigar.getPvPCoinflipGames(options?)` when product logic needs current lobby state before rendering join cards. For one specific live game object, use `client.suigar.bcs.PvPCoinflipGame.get({ client, objectId: gameId })`.
+### Cancel
 
-## Cancel Game
+Use `cancel` when the creator cancels an unresolved match.
 
-Use `cancel` when the creator cancels an unresolved PvP match.
+Required: `owner`, `coinType`, `gameId`.
 
-Required fields:
-
-- `owner`
-- `coinType`
-- `gameId`
-
-Optional fields:
-
-- `metadata`
-- `gasBudget`
-- `useGasCoin` only when overriding Mysten's default coin intent behavior
-
-Example:
+Optional: `metadata`, `gasBudget`, `useGasCoin`.
 
 ```ts
 const tx = client.suigar.tx.createPvPCoinflipTransaction('cancel', {
@@ -139,48 +95,20 @@ const tx = client.suigar.tx.createPvPCoinflipTransaction('cancel', {
 });
 ```
 
-Guardrails:
+Keep cancellation tied to the on-chain `gameId`; do not reuse create or join payload shapes.
 
-- Keep cancellation tied to the on-chain `gameId`.
-- Do not reuse create or join payload shapes for cancel flows.
+## Lobby and Object Reads
 
-## Critical guardrails
+`getPvPCoinflipGames()` lists unresolved matches by reading the PvP registry for the active network and loading referenced game objects with `client.core.getObjects()`.
 
-- Do not model PvP coinflip with `createBetTransaction`; use `createPvPCoinflipTransaction`.
-- Preserve the caller's selected side on `create`.
-- Treat lobby ids and game ids as explicit product inputs.
-- `metadata.partner` and `metadata.referrer` are reserved and ignored with a warning.
-- If the product needs partner attribution, configure `suigar({ partner: '<wallet-address>' })` on the extension and let the SDK prepend that wallet address automatically.
-- Treat `partner` as a wallet address, not a slug, label, or display string.
-- Use `client.suigar.getConfig().coins` when the UI needs supported coin `coinType` and `decimals`; use the root-exported `SuigarCoin` type for supported coin keys.
-
-## Event decoding
-
-Use:
-
-- `client.suigar.getPvPCoinflipGames(options?)`
-- `client.suigar.bcs.PvPCoinflipGame`
-- `client.suigar.bcs.PvPCoinflipGameCreatedEvent`
-- `client.suigar.bcs.PvPCoinflipGameResolvedEvent`
-- `client.suigar.bcs.PvPCoinflipGameCancelledEvent`
-- `parseGameEvent(event)` from `@suigar/sdk/utils` when the product needs the normalized `{ gameId, eventName }` for a raw Suigar event
-
-Use `getPvPCoinflipGames()` when you need the current unresolved lobby from the registry. Use the generated `PvPCoinflipGame` helper when you need the current on-chain PvP coinflip game object for a specific `gameId` and not just transaction events:
+- Registry membership is the live pending-state signal.
+- Joined and resolved games are removed from the registry and their live `Game` objects are deleted.
+- Per-object fetch or parse failures are skipped by default so a stale registry entry does not reject the whole lookup.
+- Pass `throwOnError: true` when the caller wants strict rejection.
+- Forward supported dynamic-field options such as `limit`, `cursor`, or `signal`.
 
 ```ts
 const games = await client.suigar.getPvPCoinflipGames({ limit: 20 });
-
-for (const game of games) {
-	console.log(game.id);
-	console.log(game.coin_type);
-}
-```
-
-```ts
-const games = await client.suigar.getPvPCoinflipGames({
-	limit: 20,
-	throwOnError: true,
-});
 ```
 
 ```ts
@@ -188,49 +116,36 @@ const game = await client.suigar.bcs.PvPCoinflipGame.get({
 	client,
 	objectId: '0xGAME',
 });
-
-if (game.json.is_private) {
-	// reflect private-lobby state in the product
-}
 ```
 
-```ts
-const controller = new AbortController();
+## Event Decoding
 
-const game = await client.suigar.bcs.PvPCoinflipGame.get({
-	client,
-	objectId: '0xGAME',
-	signal: controller.signal,
-});
-```
+Use:
 
-When a flow also decodes `BetResultEvent`, use the generated standard event helper and the SDK game-details parser:
+- `client.suigar.bcs.PvPCoinflipGameCreatedEvent`
+- `client.suigar.bcs.PvPCoinflipGameResolvedEvent`
+- `client.suigar.bcs.PvPCoinflipGameCancelledEvent`
+- `parseGameEvent(event)` from `@suigar/sdk/utils`
 
-```ts
-import { parseGameDetails, parseGameEvent } from '@suigar/sdk/utils';
+When a flow also decodes `BetResultEvent`, use `parseGameEvent(event)` to retrieve `gameId`, then `parseGameDetails(gameId, decoded.game_details)` so PvP result details are interpreted correctly.
 
-const { gameId, eventName } = parseGameEvent(event)!;
-const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
-const gameDetails = parseGameDetails(gameId, decoded.game_details);
-```
+## Gotchas
 
-Guardrails:
+- Do not model PvP coinflip with `createBetTransaction`.
+- Do not pass explicit coin object ids; let the SDK build the coin input from balance.
+- Do not set `metadata.partner` or `metadata.referrer`; configure `suigar({ partner: '<wallet-address>' })`.
+- Treat `partner` as a wallet address, not a slug, label, or display string.
+- Treat lobby ids, game ids, and privacy flags as explicit product state.
+- After join and resolution, inspect emitted events instead of expecting the `Game` object to remain on-chain.
+- Use `client.suigar.getConfig().coins` when the UI needs supported coin metadata.
+- Use the root-exported `SuigarCoin` type when app code needs typed supported coin keys.
 
-- `getPvPCoinflipGames()` only returns unresolved games because registry membership is the live pending-state signal.
-- `getPvPCoinflipGames()` skips per-object fetch or parse failures by default; use `throwOnError: true` when the product should fail the whole lookup instead.
-- Use `client.suigar.bcs.PvPCoinflipGame.get({ client, objectId })` when you need one specific live pending game object; it forwards supported object lookup options such as `signal`.
-- Use `client.suigar.bcs.PvPCoinflipGame.parse(object.content)` only when you already fetched the object content yourself.
-- After join and resolution, inspect `PvPCoinflipGameResolvedEvent` or other emitted events instead of expecting the `Game` object to remain on-chain.
-- Use `event.bcs` as the event payload input when available.
-- Do not route PvP coinflip transaction creation through standard bet builders.
-- Do not hand-decode `BetResultEvent.game_details`; use `parseGameEvent(event)` to retrieve `gameId`, then `parseGameDetails(gameId, ...)`, which understands `pvp_result` along with standard game keys.
-
-## Implementation checklist
+## Implementation Checklist
 
 1. Confirm whether the feature is create, join, or cancel.
 2. Wire the flow to `createPvPCoinflipTransaction`.
-3. For join or cancel, pass `gameId` and provide the transaction `coinType`.
-4. If the product needs the unresolved lobby, read it with `client.suigar.getPvPCoinflipGames()`. If it needs a specific live match state, fetch it with `client.suigar.bcs.PvPCoinflipGame.get({ client, objectId: gameId })`.
-5. Parse emitted PvP events with the generated BCS helpers.
-6. Parse `BetResultEvent.game_details` with `parseGameDetails` when displaying bet result details.
-7. Keep frontend or backend state aligned with on-chain ids and privacy flags.
+3. For join or cancel, pass `gameId` and `coinType`.
+4. Read unresolved lobby state with `client.suigar.getPvPCoinflipGames()`.
+5. Fetch a specific live match with `client.suigar.bcs.PvPCoinflipGame.get({ client, objectId: gameId })` when needed.
+6. Parse emitted PvP events with generated BCS helpers.
+7. Parse `BetResultEvent.game_details` with `parseGameDetails` when displaying bet result details.

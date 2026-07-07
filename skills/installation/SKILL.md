@@ -1,10 +1,10 @@
 ---
 name: installation
-description: Use when setting up, scaffolding, or fixing the base @suigar/sdk installation, Sui client extension wiring, config, or serialization layer for an AI-generated Suigar game app.
+description: Set up, scaffold, or fix the base @suigar/sdk integration for Suigar game apps on Sui. Use when installing packages, wiring the suigar() Sui client extension, configuring networks/package ids/coins/price info, serializing transactions, reading SDK config, using public exports, or parsing Suigar events. Use this before standard or PvP game skills when the client setup is missing or questionable.
 license: MIT
 metadata:
   author: suigar
-  version: "1.0.0"
+  version: "1.1.0"
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -13,75 +13,62 @@ metadata:
     - installation
 ---
 
-# Installation
+# Suigar SDK Installation
 
-If the task is about installing, configuring, or operating the Suigar MCP server or MCP App, use the `suigar-mcp` skill instead.
+Use this skill for application code that imports `@suigar/sdk`. If the task is about installing, configuring, operating, or troubleshooting `@suigar/mcp` or the bundled MCP App, use the `suigar-mcp` skill instead.
 
-## Public package surface
+> Source constraint: Prefer public Suigar SDK entrypoints and installed package docs/source when available. Do not guess private exports or copy internal helpers into app code.
 
-The package currently exposes these public entrypoints:
+## Default Workflow
+
+1. Confirm the app already uses the current Mysten Sui client APIs.
+2. Install or verify `@suigar/sdk`, `@mysten/sui`, and `@mysten/bcs`.
+3. Extend the existing Sui client with `suigar()`.
+4. Keep all Suigar transaction creation and serialization on that extended client instance.
+5. Use `client.suigar.getConfig()` for supported coins, package ids, and price info when the UI or diagnostics need resolved config.
+6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct.
+
+## Public Surface
+
+The package exposes these public entrypoints:
 
 - `@suigar/sdk`
 - `@suigar/sdk/games`
 - `@suigar/sdk/utils`
 
-The package root exports:
+Use these public imports:
 
-- `suigar`
-- `SuigarClient`
-- `SUPPORTED_SUI_NETWORKS`
-- `SuigarCoin`
-- `SuigarNetwork`
+```ts
+import { suigar } from '@suigar/sdk';
+import type { SuigarCoin, SuigarNetwork } from '@suigar/sdk';
+import { GAMES, type StandardGame, type PvPGame } from '@suigar/sdk/games';
+import { parseGameEvent, parseGameDetails, fromMoveFloat } from '@suigar/sdk/utils';
+```
 
-Do not assume individual game builders are exported from `@suigar/sdk`. Use the registered extension instance for runtime transaction builders.
+The package root exposes `suigar`, `SuigarClient`, `SUPPORTED_SUI_NETWORKS`, `SuigarCoin`, and `SuigarNetwork`. Game ids and game-specific option types live in `@suigar/sdk/games`. Parser and numeric helpers live in `@suigar/sdk/utils`.
 
-Game-specific public types are exported from `@suigar/sdk/games`:
+Use these game-specific public types when useful: `GAMES`, `Game`, `StandardGame`, `PvPGame`, `CoinSide`, `PvPCoinflipAction`, `BuildCoinflipTransactionOptions`, `BuildLimboTransactionOptions`, `BuildPlinkoTransactionOptions`, `BuildRangeTransactionOptions`, `BuildWheelTransactionOptions`, `BuildCreatePvPCoinflipTransactionOptions`, `BuildJoinPvPCoinflipTransactionOptions`, and `BuildCancelPvPCoinflipTransactionOptions`.
 
-- `GAMES`
-- `Game`
-- `StandardGame`
-- `PvPGame`
-- `CoinSide`
-- `PvPCoinflipAction`
-- `BuildCoinflipTransactionOptions`
-- `BuildLimboTransactionOptions`
-- `BuildPlinkoTransactionOptions`
-- `BuildRangeTransactionOptions`
-- `BuildWheelTransactionOptions`
-- `BuildCreatePvPCoinflipTransactionOptions`
-- `BuildJoinPvPCoinflipTransactionOptions`
-- `BuildCancelPvPCoinflipTransactionOptions`
+Use these utilities instead of local replacements when relevant: `fromMoveI64`, `fromMoveFloat`, `parseCoinType`, `parseGameDetails`, `parseGameEvent`, `toBigInt`, `toU16`, `toU8`, `DEFAULT_GAS_BUDGET_MIST`, `RANGE_POINT_LIMIT`, `DEFAULT_RANGE_SCALE`, and `DEFAULT_LIMBO_MULTIPLIER_SCALE`.
 
-Parser and helper utilities are exported from `@suigar/sdk/utils`:
+Utility behavior worth preserving:
 
-- `fromMoveI64`
-- `fromMoveFloat`
-- `parseCoinType`
-- `parseGameDetails`
-- `parseGameEvent`
-- `toBigInt`
-- `toU16`
-- `toU8`
-- `DEFAULT_GAS_BUDGET_MIST`
-- `RANGE_POINT_LIMIT`
-- `DEFAULT_RANGE_SCALE`
-- `DEFAULT_LIMBO_MULTIPLIER_SCALE`
+- `toBigInt(value)` normalizes non-negative integer-like values to `bigint` and rejects invalid or negative values.
+- `toU8(value)` and `toU16(value)` validate finite integer inputs in their unsigned ranges.
+- `parseCoinType(type)` extracts the normalized first generic coin type from a Move object type string.
+- `parseGameDetails(gameId, gameDetails)` decodes standard `BetResultEvent.game_details` while preserving on-chain keys.
 
-Utility behavior:
+Do not import individual runtime game builders from `@suigar/sdk`. Use the registered extension:
 
-- `toBigInt(value)` accepts `bigint`, finite `number`, non-negative integer `string`, and `boolean` inputs and returns a normalized non-negative `bigint` while throwing `TypeError` for invalid input shapes and `RangeError` for negative values
-- `toU8(value)` accepts a finite integer `number` or plain integer `string` in the inclusive `0..255` range, throwing `TypeError` for non-numeric input and `RangeError` for booleans, fractional values, or out-of-range integers
-- `toU16(value)` accepts a finite integer `number` or plain integer `string` in the inclusive `0..65535` range, throwing `TypeError` for non-numeric input and `RangeError` for booleans, fractional values, or out-of-range integers
-- `fromMoveI64(value)` converts a generated Move `i64` wrapper into a JavaScript `number`
-- `fromMoveFloat(value)` converts a generated Move float struct into a JavaScript `number`
-- `parseCoinType(type)` extracts the normalized first generic coin type from a Move object type string and throws `TypeError` when no coin type can be parsed
-- `parseGameDetails(gameId, gameDetails)` decodes standard `BetResultEvent.game_details` byte arrays into the expected string, number, and boolean values while preserving the original on-chain keys
+```ts
+client.suigar.tx.createBetTransaction(gameId, options);
+client.suigar.tx.createPvPCoinflipTransaction(action, options);
+client.suigar.serializeTransactionToBase64(tx);
+```
 
-Internal config and metadata helpers are not part of the intended public import surface.
+## Client Setup
 
-## Default setup
-
-Prefer the Sui client extension pattern:
+Prefer the Sui gRPC client extension pattern:
 
 ```ts
 import { SuiGrpcClient } from '@mysten/sui/grpc';
@@ -93,7 +80,7 @@ const client = new SuiGrpcClient({
 }).$extend(suigar());
 ```
 
-> **Important:** `partner` is a wallet address. If the app needs partner attribution on all supported bet flows, configure that wallet address at extension registration time:
+If partner attribution is required, configure it once on the extension:
 
 ```ts
 const client = new SuiGrpcClient({ baseUrl, network }).$extend(
@@ -101,7 +88,7 @@ const client = new SuiGrpcClient({ baseUrl, network }).$extend(
 );
 ```
 
-> Do not pass a partner slug, label, or display name. Use the wallet address that should be recorded on-chain.
+`partner` is a wallet address. Do not pass a slug, label, display name, `metadata.partner`, or `metadata.referrer`.
 
 If the app uses a custom extension name, preserve it consistently:
 
@@ -109,45 +96,27 @@ If the app uses a custom extension name, preserve it consistently:
 const client = new SuiGrpcClient({ baseUrl, network }).$extend(
 	suigar({ name: 'suigarGames' }),
 );
+
 client.suigarGames;
 ```
 
-If the published SDK defaults lag behind a deployment, or if the app needs to provide package, coin, or price object ids from environment/runtime config, patch them through the extension config instead of forking package internals:
+If the published defaults lag a deployment, patch config through `suigar({ config })` instead of forking SDK internals:
 
 ```ts
 const client = new SuiGrpcClient({ baseUrl, network }).$extend(
 	suigar({
 		config: {
-			packageIds: {
-				coinflip: '0x...',
-			},
-			coins: {
-				sui: {
-					coinType: '0x2::sui::SUI',
-					decimals: 9,
-				},
-			},
-			priceInfoObjectIds: {
-				sui: '0x...',
-			},
+			packageIds: { coinflip: '0x...' },
+			coins: { sui: { coinType: '0x2::sui::SUI', decimals: 9 } },
+			priceInfoObjectIds: { sui: '0x...' },
 		},
 	}),
 );
 ```
 
-## Required config guardrails
+## Serialization
 
-- Standard games rely on the SDK's network-resolved `priceInfoObjectIds` for supported coins.
-- `client.suigar.getConfig().coins` returns the supported coin metadata keyed by `SuigarCoin`, with each entry containing `coinType` and `decimals`.
-- Prefer the SDK's resolved supported coin metadata from `client.suigar.getConfig()` only for debugging, inspection, or UI coin selectors; simple examples can pass the expected coin type directly.
-- Use the root-exported `SuigarCoin` and `SuigarNetwork` types when app code needs to type supported coin keys or SDK-supported networks.
-- Do not invent package exports that do not exist or move runtime builders out of `client.suigar.tx`.
-- Keep wallet address ownership explicit and pass the same connected account through the integration.
-- If partner attribution is required, set `suigar({ partner: '<wallet-address>' })` once at extension registration time instead of passing `partner` through transaction `metadata`.
-
-## Serialization pattern
-
-When the app needs a wallet-ready payload:
+Serialize only when a wallet, backend, or transport path needs unsigned bytes:
 
 ```ts
 const tx = client.suigar.tx.createBetTransaction('coinflip', {
@@ -160,44 +129,42 @@ const tx = client.suigar.tx.createBetTransaction('coinflip', {
 const base64 = await client.suigar.serializeTransactionToBase64(tx);
 ```
 
-## On-chain parameters
+## Parameters and Events
 
-Use `client.suigar.getGameParameters(game, options?)` when an app needs live on-chain game bounds or RTP parameters. The SDK first reads the selected game's settings object from SweetHouse, then reads that game's coin-specific `Parameters<T>` object and parses it.
+Use `client.suigar.getGameParameters(game, options?)` when an app needs live on-chain game bounds or RTP parameters. Convert generated Move float structs with `fromMoveFloat()` before presenting them as JavaScript numbers.
 
-If a returned parameter field is a generated Move float struct, such as `min_target_multiplier`, `max_target_multiplier`, `min_rtp`, or `max_rtp`, run it through `fromMoveFloat()` before using it as a normal JavaScript number.
+The SDK caches parsed parameters for `cacheTtl`, which defaults to 30 minutes. Pass `ignoreCache: true` to force an on-chain refresh when stale parameters would be risky.
 
-```ts
-const parameters = await client.suigar.getGameParameters('coinflip', {
-	coinType: '0x2::sui::SUI',
-});
-```
-
-The return type is inferred from the game id. The SDK caches the parsed parameters for `cacheTtl`, which defaults to 30 minutes. Pass `ignoreCache: true` to force the on-chain read to refresh and replace the cached value.
-
-## Event parsing
-
-Use the extension's generated BCS helpers for emitted events:
+Use generated BCS helpers and SDK parsers for events:
 
 ```ts
-const { gameId, eventName } = parseGameEvent(event)!;
-const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
-const gameDetails = parseGameDetails(gameId, decoded.game_details);
+const parsed = parseGameEvent(event);
+if (parsed?.eventName === 'BetResultEvent') {
+	const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
+	const details = parseGameDetails(parsed.gameId, decoded.game_details);
+	const price = fromMoveFloat(decoded.adjusted_oracle_usd_coin_price);
+}
 ```
 
-Guardrails:
+For PvP coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinflipGameResolvedEvent`, and `PvPCoinflipGameCancelledEvent`.
 
-- Parse event payload bytes from `event.bcs` when they are available.
-- Use `parseGameEvent(event)` from `@suigar/sdk/utils` when the product needs the normalized `{ gameId, eventName }` for any supported Suigar event in `GAME_EVENTS`, including standard `BetResultEvent` and PvP coinflip events.
-- Use `client.suigar.bcs.BetResultEvent` for standard bet result events.
-- Use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinflipGameResolvedEvent`, and `PvPCoinflipGameCancelledEvent` for PvP coinflip events.
-- Use the `gameId` returned by `parseGameEvent(event)` with `parseGameDetails(gameId, decoded.game_details)` from `@suigar/sdk/utils` instead of hand-decoding standard game detail byte arrays.
-- Use `fromMoveFloat(decoded.unsafe_oracle_usd_coin_price)` and `fromMoveFloat(decoded.adjusted_oracle_usd_coin_price)` to display generated Move float structs.
+## Gotchas
+
+- Keep frontends and backends on the same `owner` wallet address used to build transactions.
+- Keep amounts as `bigint` once they leave the UI layer.
+- Use `client.suigar.getConfig().coins` for supported `coinType` and `decimals`; do not duplicate decimal constants in app code unless runtime config requires it.
+- Prefer SDK-resolved supported coin metadata from `client.suigar.getConfig()` for debugging, inspection, or UI coin selectors; simple examples can pass the expected coin type directly.
+- Standard games rely on the SDK's network-resolved `priceInfoObjectIds` for supported coins.
+- Use `SuigarCoin` and `SuigarNetwork` when app code needs supported coin or network types.
 - For object reads, parse object `content`, not `objectBcs`.
+- Do not hand-decode `BetResultEvent.game_details`; use `parseGameEvent(event)` and `parseGameDetails(gameId, ...)`.
+- Do not move SDK runtime builders out of `client.suigar.tx` or rely on private package paths.
 
-## Setup checklist
+## Implementation Checklist
 
 1. Install and import `@suigar/sdk`, `@mysten/sui`, and `@mysten/bcs`.
-2. Extend the existing client with `suigar()`.
-3. Ensure the client is connected to the intended supported network so the SDK resolves the right package ids, coin metadata, and price info object ids.
-4. Keep transaction serialization inside the same registered client instance.
+2. Extend the current Sui client with `suigar()`.
+3. Confirm the client uses the intended supported network.
+4. Keep transaction creation and serialization on the same extended client instance.
 5. Keep the consuming app on ESM and pass the explicit `network` required by current client constructors.
+6. Route game-specific work to the standard or PvP skill after base setup is correct.
