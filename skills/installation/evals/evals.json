@@ -10,7 +10,7 @@
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation",
         "https://sdk.mystenlabs.com/sui"
       ],
-      "expectations": [
+      "assertions": [
         "Imports suigar from @suigar/sdk",
         "Imports SuiGrpcClient from @mysten/sui/grpc",
         "Constructs the client with both baseUrl and network",
@@ -27,7 +27,7 @@
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"
       ],
-      "expectations": [
+      "assertions": [
         "States that partner is configured through suigar({ partner: '<wallet-address>' })",
         "States that partner must be a wallet address, not a slug or label",
         "Warns not to set metadata.partner",
@@ -42,7 +42,7 @@
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"
       ],
-      "expectations": [
+      "assertions": [
         "Uses parseGameEvent from @suigar/sdk/utils",
         "Parses event.bcs with client.suigar.bcs.BetResultEvent.parse",
         "Passes the parsed gameId into parseGameDetails",

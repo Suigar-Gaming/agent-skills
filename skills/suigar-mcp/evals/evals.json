@@ -9,7 +9,7 @@
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
       ],
-      "expectations": [
+      "assertions": [
         "Includes an mcpServers object with key suigar",
         "Uses command: npx",
         "Uses args containing -y and @suigar/mcp",
@@ -24,7 +24,7 @@
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
       ],
-      "expectations": [
+      "assertions": [
         "Recommends read-only for inspection without bytes",
         "Explains build returns unsigned base64 transaction bytes",
         "Explains dry-run simulates the unsigned transaction through Sui APIs",
@@ -39,7 +39,7 @@
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
       ],
-      "expectations": [
+      "assertions": [
         "Uses or names build_pvp_coinflip_create_transaction",
         "Uses creatorSide: 'tails'",
         "Explains creatorSide maps to the SDK side option",

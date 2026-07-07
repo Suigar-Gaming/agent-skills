@@ -9,7 +9,7 @@
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
       ],
-      "expectations": [
+      "assertions": [
         "Uses createPvPCoinflipTransaction",
         "Uses the action 'create'",
         "Passes side: 'heads'",
@@ -25,7 +25,7 @@
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
       ],
-      "expectations": [
+      "assertions": [
         "Uses createPvPCoinflipTransaction with action 'join'",
         "Passes gameId",
         "Passes owner and coinType",
@@ -41,7 +41,7 @@
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
       ],
-      "expectations": [
+      "assertions": [
         "Uses client.suigar.getPvPCoinflipGames for lobby listing",
         "Mentions options such as limit, cursor, signal, or throwOnError",
         "Explains unresolved registry membership is the live pending-state signal",

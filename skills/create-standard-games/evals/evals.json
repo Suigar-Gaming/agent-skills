@@ -9,7 +9,7 @@
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-standard-games"
       ],
-      "expectations": [
+      "assertions": [
         "Uses client.suigar.tx.createBetTransaction",
         "Uses the game id 'coinflip'",
         "Passes side: 'tails' exactly",
@@ -25,7 +25,7 @@
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-standard-games"
       ],
-      "expectations": [
+      "assertions": [
         "States not to pre-scale range points in app code",
         "Passes leftPoint: 25",
         "Passes rightPoint: 75",
@@ -41,7 +41,7 @@
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-standard-games"
       ],
-      "expectations": [
+      "assertions": [
         "Uses parseGameEvent",
         "Uses client.suigar.bcs.BetResultEvent.parse(event.bcs)",
         "Uses parseGameDetails with the gameId from parseGameEvent",
