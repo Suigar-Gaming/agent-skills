@@ -68,9 +68,22 @@ If a skill needs scripts:
 
 Document installation through skills.sh-compatible commands:
 
+Browse available skills:
+
+```bash
+npx skills list Suigar-Gaming/agent-skills --list
+```
+
+Install a specific skill:
+
+```bash
+npx skills add Suigar-Gaming/agent-skills --skill suigar-mcp
+```
+
+Install all skills:
+
 ```bash
 npx skills add Suigar-Gaming/agent-skills
-npx skills add Suigar-Gaming/agent-skills --skill suigar-mcp
 ```
 
 For manual installs, copy a skill folder into the target agent's native skills directory.
