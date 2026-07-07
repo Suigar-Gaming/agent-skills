@@ -1,10 +1,10 @@
 ---
 name: create-standard-games
-description: Use when building, scaffolding, or fixing AI-generated standard Suigar game flows on top of @suigar/sdk, especially coinflip, limbo, plinko, range, or wheel bet transactions.
+description: Build, scaffold, review, or fix standard single-player Suigar game flows using @suigar/sdk. Use when creating coinflip, limbo, plinko, range, or wheel bet transactions; mapping UI inputs to client.suigar.tx.createBetTransaction; handling stake/cashStake/betCount/metadata; decoding BetResultEvent; or correcting AI-generated code that manually selects coins, invents game builders, or misroutes standard games through MCP or PvP APIs.
 license: MIT
 metadata:
   author: suigar
-  version: "1.0.0"
+  version: "1.1.0"
   short-description: Build standard Suigar game flows
   tags:
     - suigar
@@ -13,29 +13,34 @@ metadata:
     - standard-games
 ---
 
-# Create Standard Games
+# Create Standard Suigar Games
 
-If the user is working through `@suigar/mcp` tools instead of application code that imports `@suigar/sdk`, use the `suigar-mcp` skill. MCP `stake` and `cashStake` inputs are currency amounts, and the MCP server converts them to base units before calling SDK builders.
+Use this skill for application code that imports `@suigar/sdk` and builds standard single-player game transactions. If the app setup is missing, use `installation` first. If the user is using `@suigar/mcp` tools, use `suigar-mcp` instead.
 
-## Standard game workflow
+> Source constraint: Treat the SDK public API as the source of truth. Do not invent transaction builders or hand-copy Move call internals into app code.
 
-Always prefer:
+## Default Workflow
+
+1. Confirm the target game id: `coinflip`, `limbo`, `plinko`, `range`, or `wheel`.
+2. Confirm the client has the `suigar()` extension registered.
+3. Build the transaction with `client.suigar.tx.createBetTransaction(gameId, options)`.
+4. Let the SDK source bet coins through Mysten `coinWithBalance` transaction arguments.
+5. Serialize only if the wallet or transport layer needs bytes.
+6. Decode emitted results with `client.suigar.bcs.BetResultEvent`, `parseGameEvent`, and `parseGameDetails`.
+
+## Imports and Types
+
+Use game types from `@suigar/sdk/games`:
 
 ```ts
-client.suigar.tx.createBetTransaction(gameId, options);
+import { GAMES, type Game, type StandardGame, type CoinSide } from '@suigar/sdk/games';
 ```
 
-Supported game ids:
+Do not redefine game id unions unless the local app already has a stricter UI type.
 
-- `coinflip`
-- `limbo`
-- `plinko`
-- `range`
-- `wheel`
+## Shared Options
 
-When app code needs typed game ids, import `GAMES`, `Game`, or `StandardGame` from `@suigar/sdk/games` instead of redefining game unions. Use the exported `CoinSide` type for coinflip side values when a named type is useful.
-
-## Shared options
+Every standard bet uses:
 
 - `owner: string`
 - `coinType: string`
@@ -46,29 +51,25 @@ When app code needs typed game ids, import `GAMES`, `Game`, or `StandardGame` fr
 - `gasBudget?: number | bigint`
 - `useGasCoin?: boolean`
 
-The SDK builds the bet coin from the owner's balance with Mysten `coinWithBalance` transaction arguments. Do not preselect, split, or pass coin objects from application code for standard game bets. Set `useGasCoin` only when the app needs to override Mysten's default coin intent behavior.
+Set `useGasCoin` only when the app needs to override Mysten's default native SUI coin intent behavior. Do not pass coin object ids, split coins manually, or add custom bet coin callbacks.
 
-Extension-level option:
+Attribution is an extension-level option: `suigar({ partner?: string })` prepends the partner wallet address to metadata automatically across supported bet flows.
 
-- `suigar({ partner?: string })` prepends the partner wallet address to `partner` metadata automatically across all supported bet flows.
+## Game Inputs
 
-## Game-specific options
+| Game | Required inputs | Notes |
+|---|---|---|
+| `coinflip` | `side: 'heads' | 'tails'` | Preserve the UI-selected side exactly. |
+| `limbo` | `targetMultiplier: number` | Pass human decimal values; the SDK applies scale. |
+| `plinko` | `configId: number` | Config id must match a valid on-chain board. |
+| `range` | `leftPoint: number`, `rightPoint: number` | Keep points ordered; optional `outOfRange` and `scale`. |
+| `wheel` | `configId: number` | Keep frontend labels and backend config ids aligned. |
 
-- `coinflip`: `side: 'heads' | 'tails'`
-- `limbo`: `targetMultiplier: number`, optional `scale`
-- `plinko`: `configId: number`
-- `range`: `leftPoint: number`, `rightPoint: number`, optional `outOfRange`, optional `scale`
-- `wheel`: `configId: number`
+## Game Examples
 
-## Coinflip
+### Coinflip
 
-Use `coinflip` when the player chooses a side explicitly.
-
-Required addition:
-
-- `side: 'heads' | 'tails'`
-
-Example:
+Use `coinflip` when the player chooses a side explicitly:
 
 ```ts
 const tx = client.suigar.tx.createBetTransaction('coinflip', {
@@ -79,24 +80,11 @@ const tx = client.suigar.tx.createBetTransaction('coinflip', {
 });
 ```
 
-Guardrails:
+Preserve the UI-selected side exactly.
 
-- Preserve the UI-selected side exactly.
-- Do not remap display labels to unsupported values.
+### Limbo
 
-## Limbo
-
-Use `limbo` when the player bets against a target multiplier.
-
-Required addition:
-
-- `targetMultiplier: number`
-
-Optional addition:
-
-- `scale?: number`
-
-Example:
+Use `limbo` when the player bets against a target multiplier:
 
 ```ts
 const tx = client.suigar.tx.createBetTransaction('limbo', {
@@ -107,20 +95,11 @@ const tx = client.suigar.tx.createBetTransaction('limbo', {
 });
 ```
 
-Guardrails:
+Keep UI decimal inputs as numbers until the SDK converts them using the configured or default scale.
 
-- `targetMultiplier` is converted by the SDK using the configured or default scale.
-- Keep UI decimal inputs as numbers until the SDK converts them.
+### Plinko
 
-## Plinko
-
-Use `plinko` when the game flow depends on a predefined board configuration.
-
-Required addition:
-
-- `configId: number`
-
-Example:
+Use `plinko` when the game depends on a predefined board configuration:
 
 ```ts
 const tx = client.suigar.tx.createBetTransaction('plinko', {
@@ -131,26 +110,11 @@ const tx = client.suigar.tx.createBetTransaction('plinko', {
 });
 ```
 
-Guardrails:
+Do not derive or randomize `configId` silently.
 
-- `configId` must match a valid on-chain configuration.
-- Do not derive or randomize `configId` silently.
+### Range
 
-## Range
-
-Use `range` when the player chooses a bounded interval and optional in-range or out-of-range behavior.
-
-Required additions:
-
-- `leftPoint: number`
-- `rightPoint: number`
-
-Optional additions:
-
-- `outOfRange?: boolean`
-- `scale?: number`
-
-Example:
+Use `range` when the player chooses a bounded interval and optional in-range or out-of-range behavior:
 
 ```ts
 const tx = client.suigar.tx.createBetTransaction('range', {
@@ -163,22 +127,11 @@ const tx = client.suigar.tx.createBetTransaction('range', {
 });
 ```
 
-Guardrails:
+Do not pre-scale range points in app code.
 
-- Keep `leftPoint` and `rightPoint` ordered before building the transaction.
-- Do not pre-scale range points in app code; pass human values and let the SDK apply the selected scale once.
-- Range points must stay within the contract cap after scaling. With the default scale `1_000_000`, valid UI values are `0` to `100`.
-- Let the SDK convert fixed-point values using the selected scale.
+### Wheel
 
-## Wheel
-
-Use `wheel` when the game depends on a predefined wheel configuration.
-
-Required addition:
-
-- `configId: number`
-
-Example:
+Use `wheel` when the game depends on a predefined wheel configuration:
 
 ```ts
 const tx = client.suigar.tx.createBetTransaction('wheel', {
@@ -189,55 +142,41 @@ const tx = client.suigar.tx.createBetTransaction('wheel', {
 });
 ```
 
-Guardrails:
+Keep frontend labels and backend configuration ids in sync.
 
-- `configId` must match a valid wheel setup.
-- Keep frontend labels and backend configuration ids in sync.
-
-## Guardrails for game apps
-
-- Treat `stake` as the logical wager passed to Move.
-- Use `cashStake` only when the withdrawn coin amount must differ from the game stake.
-- `betCount` defaults to `1`; do not reimplement batching unless the product requires custom behavior.
-- Pass plain application values in `metadata`; let the SDK encode them.
-- Do not set `metadata.partner` or `metadata.referrer`; those keys are reserved and the SDK ignores them with a warning.
-- If the product needs partner attribution, configure `suigar({ partner: '<wallet-address>' })` once on the client extension instead of passing it per transaction.
-- Treat `partner` as a wallet address, not a slug, label, or display string.
-- Keep amounts as `bigint` once they leave the UI layer.
-- Ensure the same connected wallet address is used as `owner`.
-- Use `client.suigar.getConfig().coins` when the UI needs supported coin `coinType` and `decimals`; do not duplicate decimal constants in app code.
-
-## Event decoding
-
-Use the generated BCS event decoder for standard bet results:
+## Event Decoding
 
 ```ts
-import {
-	fromMoveFloat,
-	parseGameDetails,
-	parseGameEvent,
-} from '@suigar/sdk/utils';
+import { fromMoveFloat, parseGameDetails, parseGameEvent } from '@suigar/sdk/utils';
 
-const { gameId, eventName } = parseGameEvent(event)!;
-const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
-const gameDetails = parseGameDetails(gameId, decoded.game_details);
-const adjustedOraclePrice = fromMoveFloat(
-	decoded.adjusted_oracle_usd_coin_price,
-);
+const parsed = parseGameEvent(event);
+if (parsed?.eventName === 'BetResultEvent') {
+	const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
+	const gameDetails = parseGameDetails(parsed.gameId, decoded.game_details);
+	const adjustedOraclePrice = fromMoveFloat(decoded.adjusted_oracle_usd_coin_price);
+}
 ```
 
-Guardrails:
+Use `event.bcs` as the event payload when available. `parseGameDetails` preserves on-chain keys and returns decoded string, number, and boolean values.
 
-- Use `event.bcs` as the event payload input when available.
-- Use `parseGameEvent(event)` to retrieve the normalized `gameId`, then pass that to `parseGameDetails(gameId, ...)` so TypeScript narrows the returned detail keys.
-- Do not hand-decode `game_details` byte arrays in app code; use `parseGameDetails(gameId, ...)`.
-- `parseGameDetails` preserves the on-chain keys and returns decoded string, number, and boolean values.
-- Metadata remains generic `VecMap<string, vector<u8>>` data; decode it according to the app's own metadata contract.
+## Gotchas
 
-## Implementation checklist
+- Do not model standard games with PvP builders or MCP transaction tool names.
+- Do not set `metadata.partner` or `metadata.referrer`; configure `suigar({ partner: '<wallet-address>' })` once instead.
+- Treat `partner` as a wallet address, not a campaign slug.
+- Use `cashStake` only when the withdrawn coin amount must differ from the game stake.
+- `betCount` defaults to `1`; do not reimplement batching unless the product needs custom behavior.
+- Pass plain application values in `metadata`; let the SDK encode them.
+- For range, do not pre-scale points in app code. With the default scale `1_000_000`, valid UI values are `0` to `100`.
+- Keep amounts as `bigint` once they leave the UI layer.
+- Ensure the same connected wallet address is used as `owner`.
+- Use `client.suigar.getConfig().coins` when the UI needs supported coin types and decimals.
+- Metadata remains generic `VecMap<string, vector<u8>>` data in events; decode it according to the app's own metadata contract.
+
+## Implementation Checklist
 
 1. Confirm the target standard game id.
-2. Verify the base client already has the `suigar()` extension configured.
+2. Verify the base client already has `suigar()` configured.
 3. Build the transaction with `createBetTransaction`.
 4. Serialize only if the surrounding wallet or transport path needs bytes.
 5. Decode `BetResultEvent` with `client.suigar.bcs.BetResultEvent` and `parseGameDetails`.

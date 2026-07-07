@@ -6,6 +6,26 @@ Skills follow the [Agent Skills](https://agentskills.io/) format.
 
 [![skills.sh](https://skills.sh/b/Suigar-Gaming/agent-skills)](https://skills.sh/Suigar-Gaming/agent-skills)
 
+## Installation
+
+Browse available skills:
+
+```bash
+npx skills list Suigar-Gaming/agent-skills --list
+```
+
+Install a specific skill:
+
+```bash
+npx skills add Suigar-Gaming/agent-skills --skill suigar-mcp
+```
+
+Install all skills:
+
+```bash
+npx skills add Suigar-Gaming/agent-skills
+```
+
 ## Available Skills
 
 ### installation
@@ -52,19 +72,6 @@ Install, configure, operate, or troubleshoot the `@suigar/mcp` server and bundle
 - Building unsigned transactions in read-only, build, or dry-run mode
 - Explaining MCP support boundaries for Suigar games
 
-## Installation
-
-Install all skills:
-
-```bash
-npx skills add Suigar-Gaming/agent-skills
-```
-
-Install one skill:
-
-```bash
-npx skills add Suigar-Gaming/agent-skills --skill suigar-mcp
-```
 
 ## Usage
 
