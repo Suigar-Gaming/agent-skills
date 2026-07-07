@@ -1,0 +1,54 @@
+{
+  "skill_name": "installation",
+  "source_constraint": "Expected outputs are grounded in the Suigar SDK public API, the installed @suigar/sdk package surface, and current Mysten Sui TypeScript client patterns.",
+  "evals": [
+    {
+      "id": "installation-grpc-extension-setup",
+      "prompt": "Set up @suigar/sdk in my Node app using the current Sui TypeScript SDK. I need a testnet client and a coinflip transaction serialized to base64 for the wallet.",
+      "expected_output": "Shows SuiGrpcClient from @mysten/sui/grpc extended with suigar(), builds a coinflip transaction through client.suigar.tx.createBetTransaction, and serializes it with client.suigar.serializeTransactionToBase64.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation",
+        "https://sdk.mystenlabs.com/sui"
+      ],
+      "expectations": [
+        "Imports suigar from @suigar/sdk",
+        "Imports SuiGrpcClient from @mysten/sui/grpc",
+        "Constructs the client with both baseUrl and network",
+        "Extends the client with suigar()",
+        "Uses client.suigar.tx.createBetTransaction for the bet",
+        "Uses client.suigar.serializeTransactionToBase64 for serialization",
+        "Does not import a standalone coinflip builder from @suigar/sdk"
+      ]
+    },
+    {
+      "id": "installation-partner-attribution",
+      "prompt": "Our Suigar app needs partner attribution. Can I just add metadata.partner: 'my-affiliate' to every bet? Show the correct setup.",
+      "expected_output": "Explains partner attribution belongs in suigar({ partner }) at extension registration time, partner must be a wallet address, and metadata.partner/referrer should not be set.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"
+      ],
+      "expectations": [
+        "States that partner is configured through suigar({ partner: '<wallet-address>' })",
+        "States that partner must be a wallet address, not a slug or label",
+        "Warns not to set metadata.partner",
+        "Warns not to set metadata.referrer",
+        "Shows client extension setup with partner configured once"
+      ]
+    },
+    {
+      "id": "installation-event-decoding",
+      "prompt": "I receive Suigar transaction events from Sui. How do I decode a BetResultEvent and get game-specific details without manually parsing bytes?",
+      "expected_output": "Uses parseGameEvent(event), client.suigar.bcs.BetResultEvent.parse(event.bcs), parseGameDetails(gameId, decoded.game_details), and fromMoveFloat for Move float fields.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"
+      ],
+      "expectations": [
+        "Uses parseGameEvent from @suigar/sdk/utils",
+        "Parses event.bcs with client.suigar.bcs.BetResultEvent.parse",
+        "Passes the parsed gameId into parseGameDetails",
+        "Mentions fromMoveFloat for generated Move float structs",
+        "Does not hand-decode game_details byte arrays"
+      ]
+    }
+  ]
+}

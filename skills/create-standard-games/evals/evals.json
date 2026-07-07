@@ -1,0 +1,53 @@
+{
+  "skill_name": "create-standard-games",
+  "source_constraint": "Expected outputs are grounded in @suigar/sdk standard game transaction builders and public Suigar SDK utilities.",
+  "evals": [
+    {
+      "id": "standard-coinflip-preserve-side",
+      "prompt": "Wire a Suigar coinflip bet for a React app. The user picks tails, stakes 1 SUI, and the connected wallet is owner. Show the transaction build code.",
+      "expected_output": "Builds a coinflip transaction with client.suigar.tx.createBetTransaction('coinflip', ...), passes side: 'tails', uses a bigint stake in base units, and does not manually split or select coin objects.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-standard-games"
+      ],
+      "expectations": [
+        "Uses client.suigar.tx.createBetTransaction",
+        "Uses the game id 'coinflip'",
+        "Passes side: 'tails' exactly",
+        "Passes owner and coinType",
+        "Uses a bigint or base-unit stake suitable for SDK app code",
+        "Does not manually call splitCoins or pass explicit coin object ids"
+      ]
+    },
+    {
+      "id": "standard-range-no-prescale",
+      "prompt": "Build a range bet where the player chooses 25 to 75 and wants the in-range outcome. Should I multiply those numbers by 1_000_000 before calling Suigar?",
+      "expected_output": "Explains not to pre-scale range points, passes leftPoint: 25 and rightPoint: 75 with outOfRange: false, and notes the SDK applies the selected/default scale.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-standard-games"
+      ],
+      "expectations": [
+        "States not to pre-scale range points in app code",
+        "Passes leftPoint: 25",
+        "Passes rightPoint: 75",
+        "Passes outOfRange: false or equivalent in-range behavior",
+        "Mentions the SDK applies scale",
+        "Uses client.suigar.tx.createBetTransaction('range', ...)"
+      ]
+    },
+    {
+      "id": "standard-event-decoding",
+      "prompt": "After a Suigar wheel bet resolves, I need to display the result details and adjusted oracle price. What's the right decoding pattern?",
+      "expected_output": "Parses the raw event with parseGameEvent, decodes BetResultEvent from event.bcs, gets details with parseGameDetails(gameId, decoded.game_details), and converts adjusted_oracle_usd_coin_price with fromMoveFloat.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-standard-games"
+      ],
+      "expectations": [
+        "Uses parseGameEvent",
+        "Uses client.suigar.bcs.BetResultEvent.parse(event.bcs)",
+        "Uses parseGameDetails with the gameId from parseGameEvent",
+        "Uses fromMoveFloat for adjusted_oracle_usd_coin_price",
+        "Does not hand-decode game_details"
+      ]
+    }
+  ]
+}

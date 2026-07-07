@@ -1,0 +1,51 @@
+{
+  "skill_name": "suigar-mcp",
+  "source_constraint": "Expected outputs are grounded in @suigar/mcp behavior as a thin unsigned-transaction layer over @suigar/sdk.",
+  "evals": [
+    {
+      "id": "mcp-install-config",
+      "prompt": "Add the Suigar MCP server to my MCP client config. What JSON should I paste and what do I do after?",
+      "expected_output": "Provides an mcpServers.suigar config using command npx and args ['-y', '@suigar/mcp'], then tells the user to restart or reload the MCP client.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+      ],
+      "expectations": [
+        "Includes an mcpServers object with key suigar",
+        "Uses command: npx",
+        "Uses args containing -y and @suigar/mcp",
+        "Tells the user to restart or reload the MCP client after config changes",
+        "Does not describe signing or custody as MCP server capabilities"
+      ]
+    },
+    {
+      "id": "mcp-readonly-vs-build-dryrun",
+      "prompt": "I want to inspect what a Suigar limbo bet would do before signing anything. Which Suigar MCP mode should I use, and when would I use build or dry-run instead?",
+      "expected_output": "Recommends read-only for a resolved plan without bytes, build for unsigned base64 bytes, and dry-run for Sui simulation of the unsigned transaction.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+      ],
+      "expectations": [
+        "Recommends read-only for inspection without bytes",
+        "Explains build returns unsigned base64 transaction bytes",
+        "Explains dry-run simulates the unsigned transaction through Sui APIs",
+        "States MCP does not sign or submit the transaction",
+        "Mentions limbo uses targetMultiplier"
+      ]
+    },
+    {
+      "id": "mcp-pvp-create-creator-side",
+      "prompt": "Use Suigar MCP to build a PvP coinflip create transaction where the creator chooses tails. Is the field side or creatorSide?",
+      "expected_output": "Routes to build_pvp_coinflip_create_transaction and uses creatorSide: 'tails' for MCP, explaining it maps to the SDK side option.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+      ],
+      "expectations": [
+        "Uses or names build_pvp_coinflip_create_transaction",
+        "Uses creatorSide: 'tails'",
+        "Explains creatorSide maps to the SDK side option",
+        "Does not route PvP coinflip through build_coinflip_transaction",
+        "Mentions owner and stake are required inputs"
+      ]
+    }
+  ]
+}
