@@ -1,6 +1,6 @@
 ---
 name: suigar-mcp
-description: Install, configure, operate, or troubleshoot the @suigar/mcp server, bundled MCP App, or plugin bundle for Suigar. Use when adding direct MCP configuration or installing the Codex, Claude Code, or Cursor plugin; reading config or required live game metadata; building unsigned standard or PvP transaction plans; using read-only/build/dry-run modes; handling SuiNS owner inputs; or explaining MCP safety boundaries and unsupported NFT or game flows.
+description: Install, configure, operate, or troubleshoot the @suigar/mcp server, bundled MCP App, or plugin bundle for Suigar. Use when adding direct MCP configuration or installing the Codex, Claude Code, or Cursor plugin; reading config, live game metadata, or the legacy NFT catalog and owned NFTs; building unsigned standard or PvP transaction plans; using read-only/build/dry-run modes; handling SuiNS owner inputs; or explaining MCP safety boundaries and unsupported game or NFT mint flows.
 license: MIT
 metadata:
   author: suigar
@@ -69,6 +69,7 @@ Start with read tools when network, coin, package, or game support is unclear:
 
 - `read_config`: inspect network, provider URL, package ids, configured coins, and supported games.
 - `read_game_metadata`: inspect one required game id's live on-chain parameters, package id, default or requested coin type, transaction surface, and support notes. Pass `ignoreCache: true` to refresh SDK-cached parameters.
+- `list_nfts`: read the legacy NFT catalog and matching NFTs owned by one required address or SuiNS name. It returns display-friendly identifiers and NFT image URLs.
 
 Use transaction tools only for supported on-chain games:
 
@@ -97,13 +98,15 @@ All tool responses should include text `content` and `structuredContent`. App-ca
 
 Use `read_game_metadata` before showing or validating live stake limits, RTP, or Plinko/Wheel configuration. It requires `game`; use `read_config` instead for broad discovery.
 
+Use `list_nfts` for read-only NFT browsing. App-capable hosts render the catalog and owned NFTs in separate views; unsupported image URLs remain available as text.
+
 ## Common Inputs
 
 - `network` defaults to `testnet`; only `testnet` and `mainnet` are supported.
 - `providerUrl` can override the Sui gRPC endpoint.
 - `config` accepts SDK-style package, registry, coin, and price-info overrides.
 - `partner` is a top-level partner wallet address forwarded through `suigar({ partner })`.
-- `owner` accepts a Sui address, SuiNS name, or SuiNS subname in build and dry-run modes.
+- `owner` accepts a Sui address, SuiNS name, or SuiNS subname in build, dry-run, and `list_nfts` reads.
 - `coinType` defaults to the SDK-configured SUI coin type.
 - `stake` and `cashStake` are currency amounts, such as `1` or `1.5`, not base units.
 - `metadata` values must be JSON-compatible strings, numbers, or booleans. Send large integer metadata values as strings.
@@ -137,5 +140,5 @@ PvP coinflip create uses the MCP field name `creatorSide`; the SDK builder recei
 - Pass partner attribution as top-level `partner`; do not set `metadata.partner` or `metadata.referrer`.
 - Use PvP tools for PvP coinflip. Do not route PvP coinflip through standard game builders.
 - For PvP join, expect live object reads while building or dry-running because the SDK resolves the current game stake from the game object.
-- MCP does not expose legacy NFT lookup, catalog, or mint tools. Use `suigar-nft-lookup` in SDK application code for an owner's legacy NFTs.
+- `list_nfts` is read-only. MCP does not expose legacy NFT minting; do not invent a mint tool.
 - Surface tool errors with the missing field, unsupported config, network, or coin detail needed for retry.

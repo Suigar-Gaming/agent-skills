@@ -64,6 +64,22 @@
       ]
     },
     {
+      "id": "mcp-list-nfts",
+      "prompt": "Use Suigar MCP to show the legacy NFT catalog and the NFTs owned by wallet.sui. I only want a read, not a transaction.",
+      "expected_output": "Uses list_nfts with owner: 'wallet.sui', explains that it is read-only and returns both the legacy NFT catalog and matching owned NFTs, and notes that an App-capable host can render separate catalog and ownership views.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+      ],
+      "assertions": [
+        "Uses or names list_nfts",
+        "Passes owner: 'wallet.sui' or explains a SuiNS owner is accepted",
+        "States that list_nfts is read-only",
+        "States that the result includes the NFT catalog",
+        "States that the result includes matching owned NFTs",
+        "Does not build or suggest a mint transaction"
+      ]
+    },
+    {
       "id": "mcp-readonly-vs-build-dryrun",
       "prompt": "I want to inspect what a Suigar limbo bet would do before signing anything. Which Suigar MCP mode should I use, and when would I use build or dry-run instead?",
       "expected_output": "Recommends read-only for a resolved plan without bytes, build for unsigned base64 bytes, and dry-run for Sui simulation of the unsigned transaction.",
