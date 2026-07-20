@@ -4,16 +4,17 @@
   "groupings": [
     {
       "title": "Suigar SDK",
-      "description": "Skills for integrating @suigar/sdk and building standard or PvP game flows in applications.",
+      "description": "Skills for integrating @suigar/sdk and building legacy NFT lookups, standard games, or PvP game flows in applications.",
       "skills": [
         "installation",
+        "suigar-nft-lookup",
         "create-standard-games",
         "create-pvp-games"
       ]
     },
     {
       "title": "Suigar MCP",
-      "description": "Skills for configuring and operating the @suigar/mcp server and MCP App.",
+      "description": "Skills for configuring and operating the @suigar/mcp server, MCP App, and plugin bundle.",
       "skills": [
         "suigar-mcp"
       ]

@@ -48,6 +48,22 @@
         "Uses fromMoveFloat for adjusted_oracle_usd_coin_price",
         "Does not hand-decode game_details"
       ]
+    },
+    {
+      "id": "standard-live-game-parameters",
+      "prompt": "Before rendering our Wheel configuration picker, how do I read current Suigar limits and valid configuration data for SUI?",
+      "expected_output": "Uses client.suigar.getGameParameters('wheel', { coinType }) to read current on-chain parameters, explains that returned Move floats are JavaScript numbers, and mentions ignoreCache: true when a fresh lookup is required.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-standard-games"
+      ],
+      "assertions": [
+        "Uses client.suigar.getGameParameters",
+        "Passes 'wheel' as the game id",
+        "Passes a SUI coinType or explains the configured default",
+        "Describes on-chain parameters or configuration",
+        "States that Move float values are JavaScript numbers",
+        "Mentions ignoreCache: true for a fresh lookup"
+      ]
     }
   ]
 }
