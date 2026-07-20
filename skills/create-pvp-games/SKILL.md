@@ -1,10 +1,10 @@
 ---
 name: create-pvp-games
-description: Build, scaffold, review, or fix PvP Suigar game flows using @suigar/sdk. Use when creating, joining, canceling, listing, or parsing PvP coinflip matches; implementing lobby cards; preserving creator side and privacy flags; fetching PvP game objects; decoding PvP coinflip events; or correcting code that incorrectly uses standard createBetTransaction for PvP actions.
+description: Build, scaffold, review, or fix PvP Suigar game flows using @suigar/sdk. Use when creating, joining, canceling, listing, or parsing PvP coinflip matches; reading live PvP stake limits or settings; implementing lobby cards; preserving creator side and privacy flags; fetching PvP game objects; decoding PvP coinflip events; or correcting code that incorrectly uses standard createBetTransaction for PvP actions.
 license: MIT
 metadata:
   author: suigar
-  version: "1.1.0"
+  version: "1.2.0"
   short-description: Build PvP Suigar game flows
   tags:
     - suigar
@@ -28,6 +28,10 @@ Use this skill for application code that imports `@suigar/sdk` and builds PvP fl
 5. Use `client.suigar.bcs.PvPCoinflipGame.get({ client, objectId })` when one live pending game object is needed.
 6. Decode PvP events with generated BCS helpers.
 7. Decode any accompanying standard `BetResultEvent.game_details` with `parseGameEvent` and `parseGameDetails`.
+
+## Live Parameters
+
+Read `client.suigar.getGameParameters('pvp-coinflip', { coinType })` before presenting or validating current PvP stake limits or game settings. Results are cached for 30 minutes by default; use `ignoreCache: true` when the lobby requires a fresh on-chain read.
 
 ## Public Surface
 

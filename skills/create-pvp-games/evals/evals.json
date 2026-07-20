@@ -49,6 +49,21 @@
         "Directs resolved-state handling to emitted PvP events",
         "Mentions PvPCoinflipGame.get for one specific live pending object"
       ]
+    },
+    {
+      "id": "pvp-live-parameters",
+      "prompt": "Before opening a PvP coinflip lobby, how do I check the current supported stake limits for SUI?",
+      "expected_output": "Uses client.suigar.getGameParameters('pvp-coinflip', { coinType }) for current on-chain PvP settings and explains that ignoreCache: true forces a fresh read when needed.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
+      ],
+      "assertions": [
+        "Uses client.suigar.getGameParameters",
+        "Passes 'pvp-coinflip' as the game id",
+        "Passes a SUI coinType or explains the configured default",
+        "States that values are current on-chain parameters",
+        "Mentions ignoreCache: true for a fresh lookup"
+      ]
     }
   ]
 }

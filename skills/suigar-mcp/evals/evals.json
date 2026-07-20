@@ -5,16 +5,78 @@
     {
       "id": "mcp-install-config",
       "prompt": "Add the Suigar MCP server to my MCP client config. What JSON should I paste and what do I do after?",
-      "expected_output": "Provides an mcpServers.suigar config using command npx and args ['-y', '@suigar/mcp'], then tells the user to restart or reload the MCP client.",
+      "expected_output": "Recommends `npx add-mcp @suigar/mcp@latest --name suigar` for detected coding agents, or provides an mcpServers.suigar config using command npx and args ['-y', '@suigar/mcp'] when explicit manual configuration is needed.",
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
       ],
       "assertions": [
-        "Includes an mcpServers object with key suigar",
-        "Uses command: npx",
-        "Uses args containing -y and @suigar/mcp",
+        "Uses npx add-mcp @suigar/mcp@latest --name suigar or explicitly scopes the answer to manual MCP configuration",
+        "When showing manual configuration, includes an mcpServers object with key suigar",
+        "When showing manual configuration, uses command: npx and args containing -y and @suigar/mcp",
         "Tells the user to restart or reload the MCP client after config changes",
         "Does not describe signing or custody as MCP server capabilities"
+      ]
+    },
+    {
+      "id": "mcp-plugin-install",
+      "prompt": "I want to install the published Suigar plugin in Codex from GitHub. How do I add it, and should I edit its .mcp.json myself?",
+      "expected_output": "Uses `codex plugin marketplace add Suigar-Gaming/ts-sdks --ref main`, directs the user to install or enable suigar from the Suigar marketplace source, explains that the repository marketplace resolves packages/mcp/plugin and registers a version-pinned MCP server, and warns not to manually edit generated plugin manifests or .mcp.json.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/ts-sdks/tree/main/packages/mcp/plugin"
+      ],
+      "assertions": [
+        "Uses codex plugin marketplace add Suigar-Gaming/ts-sdks --ref main",
+        "Mentions the Suigar marketplace source or enabling suigar",
+        "States that the repository marketplace resolves packages/mcp/plugin",
+        "States that the plugin registers the MCP server",
+        "States that the MCP package version is pinned by the plugin bundle",
+        "Warns not to manually edit the generated plugin manifest or .mcp.json"
+      ]
+    },
+    {
+      "id": "mcp-claude-plugin-install",
+      "prompt": "How do I install the published Suigar plugin in Claude Code without cloning the repository first?",
+      "expected_output": "Uses `/plugin marketplace add Suigar-Gaming/ts-sdks@main` followed by `/plugin install suigar@suigar`, explaining that the first command adds the GitHub marketplace and the second installs the marketplace-qualified plugin.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/ts-sdks/tree/main/packages/mcp/plugin"
+      ],
+      "assertions": [
+        "Uses /plugin marketplace add Suigar-Gaming/ts-sdks@main",
+        "Uses /plugin install suigar@suigar",
+        "States that the marketplace comes from GitHub",
+        "Does not require cloning the repository or using a local path"
+      ]
+    },
+    {
+      "id": "mcp-live-game-metadata",
+      "prompt": "Before offering Plinko configuration choices, how do I read current on-chain game metadata through Suigar MCP?",
+      "expected_output": "Uses read_game_metadata with the required game: 'plinko', explains that it returns live on-chain parameters, and mentions optional coinType plus ignoreCache: true for a fresh read.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+      ],
+      "assertions": [
+        "Uses or names read_game_metadata",
+        "Passes game: 'plinko'",
+        "States that game is required",
+        "Mentions live on-chain parameters",
+        "Mentions coinType or ignoreCache",
+        "Does not use read_config as a replacement for the selected game metadata read"
+      ]
+    },
+    {
+      "id": "mcp-list-nfts",
+      "prompt": "Use Suigar MCP to show the legacy NFT catalog and the NFTs owned by wallet.sui. I only want a read, not a transaction.",
+      "expected_output": "Uses list_nfts with owner: 'wallet.sui', explains that it is read-only and returns both the legacy NFT catalog and matching owned NFTs, and notes that an App-capable host can render separate catalog and ownership views.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+      ],
+      "assertions": [
+        "Uses or names list_nfts",
+        "Passes owner: 'wallet.sui' or explains a SuiNS owner is accepted",
+        "States that list_nfts is read-only",
+        "States that the result includes the NFT catalog",
+        "States that the result includes matching owned NFTs",
+        "Does not build or suggest a mint transaction"
       ]
     },
     {
