@@ -41,11 +41,12 @@ Set up `@suigar/sdk` in an application, wire the `suigar()` client extension, re
 
 ### suigar-nft-lookup
 
-Look up legacy Suigar NFTs owned by an address using the package id resolved by `@suigar/sdk`.
+Look up the legacy Suigar NFT catalog and NFTs owned by an address using SDK-resolved package ids and BCS helpers.
 
 **Use when:**
 
 - Listing an owner's legacy Suigar NFT objects
+- Reading and decoding the legacy NFT catalog factory
 - Deriving the legacy `::nft::Nft` struct type from active SDK config
 - Keeping NFT reads network-aware without hard-coded package ids
 
@@ -80,6 +81,7 @@ Install, configure, operate, or troubleshoot the `@suigar/mcp` server, bundled M
 - Adding the Suigar MCP server to an MCP client
 - Installing the Suigar plugin from a supported marketplace
 - Reading Suigar config or game metadata through MCP tools
+- Browsing the legacy NFT catalog and a wallet's matching NFTs through `list_nfts`
 - Building unsigned transactions in read-only, build, or dry-run mode
 - Explaining MCP support boundaries for Suigar games
 
