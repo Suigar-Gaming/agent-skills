@@ -5,14 +5,14 @@
     {
       "id": "mcp-install-config",
       "prompt": "Add the Suigar MCP server to my MCP client config. What JSON should I paste and what do I do after?",
-      "expected_output": "Recommends `npx add-mcp @suigar/mcp@latest --name suigar` for detected coding agents, or provides an mcpServers.suigar config using command npx and args ['-y', '@suigar/mcp'] when explicit manual configuration is needed.",
+      "expected_output": "Recommends `npx add-mcp @suigar/mcp@latest --name suigar` for detected coding agents, or provides an mcpServers.suigar config using command npx and args ['-y', '@suigar/mcp@latest'] when explicit manual configuration is needed.",
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
       ],
       "assertions": [
         "Uses npx add-mcp @suigar/mcp@latest --name suigar or explicitly scopes the answer to manual MCP configuration",
         "When showing manual configuration, includes an mcpServers object with key suigar",
-        "When showing manual configuration, uses command: npx and args containing -y and @suigar/mcp",
+        "When showing manual configuration, uses command: npx and args containing -y and @suigar/mcp@latest",
         "Tells the user to restart or reload the MCP client after config changes",
         "Does not describe signing or custody as MCP server capabilities"
       ]
@@ -61,6 +61,18 @@
         "Mentions live on-chain parameters",
         "Mentions coinType or ignoreCache",
         "Does not use read_config as a replacement for the selected game metadata read"
+      ]
+    },
+    {
+      "id": "mcp-coin-price-info-override",
+      "prompt": "My testnet USDC uses a replacement price-info object. Where do I pass that override to the Suigar MCP tool?",
+      "expected_output": "Passes config.coins.usdc.priceInfoObjectId with the USDC coin metadata.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+      ],
+      "assertions": [
+        "Uses config.coins.usdc.priceInfoObjectId",
+        "Keeps the override in the tool's config input"
       ]
     },
     {
