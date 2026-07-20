@@ -4,7 +4,7 @@ description: Build, scaffold, review, or fix PvP Suigar game flows using @suigar
 license: MIT
 metadata:
   author: suigar
-  version: "1.2.0"
+  version: "1.3.0"
   short-description: Build PvP Suigar game flows
   tags:
     - suigar
@@ -81,7 +81,7 @@ const tx = client.suigar.tx.createPvPCoinflipTransaction('join', {
 });
 ```
 
-Join derives the stake from `gameId` and uses the configured price info object id for `coinType`. Do not pass stake, side, or custom coin callbacks for join.
+Join derives the stake from `gameId` and resolves the selected coin's `priceInfoObjectId` from SDK coin metadata. Do not pass stake, side, or custom coin callbacks for join.
 
 ### Cancel
 

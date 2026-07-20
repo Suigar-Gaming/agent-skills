@@ -1,10 +1,10 @@
 ---
 name: installation
-description: Set up, scaffold, or fix the base @suigar/sdk integration for Suigar game apps on Sui. Use when installing packages, wiring the suigar() Sui client extension, configuring networks/package ids/coins/price info, serializing transactions, reading SDK config or live game parameters, using public exports, parsing Suigar events, or safely checking and converting generated Move float and i64 values. Use this before standard or PvP game skills when the client setup is missing or questionable.
+description: Set up, scaffold, or fix the base @suigar/sdk integration for Suigar game apps on Sui. Use when installing packages, wiring the suigar() Sui client extension, configuring networks/package ids/coin metadata (including price-info object ids), serializing transactions, reading SDK config or live game parameters, using public exports, parsing Suigar events, or safely checking and converting generated Move float and i64 values. Use this before standard or PvP game skills when the client setup is missing or questionable.
 license: MIT
 metadata:
   author: suigar
-  version: "1.2.0"
+  version: "1.3.0"
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -115,8 +115,13 @@ const client = new SuiGrpcClient({ baseUrl, network }).$extend(
 	suigar({
 		config: {
 			packageIds: { coinflip: '0x...' },
-			coins: { sui: { coinType: '0x2::sui::SUI', decimals: 9 } },
-			priceInfoObjectIds: { sui: '0x...' },
+			coins: {
+				sui: {
+					coinType: '0x2::sui::SUI',
+					decimals: 9,
+					priceInfoObjectId: '0x...',
+				},
+			},
 		},
 	}),
 );
@@ -174,7 +179,7 @@ For PvP coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinf
 - Keep amounts as `bigint` once they leave the UI layer.
 - Use `client.suigar.getConfig().coins` for supported `coinType` and `decimals`; do not duplicate decimal constants in app code unless runtime config requires it.
 - Prefer SDK-resolved supported coin metadata from `client.suigar.getConfig()` for debugging, inspection, or UI coin selectors; simple examples can pass the expected coin type directly.
-- Standard games rely on the SDK's network-resolved `priceInfoObjectIds` for supported coins.
+- Standard games resolve the price-info object id from the selected coin's `priceInfoObjectId` metadata.
 - Use `client.suigar.getConfig().packageIds.legacyNft` only for legacy NFT lookups; use `suigar-nft-lookup` for that flow.
 - Use `SuigarCoin` and `SuigarNetwork` when app code needs supported coin or network types.
 - For object reads, parse object `content`, not `objectBcs`.
