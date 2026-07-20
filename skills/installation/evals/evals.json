@@ -36,6 +36,19 @@
       ]
     },
     {
+      "id": "installation-coin-price-info-override",
+      "prompt": "Our deployed USDC price-info object changed before an SDK release. Show the supported suigar() config override without copying internal builders.",
+      "expected_output": "Overrides config.coins.usdc with coinType, decimals, and priceInfoObjectId without copying internal builders.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"
+      ],
+      "assertions": [
+        "Uses suigar({ config: { coins: { usdc: ... } } })",
+        "Places priceInfoObjectId inside the usdc coin metadata",
+        "Does not copy or import internal transaction builders"
+      ]
+    },
+    {
       "id": "installation-event-decoding",
       "prompt": "I receive Suigar transaction events from Sui. How do I decode a BetResultEvent and get game-specific details without manually parsing bytes?",
       "expected_output": "Uses parseGameEvent(event), client.suigar.bcs.BetResultEvent.parse(event.bcs), parseGameDetails(gameId, decoded.game_details), and fromMoveFloat for Move float fields.",
