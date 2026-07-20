@@ -1,10 +1,10 @@
 ---
 name: installation
-description: Set up, scaffold, or fix the base @suigar/sdk integration for Suigar game apps on Sui. Use when installing packages, wiring the suigar() Sui client extension, configuring networks/package ids/coins/price info, serializing transactions, reading SDK config, using public exports, or parsing Suigar events. Use this before standard or PvP game skills when the client setup is missing or questionable.
+description: Set up, scaffold, or fix the base @suigar/sdk integration for Suigar game apps on Sui. Use when installing packages, wiring the suigar() Sui client extension, configuring networks/package ids/coins/price info, serializing transactions, reading SDK config or live game parameters, using public exports, parsing Suigar events, or safely checking and converting generated Move float and i64 values. Use this before standard or PvP game skills when the client setup is missing or questionable.
 license: MIT
 metadata:
   author: suigar
-  version: "1.1.0"
+  version: "1.2.0"
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -15,7 +15,7 @@ metadata:
 
 # Suigar SDK Installation
 
-Use this skill for application code that imports `@suigar/sdk`. If the task is about installing, configuring, operating, or troubleshooting `@suigar/mcp` or the bundled MCP App, use the `suigar-mcp` skill instead.
+Use this skill for application code that imports `@suigar/sdk`. If the task is about installing, configuring, operating, or troubleshooting `@suigar/mcp`, its bundled MCP App, or its plugin bundle, use the `suigar-mcp` skill instead.
 
 > Source constraint: Prefer public Suigar SDK entrypoints and installed package docs/source when available. Do not guess private exports or copy internal helpers into app code.
 
@@ -26,7 +26,7 @@ Use this skill for application code that imports `@suigar/sdk`. If the task is a
 3. Extend the existing Sui client with `suigar()`.
 4. Keep all Suigar transaction creation and serialization on that extended client instance.
 5. Use `client.suigar.getConfig()` for supported coins, package ids, and price info when the UI or diagnostics need resolved config.
-6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct.
+6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct. Route legacy NFT ownership reads to `suigar-nft-lookup`.
 
 ## Public Surface
 
@@ -42,14 +42,21 @@ Use these public imports:
 import { suigar } from '@suigar/sdk';
 import type { SuigarCoin, SuigarNetwork } from '@suigar/sdk';
 import { GAMES, type StandardGame, type PvPGame } from '@suigar/sdk/games';
-import { parseGameEvent, parseGameDetails, fromMoveFloat } from '@suigar/sdk/utils';
+import {
+	fromMoveFloat,
+	fromMoveI64,
+	isMoveFloat,
+	isMoveI64,
+	parseGameDetails,
+	parseGameEvent,
+} from '@suigar/sdk/utils';
 ```
 
 The package root exposes `suigar`, `SuigarClient`, `SUPPORTED_SUI_NETWORKS`, `SuigarCoin`, and `SuigarNetwork`. Game ids and game-specific option types live in `@suigar/sdk/games`. Parser and numeric helpers live in `@suigar/sdk/utils`.
 
 Use these game-specific public types when useful: `GAMES`, `Game`, `StandardGame`, `PvPGame`, `CoinSide`, `PvPCoinflipAction`, `BuildCoinflipTransactionOptions`, `BuildLimboTransactionOptions`, `BuildPlinkoTransactionOptions`, `BuildRangeTransactionOptions`, `BuildWheelTransactionOptions`, `BuildCreatePvPCoinflipTransactionOptions`, `BuildJoinPvPCoinflipTransactionOptions`, and `BuildCancelPvPCoinflipTransactionOptions`.
 
-Use these utilities instead of local replacements when relevant: `fromMoveI64`, `fromMoveFloat`, `parseCoinType`, `parseGameDetails`, `parseGameEvent`, `toBigInt`, `toU16`, `toU8`, `DEFAULT_GAS_BUDGET_MIST`, `RANGE_POINT_LIMIT`, `DEFAULT_RANGE_SCALE`, and `DEFAULT_LIMBO_MULTIPLIER_SCALE`.
+Use these utilities instead of local replacements when relevant: `fromMoveI64`, `fromMoveFloat`, `isMoveI64`, `isMoveFloat`, `parseCoinType`, `parseGameDetails`, `parseGameEvent`, `toBigInt`, `toU16`, `toU8`, `DEFAULT_GAS_BUDGET_MIST`, `RANGE_POINT_LIMIT`, `DEFAULT_RANGE_SCALE`, and `DEFAULT_LIMBO_MULTIPLIER_SCALE`.
 
 Utility behavior worth preserving:
 
@@ -57,6 +64,7 @@ Utility behavior worth preserving:
 - `toU8(value)` and `toU16(value)` validate finite integer inputs in their unsigned ranges.
 - `parseCoinType(type)` extracts the normalized first generic coin type from a Move object type string.
 - `parseGameDetails(gameId, gameDetails)` decodes standard `BetResultEvent.game_details` while preserving on-chain keys.
+- `isMoveI64(value)` and `isMoveFloat(value)` guard unknown generated BCS values before `fromMoveI64()` or `fromMoveFloat()` converts them.
 
 Do not import individual runtime game builders from `@suigar/sdk`. Use the registered extension:
 
@@ -131,9 +139,21 @@ const base64 = await client.suigar.serializeTransactionToBase64(tx);
 
 ## Parameters and Events
 
-Use `client.suigar.getGameParameters(game, options?)` when an app needs live on-chain game bounds or RTP parameters. Convert generated Move float structs with `fromMoveFloat()` before presenting them as JavaScript numbers.
+Use `client.suigar.getGameParameters(game, options?)` when an app needs live on-chain game bounds or RTP parameters. It already converts generated Move float fields to JavaScript numbers.
 
 The SDK caches parsed parameters for `cacheTtl`, which defaults to 30 minutes. Pass `ignoreCache: true` to force an on-chain refresh when stale parameters would be risky.
+
+For raw generated BCS data outside `getGameParameters()`, guard unknown values before converting them:
+
+```ts
+if (isMoveFloat(value)) {
+	const number = fromMoveFloat(value);
+}
+
+if (isMoveI64(value)) {
+	const number = fromMoveI64(value);
+}
+```
 
 Use generated BCS helpers and SDK parsers for events:
 
@@ -155,6 +175,7 @@ For PvP coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinf
 - Use `client.suigar.getConfig().coins` for supported `coinType` and `decimals`; do not duplicate decimal constants in app code unless runtime config requires it.
 - Prefer SDK-resolved supported coin metadata from `client.suigar.getConfig()` for debugging, inspection, or UI coin selectors; simple examples can pass the expected coin type directly.
 - Standard games rely on the SDK's network-resolved `priceInfoObjectIds` for supported coins.
+- Use `client.suigar.getConfig().packageIds.legacyNft` only for legacy NFT lookups; use `suigar-nft-lookup` for that flow.
 - Use `SuigarCoin` and `SuigarNetwork` when app code needs supported coin or network types.
 - For object reads, parse object `content`, not `objectBcs`.
 - Do not hand-decode `BetResultEvent.game_details`; use `parseGameEvent(event)` and `parseGameDetails(gameId, ...)`.
