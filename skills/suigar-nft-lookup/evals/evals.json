@@ -1,0 +1,37 @@
+{
+  "skill_name": "suigar-nft-lookup",
+  "source_constraint": "Expected outputs are grounded in the public @suigar/sdk config surface for legacy NFT package ids and the Sui client owned-object read API.",
+  "evals": [
+    {
+      "id": "legacy-nft-owned-object-lookup",
+      "prompt": "List the legacy Suigar NFTs owned by this connected wallet in my @suigar/sdk app. I need a network-safe implementation without copied package ids.",
+      "expected_output": "Reads legacyNft from client.suigar.getConfig().packageIds, derives `${legacyNft}::nft::Nft`, and calls client.core.listOwnedObjects with the owner and StructType filter.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-nft-lookup"
+      ],
+      "assertions": [
+        "Reads client.suigar.getConfig().packageIds.legacyNft",
+        "Derives the struct type as `${legacyNft}::nft::Nft`",
+        "Uses client.core.listOwnedObjects",
+        "Passes the owner",
+        "Passes filter: { StructType: nftType }",
+        "Does not hard-code a mainnet or testnet package id"
+      ]
+    },
+    {
+      "id": "legacy-nft-boundaries",
+      "prompt": "Can @suigar/sdk mint the legacy NFTs or give me a typed API for the legacy NFT catalog?",
+      "expected_output": "Explains that the SDK exposes legacyNft for ownership lookups and legacyNftFactory for independently reading the catalog, but provides no dedicated NFT client, catalog helper/schema, or mint transaction builder.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-nft-lookup"
+      ],
+      "assertions": [
+        "States that legacyNft is for ownership lookup",
+        "States that legacyNftFactory identifies the legacy NFT catalog object",
+        "States that no dedicated SDK NFT client or catalog helper is provided",
+        "States that legacy NFT minting is outside the SDK",
+        "Does not invent a mint transaction or MCP tool"
+      ]
+    }
+  ]
+}
