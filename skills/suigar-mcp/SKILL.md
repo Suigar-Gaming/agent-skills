@@ -4,7 +4,7 @@ description: Install, configure, operate, or troubleshoot the @suigar/mcp server
 license: MIT
 metadata:
   author: suigar
-  version: "1.2.0"
+  version: "1.3.0"
   short-description: Operate the Suigar MCP server
   tags:
     - suigar
@@ -36,7 +36,7 @@ Configure MCP clients with the published package:
   "mcpServers": {
     "suigar": {
       "command": "npx",
-      "args": ["-y", "@suigar/mcp"]
+      "args": ["-y", "@suigar/mcp@latest"]
     }
   }
 }
@@ -104,7 +104,7 @@ Use `list_nfts` for read-only NFT browsing. App-capable hosts render the catalog
 
 - `network` defaults to `testnet`; only `testnet` and `mainnet` are supported.
 - `providerUrl` can override the Sui gRPC endpoint.
-- `config` accepts SDK-style package, registry, coin, and price-info overrides.
+- `config` accepts SDK-style package, registry, and coin-metadata overrides. Put a custom price-info object id beside its coin as `coins.sui.priceInfoObjectId` or `coins.usdc.priceInfoObjectId`.
 - `partner` is a top-level partner wallet address forwarded through `suigar({ partner })`.
 - `owner` accepts a Sui address, SuiNS name, or SuiNS subname in build, dry-run, and `list_nfts` reads.
 - `coinType` defaults to the SDK-configured SUI coin type.
