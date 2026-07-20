@@ -1,10 +1,10 @@
 ---
 name: create-standard-games
-description: Build, scaffold, review, or fix standard single-player Suigar game flows using @suigar/sdk. Use when creating coinflip, limbo, plinko, range, or wheel bet transactions; mapping UI inputs to client.suigar.tx.createBetTransaction; handling stake/cashStake/betCount/metadata; decoding BetResultEvent; or correcting AI-generated code that manually selects coins, invents game builders, or misroutes standard games through MCP or PvP APIs.
+description: Build, scaffold, review, or fix standard single-player Suigar game flows using @suigar/sdk. Use when creating coinflip, limbo, plinko, range, or wheel bet transactions; reading live stake limits, RTP, or Plinko/Wheel configurations; mapping UI inputs to client.suigar.tx.createBetTransaction; handling stake/cashStake/betCount/metadata; decoding BetResultEvent; or correcting AI-generated code that manually selects coins, invents game builders, or misroutes standard games through MCP or PvP APIs.
 license: MIT
 metadata:
   author: suigar
-  version: "1.1.0"
+  version: "1.2.0"
   short-description: Build standard Suigar game flows
   tags:
     - suigar
@@ -64,6 +64,12 @@ Attribution is an extension-level option: `suigar({ partner?: string })` prepend
 | `plinko` | `configId: number` | Config id must match a valid on-chain board. |
 | `range` | `leftPoint: number`, `rightPoint: number` | Keep points ordered; optional `outOfRange` and `scale`. |
 | `wheel` | `configId: number` | Keep frontend labels and backend config ids aligned. |
+
+## Live Game Parameters
+
+Read `client.suigar.getGameParameters(gameId, { coinType })` before presenting or validating live stake limits, RTP, board, or wheel configuration. The SDK returns generated Move float fields as JavaScript numbers and caches results for 30 minutes by default; pass `ignoreCache: true` when a fresh on-chain read is needed.
+
+Use the selected game's live configuration to populate `plinko` and `wheel` `configId` choices. Do not invent configuration ids or duplicate on-chain limits in application constants.
 
 ## Game Examples
 

@@ -39,6 +39,17 @@ Set up `@suigar/sdk` in an application, wire the `suigar()` client extension, re
 - Working with SDK config, supported coins, partner attribution, or serialization
 - Parsing Suigar events through public SDK utilities
 
+### suigar-nft-lookup
+
+Look up the legacy Suigar NFT catalog and NFTs owned by an address using SDK-resolved package ids and BCS helpers.
+
+**Use when:**
+
+- Listing an owner's legacy Suigar NFT objects
+- Reading and decoding the legacy NFT catalog factory
+- Deriving the legacy `::nft::Nft` struct type from active SDK config
+- Keeping NFT reads network-aware without hard-coded package ids
+
 ### create-standard-games
 
 Build standard single-player Suigar game flows on top of `@suigar/sdk`.
@@ -63,15 +74,16 @@ Build PvP game flows on top of `@suigar/sdk`, currently focused on PvP coinflip.
 
 ### suigar-mcp
 
-Install, configure, operate, or troubleshoot the `@suigar/mcp` server and bundled MCP App.
+Install, configure, operate, or troubleshoot the `@suigar/mcp` server, bundled MCP App, or plugin bundle for Codex, Claude Code, and Cursor.
 
 **Use when:**
 
 - Adding the Suigar MCP server to an MCP client
+- Installing the Suigar plugin from a supported marketplace
 - Reading Suigar config or game metadata through MCP tools
+- Browsing the legacy NFT catalog and a wallet's matching NFTs through `list_nfts`
 - Building unsigned transactions in read-only, build, or dry-run mode
 - Explaining MCP support boundaries for Suigar games
-
 
 ## Usage
 
@@ -92,7 +104,15 @@ Configure the Suigar MCP server
 ```
 
 ```text
+Install the local Suigar plugin in Codex
+```
+
+```text
 Add a PvP coinflip lobby flow
+```
+
+```text
+List this wallet's legacy Suigar NFTs with @suigar/sdk
 ```
 
 ```text
