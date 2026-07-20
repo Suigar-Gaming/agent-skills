@@ -1,10 +1,10 @@
 ---
 name: suigar-mcp
-description: Install, configure, operate, or troubleshoot the @suigar/mcp server and bundled MCP App for Suigar. Use when adding the MCP server to Claude/Codex/Cursor or another MCP client, reading config or game metadata, building unsigned standard or PvP transaction plans, using read-only/build/dry-run modes, handling SuiNS owner inputs, or explaining MCP safety boundaries and unsupported games.
+description: Install, configure, operate, or troubleshoot the @suigar/mcp server, bundled MCP App, or plugin bundle for Suigar. Use when adding direct MCP configuration or installing the Codex, Claude Code, or Cursor plugin; reading config or required live game metadata; building unsigned standard or PvP transaction plans; using read-only/build/dry-run modes; handling SuiNS owner inputs; or explaining MCP safety boundaries and unsupported NFT or game flows.
 license: MIT
 metadata:
   author: suigar
-  version: "1.1.0"
+  version: "1.2.0"
   short-description: Operate the Suigar MCP server
   tags:
     - suigar
@@ -15,11 +15,19 @@ metadata:
 
 # Suigar MCP
 
-Use this skill for `@suigar/mcp` operation. If the user is writing application code that imports `@suigar/sdk`, use `installation`, `create-standard-games`, or `create-pvp-games` instead.
+Use this skill for `@suigar/mcp` operation. If the user is writing application code that imports `@suigar/sdk`, use `installation`, `create-standard-games`, `create-pvp-games`, or `suigar-nft-lookup` instead.
 
 The MCP server is a thin layer over `@suigar/sdk`. It reads Suigar config and game metadata, builds unsigned transactions, and can dry-run unsigned transactions. It never signs, submits, executes, or custodies private keys.
 
-## Install
+## Install or Add the Plugin
+
+For the fastest direct installation across detected coding agents, use the package's `add-mcp` command:
+
+```bash
+npx add-mcp @suigar/mcp@latest --name suigar
+```
+
+Use manual stdio configuration only when the user needs to configure one MCP client explicitly or their environment does not support `add-mcp`:
 
 Configure MCP clients with the published package:
 
@@ -36,12 +44,31 @@ Configure MCP clients with the published package:
 
 After changing MCP client config, tell the user to restart or reload the client so it starts the server.
 
+Use the plugin bundle when the user wants marketplace installation or the bundled client integration. The package ships manifests for Codex, Claude Code, and Cursor; those manifests register the version-pinned `@suigar/mcp` stdio server automatically.
+
+For Codex, add the public Suigar marketplace from GitHub:
+
+```bash
+codex plugin marketplace add Suigar-Gaming/ts-sdks --ref main
+```
+
+The repository marketplace resolves the plugin at `packages/mcp/plugin`. After adding it, install or enable `suigar` from the Suigar source in the Plugins directory. Use a local path only while developing unpublished changes in a checkout.
+
+For Claude Code, add the public Suigar marketplace from GitHub and install the plugin:
+
+```text
+/plugin marketplace add Suigar-Gaming/ts-sdks@main
+/plugin install suigar@suigar
+```
+
+For Cursor, install through the Suigar repository marketplace at `https://github.com/Suigar-Gaming/ts-sdks` and reload Cursor. Do not tell users to manually edit the generated plugin manifests or their version-pinned `.mcp.json`.
+
 ## Tool Routing
 
 Start with read tools when network, coin, package, or game support is unclear:
 
 - `read_config`: inspect network, provider URL, package ids, configured coins, and supported games.
-- `read_game_metadata`: inspect one game's package id, default or requested coin type, transaction surface, and support notes.
+- `read_game_metadata`: inspect one required game id's live on-chain parameters, package id, default or requested coin type, transaction surface, and support notes. Pass `ignoreCache: true` to refresh SDK-cached parameters.
 
 Use transaction tools only for supported on-chain games:
 
@@ -67,6 +94,8 @@ Use the lightest mode that answers the request:
 | `dry-run` | The user needs raw and summarized Sui simulation data for the unsigned transaction. |
 
 All tool responses should include text `content` and `structuredContent`. App-capable clients may render the bundled Suigar Transaction Inspector UI.
+
+Use `read_game_metadata` before showing or validating live stake limits, RTP, or Plinko/Wheel configuration. It requires `game`; use `read_config` instead for broad discovery.
 
 ## Common Inputs
 
@@ -108,4 +137,5 @@ PvP coinflip create uses the MCP field name `creatorSide`; the SDK builder recei
 - Pass partner attribution as top-level `partner`; do not set `metadata.partner` or `metadata.referrer`.
 - Use PvP tools for PvP coinflip. Do not route PvP coinflip through standard game builders.
 - For PvP join, expect live object reads while building or dry-running because the SDK resolves the current game stake from the game object.
+- MCP does not expose legacy NFT lookup, catalog, or mint tools. Use `suigar-nft-lookup` in SDK application code for an owner's legacy NFTs.
 - Surface tool errors with the missing field, unsupported config, network, or coin detail needed for retry.
