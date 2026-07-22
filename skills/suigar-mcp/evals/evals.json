@@ -77,8 +77,8 @@
     },
     {
       "id": "mcp-list-nfts",
-      "prompt": "Use Suigar MCP to show the legacy NFT catalog and the NFTs owned by wallet.sui. I only want a read, not a transaction.",
-      "expected_output": "Uses list_nfts with owner: 'wallet.sui', explains that it is read-only and returns both the legacy NFT catalog and matching owned NFTs, and notes that an App-capable host can render separate catalog and ownership views.",
+      "prompt": "Use Suigar MCP to show the NFT V1 catalog and the NFTs owned by wallet.sui. I only want a read, not a transaction.",
+      "expected_output": "Uses list_nfts with owner: 'wallet.sui', explains that it is read-only and returns both the NFT V1 catalog and matching owned NFTs, and notes that an App-capable host can render separate catalog and ownership views.",
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
       ],
@@ -119,6 +119,23 @@
         "Explains creatorSide maps to the SDK side option",
         "Does not route PvP coinflip through build_coinflip_transaction",
         "Mentions owner and stake are required inputs"
+      ]
+    },
+    {
+      "id": "mcp-soccer-transaction",
+      "prompt": "Use Suigar MCP to build a 1 SUI Soccer transaction for my wallet using ids selected from live Soccer metadata.",
+      "expected_output": "Routes to build_soccer_transaction and supplies owner, stake, configId from parameters.configs, countryId as the key matching the requested country name in parameters.countries.contents, and shotZoneId from the selected config's shot_zone_ids. It explains that build returns unsigned bytes only.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+      ],
+      "assertions": [
+        "Uses or names build_soccer_transaction",
+        "Passes configId from live parameters.configs",
+        "Resolves the requested country name through live parameters.countries.contents and passes its key as countryId",
+        "Passes shotZoneId from the selected config's live shot_zone_ids",
+        "Passes owner and stake",
+        "Mentions read_game_metadata or live Soccer metadata",
+        "Does not claim MCP signs or submits the transaction"
       ]
     }
   ]
