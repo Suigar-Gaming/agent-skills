@@ -98,7 +98,7 @@ const tx = client.suigar.tx.createBetTransaction('limbo', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
-	targetMultiplier: 2.5,
+	targetMultiplier,
 });
 ```
 
@@ -113,11 +113,9 @@ const tx = client.suigar.tx.createBetTransaction('plinko', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
-	configId: selectedPlinkoConfig.key,
+	configId,
 });
 ```
-
-`selectedPlinkoConfig` must come from the live Plinko `parameters.configs` map.
 
 ### Range
 
@@ -128,9 +126,9 @@ const tx = client.suigar.tx.createBetTransaction('range', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
-	leftPoint: 25,
-	rightPoint: 75,
-	outOfRange: false,
+	leftPoint,
+	rightPoint,
+	outOfRange,
 });
 ```
 
@@ -145,11 +143,9 @@ const tx = client.suigar.tx.createBetTransaction('wheel', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
-	configId: selectedWheelConfig.key,
+	configId,
 });
 ```
-
-`selectedWheelConfig` must come from the live Wheel `parameters.configs` map.
 
 ### Soccer
 
@@ -160,13 +156,11 @@ const tx = client.suigar.tx.createBetTransaction('soccer', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
-	configId: selectedSoccerOption.configId,
-	countryId: selectedSoccerOption.countryId,
-	shotZoneId: selectedSoccerOption.shotZoneId,
+	configId,
+	countryId,
+	shotZoneId,
 });
 ```
-
-`selectedSoccerOption` must be derived from current on-chain Soccer parameters: map the user's country name to the matching `countries.contents` entry and use its `key` as `countryId`; use a `configId` from `configs.contents` and a `shotZoneId` listed by that config. `configId` and `shotZoneId` are unsigned 8-bit values; `countryId` is an unsigned 16-bit value.
 
 ## Event Decoding
 
