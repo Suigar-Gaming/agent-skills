@@ -1,10 +1,10 @@
 ---
 name: create-standard-games
-description: Build, scaffold, review, or fix standard single-player Suigar game flows using @suigar/sdk. Use when creating coinflip, limbo, plinko, range, or wheel bet transactions; reading live stake limits, RTP, or Plinko/Wheel configurations; mapping UI inputs to client.suigar.tx.createBetTransaction; handling stake/cashStake/betCount/metadata; decoding BetResultEvent; or correcting AI-generated code that manually selects coins, invents game builders, or misroutes standard games through MCP or PvP APIs.
+description: Build, scaffold, review, or fix standard single-player Suigar game flows using @suigar/sdk. Use when creating coinflip, limbo, plinko, range, soccer, or wheel bet transactions; reading live stake limits, RTP, or game configurations; mapping UI inputs to client.suigar.tx.createBetTransaction; handling stake/cashStake/betCount/metadata; decoding BetResultEvent; or correcting AI-generated code that manually selects coins, invents game builders, or misroutes standard games through MCP or PvP APIs.
 license: MIT
 metadata:
   author: suigar
-  version: "1.2.0"
+  version: "1.3.0"
   short-description: Build standard Suigar game flows
   tags:
     - suigar
@@ -21,7 +21,7 @@ Use this skill for application code that imports `@suigar/sdk` and builds standa
 
 ## Default Workflow
 
-1. Confirm the target game id: `coinflip`, `limbo`, `plinko`, `range`, or `wheel`.
+1. Confirm the target game id: `coinflip`, `limbo`, `plinko`, `range`, `soccer`, or `wheel`.
 2. Confirm the client has the `suigar()` extension registered.
 3. Build the transaction with `client.suigar.tx.createBetTransaction(gameId, options)`.
 4. Let the SDK source bet coins through Mysten `coinWithBalance` transaction arguments.
@@ -59,17 +59,27 @@ Attribution is an extension-level option: `suigar({ partner?: string })` prepend
 
 | Game | Required inputs | Notes |
 |---|---|---|
-| `coinflip` | `side: 'heads' | 'tails'` | Preserve the UI-selected side exactly. |
+| `coinflip` | `side`: `heads` or `tails` | Preserve the UI-selected side exactly. |
 | `limbo` | `targetMultiplier: number` | Pass human decimal values; the SDK applies scale. |
-| `plinko` | `configId: number` | Config id must match a valid on-chain board. |
+| `plinko` | `configId: number` | `configId` comes from live `parameters.configs`. |
 | `range` | `leftPoint: number`, `rightPoint: number` | Keep points ordered; optional `outOfRange` and `scale`. |
-| `wheel` | `configId: number` | Keep frontend labels and backend config ids aligned. |
+| `soccer` | `configId: number`, `countryId: number`, `shotZoneId: number` | `configId` comes from `parameters.configs`; map a natural-language country name to the matching `parameters.countries.contents[].value` and pass its `key` as `countryId`; get `shotZoneId` from that config's `shot_zone_ids`. Do not guess IDs or use ISO codes—ask if no name matches. |
+| `wheel` | `configId: number` | `configId` comes from live `parameters.configs`. |
 
 ## Live Game Parameters
 
-Read `client.suigar.getGameParameters(gameId, { coinType })` before presenting or validating live stake limits, RTP, board, or wheel configuration. The SDK returns generated Move float fields as JavaScript numbers and caches results for 30 minutes by default; pass `ignoreCache: true` when a fresh on-chain read is needed.
+Read `client.suigar.getGameParameters(gameId, { coinType })` before presenting or validating live stake limits, RTP, or game inputs. The SDK returns generated Move float fields as JavaScript numbers and caches results for 30 minutes by default; pass `ignoreCache: true` when a fresh on-chain read is needed.
 
-Use the selected game's live configuration to populate `plinko` and `wheel` `configId` choices. Do not invent configuration ids or duplicate on-chain limits in application constants.
+| Game | Transaction input fields | On-chain parameters |
+|---|---|---|
+| `coinflip` | `side` | `min_stake`, `max_stake` |
+| `limbo` | `targetMultiplier` | `min_stake`, `max_stake`, `min_target_multiplier`, `max_target_multiplier`, `max_number_of_games` |
+| `plinko` | `configId` | `min_stake`, `max_stake`, `configs.contents`, `max_number_of_balls` |
+| `range` | `leftPoint`, `rightPoint`, `outOfRange` | `min_stake`, `max_stake`, `min_zone_size`, `max_zone_size`, `max_number_of_games` |
+| `soccer` | `configId`, `countryId`, `shotZoneId` | `min_stake`, `max_stake`, `configs.contents`, `countries.contents`, selected config `shot_zone_ids`, `max_number_of_shots` |
+| `wheel` | `configId` | `min_stake`, `max_stake`, `configs.contents`, `max_number_of_spins` |
+
+`coinType` comes from `client.suigar.getConfig().coins`, not game parameters.
 
 ## Game Examples
 
@@ -97,7 +107,7 @@ const tx = client.suigar.tx.createBetTransaction('limbo', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
-	targetMultiplier: 2.5,
+	targetMultiplier,
 });
 ```
 
@@ -112,11 +122,9 @@ const tx = client.suigar.tx.createBetTransaction('plinko', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
-	configId: 3,
+	configId,
 });
 ```
-
-Do not derive or randomize `configId` silently.
 
 ### Range
 
@@ -127,9 +135,9 @@ const tx = client.suigar.tx.createBetTransaction('range', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
-	leftPoint: 25,
-	rightPoint: 75,
-	outOfRange: false,
+	leftPoint,
+	rightPoint,
+	outOfRange,
 });
 ```
 
@@ -144,11 +152,24 @@ const tx = client.suigar.tx.createBetTransaction('wheel', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
-	configId: 1,
+	configId,
 });
 ```
 
-Keep frontend labels and backend configuration ids in sync.
+### Soccer
+
+Use `soccer` with the selected on-chain configuration, country, and shot-zone identifiers:
+
+```ts
+const tx = client.suigar.tx.createBetTransaction('soccer', {
+	owner,
+	coinType: '0x2::sui::SUI',
+	stake: 1_000_000_000n,
+	configId,
+	countryId,
+	shotZoneId,
+});
+```
 
 ## Event Decoding
 
@@ -171,7 +192,7 @@ Use `event.bcs` as the event payload when available. `parseGameDetails` preserve
 - Do not set `metadata.partner` or `metadata.referrer`; configure `suigar({ partner: '<wallet-address>' })` once instead.
 - Treat `partner` as a wallet address, not a campaign slug.
 - Use `cashStake` only when the withdrawn coin amount must differ from the game stake.
-- `betCount` defaults to `1`; do not reimplement batching unless the product needs custom behavior.
+- `betCount` defaults to `1`; before accepting a larger value, validate against the current game parameters when that game publishes a maximum: Limbo and Range `max_number_of_games`, Plinko `max_number_of_balls`, Soccer `max_number_of_shots`, and Wheel `max_number_of_spins`.
 - Pass plain application values in `metadata`; let the SDK encode them.
 - For range, do not pre-scale points in app code. With the default scale `1_000_000`, valid UI values are `0` to `100`.
 - Keep amounts as `bigint` once they leave the UI layer.

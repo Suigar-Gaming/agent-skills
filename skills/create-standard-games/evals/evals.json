@@ -64,6 +64,23 @@
         "States that Move float values are JavaScript numbers",
         "Mentions ignoreCache: true for a fresh lookup"
       ]
+    },
+    {
+      "id": "standard-soccer-transaction",
+      "prompt": "Build a Suigar Soccer bet for the connected wallet. I have a selected Soccer option from current on-chain metadata, and the player stakes 1 SUI.",
+      "expected_output": "Builds the transaction with client.suigar.tx.createBetTransaction('soccer', ...), passes owner, coinType, a base-unit stake, configId from parameters.configs, countryId as the key matching the user's country name in parameters.countries.contents, and shotZoneId from the selected config's shot_zone_ids without inventing numeric ids or manually building a Move call.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-standard-games"
+      ],
+      "assertions": [
+        "Uses client.suigar.tx.createBetTransaction",
+        "Uses the game id 'soccer'",
+        "Passes configId from live parameters.configs",
+        "Resolves the user's country name through live parameters.countries.contents and passes its key as countryId",
+        "Passes shotZoneId from the selected config's live shot_zone_ids",
+        "Passes owner, coinType, and a base-unit stake",
+        "Does not hand-write a Move target or select coin objects"
+      ]
     }
   ]
 }
