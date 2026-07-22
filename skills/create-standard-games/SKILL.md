@@ -59,18 +59,27 @@ Attribution is an extension-level option: `suigar({ partner?: string })` prepend
 
 | Game | Required inputs | Notes |
 |---|---|---|
-| `coinflip` | `side: 'heads' | 'tails'` | Preserve the UI-selected side exactly. |
+| `coinflip` | `side`: `heads` or `tails` | Preserve the UI-selected side exactly. |
 | `limbo` | `targetMultiplier: number` | Pass human decimal values; the SDK applies scale. |
-| `plinko` | `configId: number` | Select the id from live `parameters.configs`. |
+| `plinko` | `configId: number` | `configId` comes from live `parameters.configs`. |
 | `range` | `leftPoint: number`, `rightPoint: number` | Keep points ordered; optional `outOfRange` and `scale`. |
-| `soccer` | `configId: number`, `countryId: number`, `shotZoneId: number` | Select `configId` from `parameters.configs`; resolve the user's country name against `parameters.countries.contents[].value` and pass its `key`; select `shotZoneId` from that config's `shot_zone_ids`. |
-| `wheel` | `configId: number` | Select the id from live `parameters.configs`. |
+| `soccer` | `configId: number`, `countryId: number`, `shotZoneId: number` | `configId` comes from `parameters.configs`; map a natural-language country name to the matching `parameters.countries.contents[].value` and pass its `key` as `countryId`; get `shotZoneId` from that config's `shot_zone_ids`. Do not guess IDs or use ISO codes—ask if no name matches. |
+| `wheel` | `configId: number` | `configId` comes from live `parameters.configs`. |
 
 ## Live Game Parameters
 
 Read `client.suigar.getGameParameters(gameId, { coinType })` before presenting or validating live stake limits, RTP, or game inputs. The SDK returns generated Move float fields as JavaScript numbers and caches results for 30 minutes by default; pass `ignoreCache: true` when a fresh on-chain read is needed.
 
-Use game parameters as the source of truth: select Plinko and Wheel `configId` from `parameters.configs`; for Soccer, select `configId` from `parameters.configs`, resolve a natural-language country request against `parameters.countries.contents[].value` and pass its numeric `key` as `countryId`, then select `shotZoneId` from the chosen config's `shot_zone_ids`. Do not assume country IDs or ISO codes; ask for clarification if the requested country does not match the returned names. Validate Limbo target multipliers and Range points against their returned bounds rather than copied application constants.
+| Game | Transaction input fields | On-chain parameters |
+|---|---|---|
+| `coinflip` | `side` | `min_stake`, `max_stake` |
+| `limbo` | `targetMultiplier` | `min_stake`, `max_stake`, `min_target_multiplier`, `max_target_multiplier`, `max_number_of_games` |
+| `plinko` | `configId` | `min_stake`, `max_stake`, `configs.contents`, `max_number_of_balls` |
+| `range` | `leftPoint`, `rightPoint`, `outOfRange` | `min_stake`, `max_stake`, `min_zone_size`, `max_zone_size`, `max_number_of_games` |
+| `soccer` | `configId`, `countryId`, `shotZoneId` | `min_stake`, `max_stake`, `configs.contents`, `countries.contents`, selected config `shot_zone_ids`, `max_number_of_shots` |
+| `wheel` | `configId` | `min_stake`, `max_stake`, `configs.contents`, `max_number_of_spins` |
+
+`coinType` comes from `client.suigar.getConfig().coins`, not game parameters.
 
 ## Game Examples
 
