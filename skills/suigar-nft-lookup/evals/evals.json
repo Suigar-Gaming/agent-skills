@@ -1,50 +1,50 @@
 {
   "skill_name": "suigar-nft-lookup",
-  "source_constraint": "Expected outputs are grounded in the public @suigar/sdk config surface for legacy NFT package ids and the Sui client owned-object read API.",
+  "source_constraint": "Expected outputs are grounded in the public @suigar/sdk NFT V1 config and BCS surface plus the Sui client owned-object read API.",
   "evals": [
     {
-      "id": "legacy-nft-owned-object-lookup",
-      "prompt": "List the legacy Suigar NFTs owned by this connected wallet in my @suigar/sdk app. I need a network-safe implementation without copied package ids.",
-      "expected_output": "Reads legacyNft from client.suigar.getConfig().packageIds, derives `${legacyNft}::nft::Nft`, and calls client.core.listOwnedObjects with the owner, type, and include: { content: true }, then decodes objects with client.suigar.bcs.LegacyNft.",
+      "id": "nft-v1-owned-object-lookup",
+      "prompt": "List the Suigar NFT V1 objects owned by this connected wallet in my @suigar/sdk app. I need a network-safe implementation without copied package ids.",
+      "expected_output": "Reads nftV1 from client.suigar.getConfig().packageIds, derives the type with client.suigar.bcs.NftV1.typeTag({ package: nftV1 }), calls client.core.listOwnedObjects with the owner, type, and include: { content: true }, then decodes objects with client.suigar.bcs.NftV1.",
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-nft-lookup"
       ],
       "assertions": [
-        "Reads client.suigar.getConfig().packageIds.legacyNft",
-        "Derives the struct type as `${legacyNft}::nft::Nft`",
+        "Reads client.suigar.getConfig().packageIds.nftV1",
+        "Uses client.suigar.bcs.NftV1.typeTag",
         "Uses client.core.listOwnedObjects",
         "Passes the owner",
         "Passes type: nftType",
         "Requests include: { content: true }",
-        "Uses client.suigar.bcs.LegacyNft.parse",
+        "Uses client.suigar.bcs.NftV1.parse",
         "Does not hard-code a mainnet or testnet package id"
       ]
     },
     {
-      "id": "legacy-nft-catalog-lookup",
-      "prompt": "Read the legacy Suigar NFT catalog in my @suigar/sdk app. What is the factory name and the correct network-safe decode path?",
-      "expected_output": "Reads legacyNftFactory from client.suigar.getConfig().packageIds, fetches it with client.core.getObject and include: { content: true }, then decodes object.content with client.suigar.bcs.LegacyNftFactory.parse. It identifies the factory as LegacyNftFactory.",
+      "id": "nft-v1-catalog-lookup",
+      "prompt": "Read the Suigar NFT V1 catalog in my @suigar/sdk app. What is the factory name and the correct network-safe decode path?",
+      "expected_output": "Reads nftV1Factory from client.suigar.getConfig().objectIds, fetches it with client.core.getObject and include: { content: true }, then decodes object.content with client.suigar.bcs.NftV1Factory.parse. It identifies the factory as NftV1Factory.",
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-nft-lookup"
       ],
       "assertions": [
-        "Reads client.suigar.getConfig().packageIds.legacyNftFactory",
+        "Reads client.suigar.getConfig().objectIds.nftV1Factory",
         "Uses client.core.getObject",
         "Requests include: { content: true }",
-        "Uses client.suigar.bcs.LegacyNftFactory.parse",
-        "Identifies the factory as LegacyNftFactory",
+        "Uses client.suigar.bcs.NftV1Factory.parse",
+        "Identifies the factory as NftV1Factory",
         "Does not hard-code a factory object id"
       ]
     },
     {
-      "id": "legacy-nft-mint-boundary",
-      "prompt": "Can @suigar/sdk mint a legacy NFT after I select a spec from the catalog?",
-      "expected_output": "Explains that catalog and ownership reads are supported through resolved config and BCS helpers, but legacy NFT mint transactions remain outside the SDK and should not be invented.",
+      "id": "nft-v1-mint-boundary",
+      "prompt": "Can @suigar/sdk mint an NFT V1 after I select a spec from the catalog?",
+      "expected_output": "Explains that catalog and ownership reads are supported through resolved config and BCS helpers, but NFT V1 mint transactions remain outside the SDK and should not be invented.",
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-nft-lookup"
       ],
       "assertions": [
-        "States that legacy NFT minting is outside the SDK",
+        "States that NFT V1 minting is outside the SDK",
         "Does not invent a mint transaction target or builder",
         "Distinguishes supported catalog or ownership reads from minting"
       ]
