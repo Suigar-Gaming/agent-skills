@@ -5,7 +5,7 @@
     {
       "id": "installation-grpc-extension-setup",
       "prompt": "Set up @suigar/sdk in my Node app using the current Sui TypeScript SDK. I need a testnet client and a coinflip transaction serialized to base64 for the wallet.",
-      "expected_output": "Shows SuiGrpcClient from @mysten/sui/grpc extended with suigar(), builds a coinflip transaction through client.suigar.tx.createBetTransaction, and serializes it with client.suigar.serializeTransactionToBase64.",
+      "expected_output": "Shows SuiGrpcClient from @mysten/sui/grpc extended with suigar(), builds a coinflip transaction through client.suigar.tx.createGameBet, and serializes it with client.suigar.serializeTransactionToBase64.",
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation",
         "https://sdk.mystenlabs.com/sui"
@@ -15,7 +15,7 @@
         "Imports SuiGrpcClient from @mysten/sui/grpc",
         "Constructs the client with both baseUrl and network",
         "Extends the client with suigar()",
-        "Uses client.suigar.tx.createBetTransaction for the bet",
+        "Uses client.suigar.tx.createGameBet for the bet",
         "Uses client.suigar.serializeTransactionToBase64 for serialization",
         "Does not import a standalone coinflip builder from @suigar/sdk"
       ]
@@ -77,6 +77,21 @@
         "Guards an unknown value with isMoveI64 before fromMoveI64",
         "States that getGameParameters already normalizes Move float fields",
         "Does not copy a local structural type guard"
+      ]
+    },
+    {
+      "id": "installation-referral-claim",
+      "prompt": "In my @suigar/sdk app, how do I check a referrer's SUI commission and build an unsigned claim transaction without hand-writing a Move call?",
+      "expected_output": "Uses client.suigar.view.referral.getCommission({ owner, coinType }) for the simulated claimable amount and client.suigar.tx.referral.claimCommission({ owner, coinType }) for the unsigned transaction. It explains that the read returns 0n when it cannot be claimed or simulated and the claim transfers the resulting coin to owner.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"
+      ],
+      "assertions": [
+        "Uses client.suigar.view.referral.getCommission",
+        "Uses client.suigar.tx.referral.claimCommission",
+        "Passes owner and coinType",
+        "Does not hand-write a referral Move target",
+        "States that the claim transaction is unsigned until the app submits it"
       ]
     }
   ]
