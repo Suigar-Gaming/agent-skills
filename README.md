@@ -57,13 +57,13 @@ Build standard single-player Suigar game flows on top of `@suigar/sdk`.
 **Use when:**
 
 - Building `coinflip`, `limbo`, `plinko`, `range`, `soccer`, or `wheel` bet transactions
-- Mapping UI inputs to `client.suigar.tx.createBetTransaction`
+- Mapping UI inputs to `client.suigar.tx.createGameBet`
 - Reviewing standard game amount, metadata, coin, or partner handling
 - Fixing AI-generated standard Suigar game code
 
 ### create-pvp-games
 
-Build PvP game flows on top of `@suigar/sdk`, currently focused on PvP coinflip.
+Build PvP game flows on top of `@suigar/sdk`. The skill includes a dedicated PvP coinflip specification and can grow with one specification per future PvP game.
 
 **Use when:**
 

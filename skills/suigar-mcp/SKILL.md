@@ -1,6 +1,6 @@
 ---
 name: suigar-mcp
-description: Install, configure, operate, or troubleshoot the @suigar/mcp server, bundled MCP App, or plugin bundle for Suigar. Use when adding direct MCP configuration or installing the Codex, Claude Code, or Cursor plugin; reading config, live game metadata, or the NFT V1 catalog and owned NFTs; building unsigned standard or PvP transaction plans including Soccer; using read-only/build/dry-run modes; handling SuiNS owner inputs; or explaining MCP safety boundaries and unsupported game or NFT mint flows.
+description: Install, configure, operate, or troubleshoot the @suigar/mcp server, bundled MCP App, or plugin bundle for Suigar. Use when adding direct MCP configuration or installing the Codex, Claude Code, or Cursor plugin; reading config, live game metadata, NFT V1 catalog and ownership, or referral rewards; building unsigned standard, PvP, or referral-claim transaction plans including Soccer; using read-only/build/dry-run modes; handling SuiNS owner inputs; or explaining MCP safety boundaries and unsupported game or NFT mint flows.
 license: MIT
 metadata:
   author: suigar
@@ -70,8 +70,10 @@ Start with read tools when network, coin, package, or game support is unclear:
 - `read_config`: inspect network, provider URL, package ids, configured coins, and supported games.
 - `read_game_metadata`: inspect one required game id's live on-chain parameters, package id, default or requested coin type, transaction surface, and support notes. Pass `ignoreCache: true` to refresh SDK-cached parameters.
 - `list_nfts`: read the NFT V1 catalog and matching NFTs owned by one required address or SuiNS name. It returns display-friendly identifiers and NFT image URLs.
+- `get_referral_commission`: simulate the commission claimable by one referrer for a selected or default coin type.
+- `get_referral_level_up_usd_rewards`: simulate the USD level-up rewards claimable by one referrer.
 
-Use transaction tools only for supported on-chain games:
+Use transaction tools for supported on-chain games and referrals:
 
 - `build_coinflip_transaction`
 - `build_limbo_transaction`
@@ -82,6 +84,8 @@ Use transaction tools only for supported on-chain games:
 - `build_pvp_coinflip_create_transaction`
 - `build_pvp_coinflip_join_transaction`
 - `build_pvp_coinflip_cancel_transaction`
+- `build_referral_commission_claim_transaction`
+- `build_referral_level_up_usd_rewards_claim_transaction`
 
 Do not invent tools for unsupported games. Slots are backend-driven and are not exposed as an MCP transaction builder.
 
@@ -101,19 +105,23 @@ Use `read_game_metadata` before showing or validating live stake limits, RTP, or
 
 Use `list_nfts` for read-only NFT V1 browsing. App-capable hosts render the catalog and owned NFTs in separate views; unsupported image URLs remain available as text.
 
+Referral amount reads are read-only simulations of the SDK's real claim transaction. They require `owner`; commission accepts an optional `coinType` and defaults to configured SUI, while level-up USD rewards use configured USDC. They return `0` when a claim cannot be simulated or is unavailable.
+
 ## Common Inputs
 
 - `network` defaults to `testnet`; only `testnet` and `mainnet` are supported.
 - `providerUrl` can override the Sui gRPC endpoint.
 - `config` accepts SDK-style `packageIds`, `objectIds`, `registryIds`, and coin-metadata overrides. Put a custom price-info object id beside its coin as `coins.sui.priceInfoObjectId` or `coins.usdc.priceInfoObjectId`; singleton ids such as `sweetHouse` and `nftV1Factory` belong in `objectIds`.
 - `partner` is a top-level partner wallet address forwarded through `suigar({ partner })`.
-- `owner` accepts a Sui address, SuiNS name, or SuiNS subname in build, dry-run, and `list_nfts` reads.
+- `owner` accepts a Sui address, SuiNS name, or SuiNS subname in build, dry-run, NFT, and referral reads.
 - `coinType` defaults to the SDK-configured SUI coin type.
 - `stake` and `cashStake` are currency amounts, such as `1` or `1.5`, not base units.
 - `betCount` defaults to `1`. For Limbo, Plinko, Range, Soccer, and Wheel, MCP reads the current game parameters and rejects a value above that game's on-chain maximum; Coinflip does not publish a maximum.
 - `metadata` values must be JSON-compatible strings, numbers, or booleans. Send large integer metadata values as strings.
 - `gasBudget` is in MIST.
 - `useGasCoin` is only for native SUI bet coin handling when overriding Mysten's default coin intent behavior.
+
+Referral claim builders require `owner`; commission claims optionally accept `coinType`, while level-up USD reward claims use configured USDC. Their SDK-built transaction transfers the claimed coin to `owner`.
 
 Do not pass explicit coin object ids. The MCP package intentionally uses SDK public transaction builders.
 
@@ -145,4 +153,5 @@ PvP coinflip create uses the MCP field name `creatorSide`; the SDK builder recei
 - Use `read_game_metadata` before supplying any live game input or non-default `betCount`. It provides the valid Plinko/Wheel configs, Soccer configs/countries/shot zones, and limits used by MCP's on-chain maximum validation for Limbo, Plinko, Range, Soccer, and Wheel. For a natural-language Soccer country request, match the returned country name and pass its key as `countryId`; do not guess an ID or substitute an ISO code.
 - For PvP join, expect live object reads while building or dry-running because the SDK resolves the current game stake from the game object.
 - `list_nfts` is read-only. MCP does not expose NFT V1 minting; do not invent a mint tool.
+- Use `get_referral_commission` or `get_referral_level_up_usd_rewards` before presenting a claimable referral amount. Use the matching referral claim transaction tool only for an unsigned plan, build, or dry-run; MCP never submits it.
 - Surface tool errors with the missing field, unsupported config, network, or coin detail needed for retry.

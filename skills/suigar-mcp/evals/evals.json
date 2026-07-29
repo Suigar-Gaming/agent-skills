@@ -137,6 +137,21 @@
         "Mentions read_game_metadata or live Soccer metadata",
         "Does not claim MCP signs or submits the transaction"
       ]
+    },
+    {
+      "id": "mcp-referral-commission-claim",
+      "prompt": "Use Suigar MCP to check the SUI referral commission claimable by wallet.sui and then give me unsigned bytes to claim it. Do not submit anything.",
+      "expected_output": "Uses get_referral_commission with owner: 'wallet.sui' to read the simulated amount, then build_referral_commission_claim_transaction in build mode for unsigned bytes. It explains that coinType is optional and defaults to configured SUI, reads can return 0 when unavailable, and MCP does not sign or submit.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+      ],
+      "assertions": [
+        "Uses or names get_referral_commission",
+        "Uses or names build_referral_commission_claim_transaction",
+        "Passes owner: 'wallet.sui' or explains a SuiNS owner is accepted",
+        "Explains build returns unsigned transaction bytes",
+        "States MCP does not sign or submit the transaction"
+      ]
     }
   ]
 }

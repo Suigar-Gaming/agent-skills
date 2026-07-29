@@ -1,6 +1,6 @@
 ---
 name: create-standard-games
-description: Build, scaffold, review, or fix standard single-player Suigar game flows using @suigar/sdk. Use when creating coinflip, limbo, plinko, range, soccer, or wheel bet transactions; reading live stake limits, RTP, or game configurations; mapping UI inputs to client.suigar.tx.createBetTransaction; handling stake/cashStake/betCount/metadata; decoding BetResultEvent; or correcting AI-generated code that manually selects coins, invents game builders, or misroutes standard games through MCP or PvP APIs.
+description: Build, scaffold, review, or fix standard single-player Suigar game flows using @suigar/sdk. Use when creating coinflip, limbo, plinko, range, soccer, or wheel bet transactions; reading live stake limits, RTP, or game configurations; mapping UI inputs to client.suigar.tx.createGameBet; handling stake/cashStake/betCount/metadata; decoding BetResultEvent; or correcting AI-generated code that manually selects coins, invents game builders, or misroutes standard games through MCP or PvP APIs.
 license: MIT
 metadata:
   author: suigar
@@ -23,7 +23,7 @@ Use this skill for application code that imports `@suigar/sdk` and builds standa
 
 1. Confirm the target game id: `coinflip`, `limbo`, `plinko`, `range`, `soccer`, or `wheel`.
 2. Confirm the client has the `suigar()` extension registered.
-3. Build the transaction with `client.suigar.tx.createBetTransaction(gameId, options)`.
+3. Build the transaction with `client.suigar.tx.createGameBet(gameId, options)`.
 4. Let the SDK source bet coins through Mysten `coinWithBalance` transaction arguments.
 5. Serialize only if the wallet or transport layer needs bytes.
 6. Decode emitted results with `client.suigar.bcs.BetResultEvent`, `parseGameEvent`, and `parseGameDetails`.
@@ -88,7 +88,7 @@ Read `client.suigar.getGameParameters(gameId, { coinType })` before presenting o
 Use `coinflip` when the player chooses a side explicitly:
 
 ```ts
-const tx = client.suigar.tx.createBetTransaction('coinflip', {
+const tx = client.suigar.tx.createGameBet('coinflip', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
@@ -103,7 +103,7 @@ Preserve the UI-selected side exactly.
 Use `limbo` when the player bets against a target multiplier:
 
 ```ts
-const tx = client.suigar.tx.createBetTransaction('limbo', {
+const tx = client.suigar.tx.createGameBet('limbo', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
@@ -118,7 +118,7 @@ Keep UI decimal inputs as numbers until the SDK converts them using the configur
 Use `plinko` when the game depends on a predefined board configuration:
 
 ```ts
-const tx = client.suigar.tx.createBetTransaction('plinko', {
+const tx = client.suigar.tx.createGameBet('plinko', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
@@ -131,7 +131,7 @@ const tx = client.suigar.tx.createBetTransaction('plinko', {
 Use `range` when the player chooses a bounded interval and optional in-range or out-of-range behavior:
 
 ```ts
-const tx = client.suigar.tx.createBetTransaction('range', {
+const tx = client.suigar.tx.createGameBet('range', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
@@ -148,7 +148,7 @@ Do not pre-scale range points in app code.
 Use `wheel` when the game depends on a predefined wheel configuration:
 
 ```ts
-const tx = client.suigar.tx.createBetTransaction('wheel', {
+const tx = client.suigar.tx.createGameBet('wheel', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
@@ -161,7 +161,7 @@ const tx = client.suigar.tx.createBetTransaction('wheel', {
 Use `soccer` with the selected on-chain configuration, country, and shot-zone identifiers:
 
 ```ts
-const tx = client.suigar.tx.createBetTransaction('soccer', {
+const tx = client.suigar.tx.createGameBet('soccer', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
@@ -204,7 +204,7 @@ Use `event.bcs` as the event payload when available. `parseGameDetails` preserve
 
 1. Confirm the target standard game id.
 2. Verify the base client already has `suigar()` configured.
-3. Build the transaction with `createBetTransaction`.
+3. Build the transaction with `createGameBet`.
 4. Serialize only if the surrounding wallet or transport path needs bytes.
 5. Decode `BetResultEvent` with `client.suigar.bcs.BetResultEvent` and `parseGameDetails`.
 6. Keep frontend forms, backend handlers, and event decoding aligned with the same game-specific option shape.
