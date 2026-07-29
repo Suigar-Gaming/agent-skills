@@ -5,17 +5,16 @@
     {
       "id": "pvp-create-private-match",
       "prompt": "Create a private PvP coinflip match with @suigar/sdk. The creator chooses heads and stakes 2 SUI. Show the transaction code.",
-      "expected_output": "Uses client.suigar.tx.createPvPCoinflipTransaction('create', ...), preserves side: 'heads', includes isPrivate: true, owner, coinType, and stake, and does not use createBetTransaction.",
+      "expected_output": "Uses client.suigar.tx.pvpCoinflip.createGame(...), preserves side: 'heads', includes isPrivate: true, owner, coinType, and stake, and does not use createGameBet.",
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
       ],
       "assertions": [
-        "Uses createPvPCoinflipTransaction",
-        "Uses the action 'create'",
+        "Uses client.suigar.tx.pvpCoinflip.createGame",
         "Passes side: 'heads'",
         "Passes isPrivate: true",
         "Passes owner, coinType, and stake",
-        "Does not use createBetTransaction for PvP"
+        "Does not use createGameBet for PvP"
       ]
     },
     {
@@ -26,7 +25,7 @@
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
       ],
       "assertions": [
-        "Uses createPvPCoinflipTransaction with action 'join'",
+        "Uses client.suigar.tx.pvpCoinflip.joinGame",
         "Passes gameId",
         "Passes owner and coinType",
         "States the SDK derives stake from gameId or the live game object",

@@ -1,10 +1,10 @@
 ---
 name: installation
-description: Set up, scaffold, or fix the base @suigar/sdk integration for Suigar game apps on Sui. Use when installing packages, wiring the suigar() Sui client extension, configuring networks/package ids/coin metadata (including price-info object ids), serializing transactions, reading SDK config or live game parameters, using public exports, parsing Suigar events, or safely checking and converting generated Move float and i64 values. Use this before standard or PvP game skills when the client setup is missing or questionable.
+description: Set up, scaffold, or fix the base @suigar/sdk integration for Suigar game apps on Sui. Use when installing the v2 SDK with the current Mysten Sui TypeScript SDK, wiring the suigar() Sui client extension, configuring networks/package/object/registry ids or coin metadata, serializing transactions, reading SDK config or live game parameters, using public exports, parsing Suigar events, building or reading referral claims, or safely checking and converting generated Move float and i64 values. Use this before standard or PvP game skills when the client setup is missing or questionable.
 license: MIT
 metadata:
   author: suigar
-  version: "1.3.0"
+  version: "1.4.0"
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -26,7 +26,7 @@ Use this skill for application code that imports `@suigar/sdk`. If the task is a
 3. Extend the existing Sui client with `suigar()`.
 4. Keep all Suigar transaction creation and serialization on that extended client instance.
 5. Use `client.suigar.getConfig()` for supported coins, package ids, and price info when the UI or diagnostics need resolved config.
-6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct. Route legacy NFT ownership reads to `suigar-nft-lookup`.
+6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct. Route NFT V1 catalog or ownership reads to `suigar-nft-lookup`.
 
 ## Public Surface
 
@@ -54,7 +54,7 @@ import {
 
 The package root exposes `suigar`, `SuigarClient`, `SUPPORTED_SUI_NETWORKS`, `SuigarCoin`, and `SuigarNetwork`. Game ids and game-specific option types live in `@suigar/sdk/games`. Parser and numeric helpers live in `@suigar/sdk/utils`.
 
-Use these game-specific public types when useful: `GAMES`, `Game`, `StandardGame`, `PvPGame`, `CoinSide`, `PvPCoinflipAction`, `BuildCoinflipTransactionOptions`, `BuildLimboTransactionOptions`, `BuildPlinkoTransactionOptions`, `BuildRangeTransactionOptions`, `BuildWheelTransactionOptions`, `BuildCreatePvPCoinflipTransactionOptions`, `BuildJoinPvPCoinflipTransactionOptions`, and `BuildCancelPvPCoinflipTransactionOptions`.
+Use these game-specific public types when useful: `GAMES`, `Game`, `StandardGame`, `PvPGame`, `CoinSide`, `PvPCoinflipAction`, `CreateGameBetOptions`, `CoinflipTransactionOptions`, `LimboTransactionOptions`, `PlinkoTransactionOptions`, `RangeTransactionOptions`, `SoccerTransactionOptions`, `WheelTransactionOptions`, `CreatePvPCoinflipTransactionOptions`, `JoinPvPCoinflipTransactionOptions`, `CancelPvPCoinflipTransactionOptions`, `ClaimReferralCommissionOptions`, and `ClaimReferralLevelUpUsdRewardsOptions`.
 
 Use these utilities instead of local replacements when relevant: `fromMoveI64`, `fromMoveFloat`, `isMoveI64`, `isMoveFloat`, `parseCoinType`, `parseGameDetails`, `parseGameEvent`, `toBigInt`, `toU16`, `toU8`, `DEFAULT_GAS_BUDGET_MIST`, `RANGE_POINT_LIMIT`, `DEFAULT_RANGE_SCALE`, and `DEFAULT_LIMBO_MULTIPLIER_SCALE`.
 
@@ -69,8 +69,12 @@ Utility behavior worth preserving:
 Do not import individual runtime game builders from `@suigar/sdk`. Use the registered extension:
 
 ```ts
-client.suigar.tx.createBetTransaction(gameId, options);
-client.suigar.tx.createPvPCoinflipTransaction(action, options);
+client.suigar.tx.createGameBet(gameId, options);
+client.suigar.tx.pvpCoinflip.createGame(options);
+client.suigar.tx.pvpCoinflip.joinGame(options);
+client.suigar.tx.pvpCoinflip.cancelGame(options);
+client.suigar.tx.referral.claimCommission(options);
+client.suigar.tx.referral.claimLevelUpUsdRewards(options);
 client.suigar.serializeTransactionToBase64(tx);
 ```
 
@@ -115,6 +119,7 @@ const client = new SuiGrpcClient({ baseUrl, network }).$extend(
 	suigar({
 		config: {
 			packageIds: { coinflip: '0x...' },
+			objectIds: { sweetHouse: '0x...' },
 			coins: {
 				sui: {
 					coinType: '0x2::sui::SUI',
@@ -132,7 +137,7 @@ const client = new SuiGrpcClient({ baseUrl, network }).$extend(
 Serialize only when a wallet, backend, or transport path needs unsigned bytes:
 
 ```ts
-const tx = client.suigar.tx.createBetTransaction('coinflip', {
+const tx = client.suigar.tx.createGameBet('coinflip', {
 	owner,
 	coinType: '0x2::sui::SUI',
 	stake: 1_000_000_000n,
@@ -142,9 +147,31 @@ const tx = client.suigar.tx.createBetTransaction('coinflip', {
 const base64 = await client.suigar.serializeTransactionToBase64(tx);
 ```
 
+## Referral Claims
+
+Use the extension's referral surface for unsigned claim transactions and claimable-amount reads. Commission claims use the selected supported coin; level-up USD reward claims use the configured USDC coin.
+
+```ts
+const claimableCommission = await client.suigar.view.referral.getCommission({
+	owner,
+	coinType: '0x2::sui::SUI',
+});
+
+const tx = client.suigar.tx.referral.claimCommission({
+	owner,
+	coinType: '0x2::sui::SUI',
+});
+
+const claimableLevelUpRewards =
+	await client.suigar.view.referral.getLevelUpUsdRewards({ owner });
+const rewardsTx = client.suigar.tx.referral.claimLevelUpUsdRewards({ owner });
+```
+
+The view methods simulate the corresponding claim transaction and return `0n` when it cannot be claimed or simulated. The claim builders return transactions that transfer the claimed coin to `owner`; serialize or submit them through the app's normal wallet flow.
+
 ## Parameters and Events
 
-Use `client.suigar.getGameParameters(game, options?)` when an app needs live on-chain game bounds or RTP parameters. It already converts generated Move float fields to JavaScript numbers.
+Use `client.suigar.getGameParameters(game, { coinType, ...options })` when an app needs live on-chain game bounds or RTP parameters. `coinType` is required because parameters are stored per game and coin type. The SDK already converts generated Move float fields to JavaScript numbers.
 
 The SDK caches parsed parameters for `cacheTtl`, which defaults to 30 minutes. Pass `ignoreCache: true` to force an on-chain refresh when stale parameters would be risky.
 
@@ -180,11 +207,13 @@ For PvP coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinf
 - Use `client.suigar.getConfig().coins` for supported `coinType` and `decimals`; do not duplicate decimal constants in app code unless runtime config requires it.
 - Prefer SDK-resolved supported coin metadata from `client.suigar.getConfig()` for debugging, inspection, or UI coin selectors; simple examples can pass the expected coin type directly.
 - Standard games resolve the price-info object id from the selected coin's `priceInfoObjectId` metadata.
-- Use `client.suigar.getConfig().packageIds.legacyNft` only for legacy NFT lookups; use `suigar-nft-lookup` for that flow.
+- `packageIds` contains only Move package addresses. Use `objectIds` for singleton objects such as `sweetHouse` and `nftV1Factory`, and `registryIds` for dynamic-field registries.
+- Use `client.suigar.getConfig().packageIds.nftV1` and `objectIds.nftV1Factory` only for NFT V1 catalog or ownership reads; use `suigar-nft-lookup` for that flow.
 - Use `SuigarCoin` and `SuigarNetwork` when app code needs supported coin or network types.
 - For object reads, parse object `content`, not `objectBcs`.
 - Do not hand-decode `BetResultEvent.game_details`; use `parseGameEvent(event)` and `parseGameDetails(gameId, ...)`.
 - Do not move SDK runtime builders out of `client.suigar.tx` or rely on private package paths.
+- Do not assume a referral balance is claimable solely because a referrer exists; read it through `client.suigar.view.referral` or simulate the built transaction.
 
 ## Implementation Checklist
 
