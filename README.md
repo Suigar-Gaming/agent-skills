@@ -36,8 +36,19 @@ Set up `@suigar/sdk` in an application, wire the `suigar()` client extension, re
 
 - Installing or scaffolding the base Suigar SDK integration
 - Configuring `SuiGrpcClient` with `suigar()`
-- Working with SDK config, supported coins, partner attribution, or serialization
+- Working with SDK config, supported coins, or serialization
 - Parsing Suigar events through public SDK utilities
+
+### referrals
+
+Configure partner attribution and claim referral rewards through `@suigar/sdk`.
+
+**Use when:**
+
+- Configuring `suigar({ partner })` with a partner wallet address
+- Checking claimable referral commission or level-up USD rewards
+- Building unsigned referral claim transactions
+- Correcting referral values incorrectly placed in game metadata
 
 ### suigar-nft-lookup
 
@@ -58,7 +69,7 @@ Build standard single-player Suigar game flows on top of `@suigar/sdk`.
 
 - Building `coinflip`, `limbo`, `plinko`, `range`, `soccer`, or `wheel` bet transactions
 - Mapping UI inputs to `client.suigar.tx.createGameBet`
-- Reviewing standard game amount, metadata, coin, or partner handling
+- Reviewing standard game amount, metadata, or coin handling
 - Fixing AI-generated standard Suigar game code
 
 ### create-pvp-games

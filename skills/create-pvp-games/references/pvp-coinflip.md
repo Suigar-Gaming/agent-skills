@@ -124,8 +124,7 @@ When a flow also decodes `BetResultEvent`, use `parseGameEvent(event)` to retrie
 
 - Do not model PvP coinflip with `createGameBet`.
 - Do not pass explicit coin object ids; let the SDK build the coin input from balance.
-- Do not set `metadata.partner` or `metadata.referrer`; configure `suigar({ partner: '<wallet-address>' })`.
-- Treat `partner` as a wallet address, not a slug, label, or display string.
+- For partner attribution, follow [referrals](../../referrals/SKILL.md); do not set `metadata.partner` or `metadata.referrer`.
 - Treat lobby ids, game ids, and privacy flags as explicit product state.
 - After join and resolution, inspect emitted events instead of expecting the `Game` object to remain on-chain.
 - Use `client.suigar.getConfig().coins` when the UI needs supported coin metadata.

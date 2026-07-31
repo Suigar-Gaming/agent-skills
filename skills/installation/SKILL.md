@@ -1,10 +1,10 @@
 ---
 name: installation
-description: Set up, scaffold, or fix the base @suigar/sdk integration for Suigar game apps on Sui. Use when installing the v2 SDK with the current Mysten Sui TypeScript SDK, wiring the suigar() Sui client extension, configuring networks/package/object/registry ids or coin metadata, serializing transactions, reading SDK config or live game parameters, using public exports, parsing Suigar events, building or reading referral claims, or safely checking and converting generated Move float and i64 values. Use this before standard or PvP game skills when the client setup is missing or questionable.
+description: Set up, scaffold, or fix the base @suigar/sdk integration for Suigar game apps on Sui. Use when installing the v2 SDK with the current Mysten Sui TypeScript SDK, wiring the suigar() Sui client extension, configuring networks/package/object/registry ids or coin metadata, serializing transactions, reading SDK config or live game parameters, using public exports, parsing Suigar events, or safely checking and converting generated Move float and i64 values. Use this before standard or PvP game skills when the client setup is missing or questionable.
 license: MIT
 metadata:
   author: suigar
-  version: "1.4.0"
+  version: "1.5.0"
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -26,7 +26,7 @@ Use this skill for application code that imports `@suigar/sdk`. If the task is a
 3. Extend the existing Sui client with `suigar()`.
 4. Keep all Suigar transaction creation and serialization on that extended client instance.
 5. Use `client.suigar.getConfig()` for supported coins, package ids, and price info when the UI or diagnostics need resolved config.
-6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct. Route NFT V1 catalog or ownership reads to `suigar-nft-lookup`.
+6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct. Route partner attribution or referral claims to [referrals](../referrals/SKILL.md), and NFT V1 catalog or ownership reads to `suigar-nft-lookup`.
 
 ## Public Surface
 
@@ -54,7 +54,7 @@ import {
 
 The package root exposes `suigar`, `SuigarClient`, `SUPPORTED_SUI_NETWORKS`, `SuigarCoin`, and `SuigarNetwork`. Game ids and game-specific option types live in `@suigar/sdk/games`. Parser and numeric helpers live in `@suigar/sdk/utils`.
 
-Use these game-specific public types when useful: `GAMES`, `Game`, `StandardGame`, `PvPGame`, `CoinSide`, `PvPCoinflipAction`, `CreateGameBetOptions`, `CoinflipTransactionOptions`, `LimboTransactionOptions`, `PlinkoTransactionOptions`, `RangeTransactionOptions`, `SoccerTransactionOptions`, `WheelTransactionOptions`, `CreatePvPCoinflipTransactionOptions`, `JoinPvPCoinflipTransactionOptions`, `CancelPvPCoinflipTransactionOptions`, `ClaimReferralCommissionOptions`, and `ClaimReferralLevelUpUsdRewardsOptions`.
+Use these game-specific public types when useful: `GAMES`, `Game`, `StandardGame`, `PvPGame`, `CoinSide`, `PvPCoinflipAction`, `CreateGameBetOptions`, `CoinflipTransactionOptions`, `LimboTransactionOptions`, `PlinkoTransactionOptions`, `RangeTransactionOptions`, `SoccerTransactionOptions`, `WheelTransactionOptions`, `CreatePvPCoinflipTransactionOptions`, `JoinPvPCoinflipTransactionOptions`, and `CancelPvPCoinflipTransactionOptions`.
 
 Use these utilities instead of local replacements when relevant: `fromMoveI64`, `fromMoveFloat`, `isMoveI64`, `isMoveFloat`, `parseCoinType`, `parseGameDetails`, `parseGameEvent`, `toBigInt`, `toU16`, `toU8`, `DEFAULT_GAS_BUDGET_MIST`, `RANGE_POINT_LIMIT`, `DEFAULT_RANGE_SCALE`, and `DEFAULT_LIMBO_MULTIPLIER_SCALE`.
 
@@ -73,8 +73,6 @@ client.suigar.tx.createGameBet(gameId, options);
 client.suigar.tx.pvpCoinflip.createGame(options);
 client.suigar.tx.pvpCoinflip.joinGame(options);
 client.suigar.tx.pvpCoinflip.cancelGame(options);
-client.suigar.tx.referral.claimCommission(options);
-client.suigar.tx.referral.claimLevelUpUsdRewards(options);
 client.suigar.serializeTransactionToBase64(tx);
 ```
 
@@ -92,15 +90,7 @@ const client = new SuiGrpcClient({
 }).$extend(suigar());
 ```
 
-If partner attribution is required, configure it once on the extension:
-
-```ts
-const client = new SuiGrpcClient({ baseUrl, network }).$extend(
-	suigar({ partner: '0xpartner_wallet_address' }),
-);
-```
-
-`partner` is a wallet address. Do not pass a slug, label, display name, `metadata.partner`, or `metadata.referrer`.
+For partner attribution, use the [referrals](../referrals/SKILL.md) skill.
 
 If the app uses a custom extension name, preserve it consistently:
 
@@ -147,28 +137,6 @@ const tx = client.suigar.tx.createGameBet('coinflip', {
 const base64 = await client.suigar.serializeTransactionToBase64(tx);
 ```
 
-## Referral Claims
-
-Use the extension's referral surface for unsigned claim transactions and claimable-amount reads. Commission claims use the selected supported coin; level-up USD reward claims use the configured USDC coin.
-
-```ts
-const claimableCommission = await client.suigar.view.referral.getCommission({
-	owner,
-	coinType: '0x2::sui::SUI',
-});
-
-const tx = client.suigar.tx.referral.claimCommission({
-	owner,
-	coinType: '0x2::sui::SUI',
-});
-
-const claimableLevelUpRewards =
-	await client.suigar.view.referral.getLevelUpUsdRewards({ owner });
-const rewardsTx = client.suigar.tx.referral.claimLevelUpUsdRewards({ owner });
-```
-
-The view methods simulate the corresponding claim transaction and return `0n` when it cannot be claimed or simulated. The claim builders return transactions that transfer the claimed coin to `owner`; serialize or submit them through the app's normal wallet flow.
-
 ## Parameters and Events
 
 Use `client.suigar.getGameParameters(game, { coinType, ...options })` when an app needs live on-chain game bounds or RTP parameters. `coinType` is required because parameters are stored per game and coin type. The SDK already converts generated Move float fields to JavaScript numbers.
@@ -213,7 +181,6 @@ For PvP coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinf
 - For object reads, parse object `content`, not `objectBcs`.
 - Do not hand-decode `BetResultEvent.game_details`; use `parseGameEvent(event)` and `parseGameDetails(gameId, ...)`.
 - Do not move SDK runtime builders out of `client.suigar.tx` or rely on private package paths.
-- Do not assume a referral balance is claimable solely because a referrer exists; read it through `client.suigar.view.referral` or simulate the built transaction.
 
 ## Implementation Checklist
 
@@ -222,4 +189,4 @@ For PvP coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinf
 3. Confirm the client uses the intended supported network.
 4. Keep transaction creation and serialization on the same extended client instance.
 5. Keep the consuming app on ESM and pass the explicit `network` required by current client constructors.
-6. Route game-specific work to the standard or PvP skill after base setup is correct.
+6. Route game-specific work to the standard or PvP skill after base setup is correct; use [referrals](../referrals/SKILL.md) for attribution or reward claims.
