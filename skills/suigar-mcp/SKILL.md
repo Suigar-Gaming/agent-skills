@@ -105,7 +105,7 @@ Use `read_game_metadata` before showing or validating live stake limits, RTP, or
 
 Use `list_nfts` for read-only NFT V1 browsing. App-capable hosts render the catalog and owned NFTs in separate views; unsupported image URLs remain available as text.
 
-Referral amount reads are read-only simulations of the SDK's real claim transaction. They require `owner`; commission accepts an optional `coinType` and defaults to configured SUI, while level-up USD rewards use configured USDC. They return `0` when a claim cannot be simulated or is unavailable.
+Referral amount reads are read-only simulations of the SDK's real claim transaction. They require `owner`; commission accepts an optional `coinType` and defaults to configured SUI, while level-up USD rewards use configured USDC. They return `0` when a claim cannot be simulated or is unavailable. For SDK application integration or partner attribution, use [referrals](../referrals/SKILL.md).
 
 ## Common Inputs
 
