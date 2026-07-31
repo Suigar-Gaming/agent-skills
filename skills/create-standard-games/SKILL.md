@@ -53,7 +53,7 @@ Every standard bet uses:
 
 Set `useGasCoin` only when the app needs to override Mysten's default native SUI coin intent behavior. Do not pass coin object ids, split coins manually, or add custom bet coin callbacks.
 
-Attribution is an extension-level option: `suigar({ partner?: string })` prepends the partner wallet address to metadata automatically across supported bet flows.
+For partner attribution, use [referrals](../referrals/SKILL.md); it is configured once at the extension level, not in a bet payload.
 
 ## Game Inputs
 
@@ -189,8 +189,7 @@ Use `event.bcs` as the event payload when available. `parseGameDetails` preserve
 ## Gotchas
 
 - Do not model standard games with PvP builders or MCP transaction tool names.
-- Do not set `metadata.partner` or `metadata.referrer`; configure `suigar({ partner: '<wallet-address>' })` once instead.
-- Treat `partner` as a wallet address, not a campaign slug.
+- For partner attribution, follow [referrals](../referrals/SKILL.md); do not set `metadata.partner` or `metadata.referrer`.
 - Use `cashStake` only when the withdrawn coin amount must differ from the game stake.
 - `betCount` defaults to `1`; before accepting a larger value, validate against the current game parameters when that game publishes a maximum: Limbo and Range `max_number_of_games`, Plinko `max_number_of_balls`, Soccer `max_number_of_shots`, and Wheel `max_number_of_spins`.
 - Pass plain application values in `metadata`; let the SDK encode them.
