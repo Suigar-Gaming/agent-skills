@@ -14,7 +14,7 @@
         "When showing manual configuration, includes an mcpServers object with key suigar",
         "When showing manual configuration, uses command: npx and args containing -y and @suigar/mcp@latest",
         "Tells the user to restart or reload the MCP client after config changes",
-        "Does not describe signing or custody as MCP server capabilities"
+        "Does not claim installation alone signs transactions or creates a session wallet"
       ]
     },
     {
@@ -88,13 +88,13 @@
         "States that list_nfts is read-only",
         "States that the result includes the NFT catalog",
         "States that the result includes matching owned NFTs",
-        "Does not build or suggest a mint transaction"
+        "Does not build or suggest a mint transaction because the user requested only a read"
       ]
     },
     {
-      "id": "mcp-readonly-vs-build-dryrun",
-      "prompt": "I want to inspect what a Suigar limbo bet would do before signing anything. Which Suigar MCP mode should I use, and when would I use build or dry-run instead?",
-      "expected_output": "Recommends read-only for a resolved plan without bytes, build for unsigned base64 bytes, and dry-run for Sui simulation of the unsigned transaction.",
+      "id": "mcp-readonly-vs-build-dryrun-execute",
+      "prompt": "I want to inspect what a Suigar limbo bet would do before signing anything. Which Suigar MCP mode should I use, and when would I use build, dry-run, or execute instead?",
+      "expected_output": "Recommends read-only for a resolved plan without bytes, build for unsigned base64 bytes, dry-run for Sui simulation, and execute only when the user explicitly wants paired-wallet approval or session-wallet execution.",
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
       ],
@@ -102,7 +102,7 @@
         "Recommends read-only for inspection without bytes",
         "Explains build returns unsigned base64 transaction bytes",
         "Explains dry-run simulates the unsigned transaction through Sui APIs",
-        "States MCP does not sign or submit the transaction",
+        "Explains execute requires paired-wallet approval or a local session wallet",
         "Mentions limbo uses targetMultiplier"
       ]
     },
@@ -124,7 +124,7 @@
     {
       "id": "mcp-soccer-transaction",
       "prompt": "Use Suigar MCP to build a 1 SUI Soccer transaction for my wallet using ids selected from live Soccer metadata.",
-      "expected_output": "Routes to build_soccer_transaction and supplies owner, stake, configId from parameters.configs, countryId as the key matching the requested country name in parameters.countries.contents, and shotZoneId from the selected config's shot_zone_ids. It explains that build returns unsigned bytes only.",
+      "expected_output": "Routes to build_soccer_transaction and supplies owner, stake, configId from parameters.configs, countryId as the key matching the requested country name in parameters.countries.contents, and shotZoneId from the selected config's shot_zone_ids. It explains that build returns unsigned bytes.",
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
       ],
@@ -135,13 +135,13 @@
         "Passes shotZoneId from the selected config's live shot_zone_ids",
         "Passes owner and stake",
         "Mentions read_game_metadata or live Soccer metadata",
-        "Does not claim MCP signs or submits the transaction"
+        "Does not use execute mode unless the user asks to execute"
       ]
     },
     {
       "id": "mcp-referral-commission-claim",
       "prompt": "Use Suigar MCP to check the SUI referral commission claimable by wallet.sui and then give me unsigned bytes to claim it. Do not submit anything.",
-      "expected_output": "Uses get_referral_commission with owner: 'wallet.sui' to read the simulated amount, then build_referral_commission_claim_transaction in build mode for unsigned bytes. It explains that coinType is optional and defaults to configured SUI, reads can return 0 when unavailable, and MCP does not sign or submit.",
+      "expected_output": "Uses get_referral_commission with owner: 'wallet.sui' to read the simulated amount, then build_referral_commission_claim_transaction in build mode for unsigned bytes. It explains that coinType is optional and defaults to configured SUI, reads can return 0 when unavailable, and build mode does not sign or submit.",
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
       ],
@@ -150,7 +150,40 @@
         "Uses or names build_referral_commission_claim_transaction",
         "Passes owner: 'wallet.sui' or explains a SuiNS owner is accepted",
         "Explains build returns unsigned transaction bytes",
-        "States MCP does not sign or submit the transaction"
+        "States build mode does not sign or submit the transaction"
+      ]
+    },
+    {
+      "id": "mcp-nft-v1-mint",
+      "prompt": "Use Suigar MCP to build an NFT V1 mint transaction for wallet.sui with this catalog specId. Do not submit it.",
+      "expected_output": "Uses build_nft_v1_mint_transaction in build mode with owner: 'wallet.sui' and specId, explains that the tool resolves the specification price from the configured NFT factory, and does not use execute mode.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+      ],
+      "assertions": [
+        "Uses or names build_nft_v1_mint_transaction",
+        "Passes owner: 'wallet.sui' or explains a SuiNS owner is accepted",
+        "Passes specId",
+        "Uses build mode",
+        "States the NFT factory/spec price is resolved by MCP or SDK",
+        "Does not use execute mode"
+      ]
+    },
+    {
+      "id": "mcp-session-wallet-execute",
+      "prompt": "I set up a local Suigar session wallet and funded it. Execute a 1 SUI coinflip on heads from that session wallet.",
+      "expected_output": "Uses build_coinflip_transaction with mode: 'execute' and executionWallet: 'session', passes side: 'heads' and stake: 1, explains owner is optional in session execution and must match the session wallet if provided, and warns that the session wallet signs and submits directly from the local keychain-backed wallet.",
+      "sources": [
+        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+      ],
+      "assertions": [
+        "Uses or names build_coinflip_transaction",
+        "Uses mode: 'execute'",
+        "Uses executionWallet: 'session'",
+        "Passes side: 'heads'",
+        "Passes stake: 1",
+        "Explains session execution signs and submits with the local session wallet",
+        "Does not require owner unless matching the session wallet"
       ]
     }
   ]

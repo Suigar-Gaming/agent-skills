@@ -50,14 +50,15 @@ Configure partner attribution and claim referral rewards through `@suigar/sdk`.
 - Building unsigned referral claim transactions
 - Correcting referral values incorrectly placed in game metadata
 
-### suigar-nft-lookup
+### suigar-nft
 
-Look up the Suigar NFT V1 catalog and NFTs owned by an address using SDK-resolved package and object ids plus BCS helpers.
+Read the Suigar NFT V1 catalog, list owned NFTs, and build NFT V1 mint transactions using SDK-resolved package and object ids plus BCS helpers.
 
 **Use when:**
 
 - Listing an owner's NFT V1 objects
 - Reading and decoding the NFT V1 catalog factory
+- Building `client.suigar.tx.nftV1.mint` from a catalog `specId`
 - Deriving the NFT type with the active SDK BCS helper
 - Keeping NFT reads network-aware without hard-coded package ids
 
@@ -92,8 +93,11 @@ Install, configure, operate, or troubleshoot the `@suigar/mcp` server, bundled M
 - Adding the Suigar MCP server to an MCP client
 - Installing the Suigar plugin from a supported marketplace
 - Reading Suigar config or game metadata through MCP tools
+- Pairing browser wallets, checking balances, or listing coin objects
+- Setting up, inspecting, or funding a local session wallet
 - Browsing the NFT V1 catalog and a wallet's matching NFTs through `list_nfts`
-- Building unsigned transactions in read-only, build, or dry-run mode
+- Building NFT V1 mint transactions through `build_nft_v1_mint_transaction`
+- Building, dry-running, or explicitly executing transactions in read-only, build, dry-run, or execute mode
 - Explaining MCP support boundaries for Suigar games
 
 ## Usage
@@ -103,11 +107,11 @@ Skills are automatically available once installed. The agent will use them when 
 **Examples:**
 
 ```text
-Set up @suigar/sdk in this app
+Set up Suigar in this app
 ```
 
 ```text
-Build a coinflip transaction with @suigar/sdk
+Build a coinflip transaction
 ```
 
 ```text
@@ -123,7 +127,11 @@ Add a PvP coinflip lobby flow
 ```
 
 ```text
-List this wallet's Suigar NFT V1 objects with @suigar/sdk
+List this wallet's Suigar NFT V1 objects
+```
+
+```text
+Mint a Suigar NFT V1 from this catalog specId
 ```
 
 ```text
@@ -140,6 +148,10 @@ Dry-run a Suigar MCP limbo transaction for this wallet with a 2.5x target multip
 
 ```text
 Use Suigar MCP to build an unsigned PvP coinflip create transaction for 1 SUI on tails
+```
+
+```text
+Use Suigar MCP to set up a local session wallet and show its balances
 ```
 
 ## Skill Structure

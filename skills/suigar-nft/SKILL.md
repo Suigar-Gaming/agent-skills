@@ -1,11 +1,11 @@
 ---
-name: suigar-nft-lookup
-description: Look up the Suigar NFT V1 catalog or NFTs owned by a Sui address with @suigar/sdk. Use when reading and decoding `NftV1Factory`, listing or decoding an owner's `NftV1` objects, deriving the network-specific type with the SDK BCS helper, avoiding hard-coded NFT package or factory ids, or explaining the boundary between SDK-supported catalog and ownership reads and unsupported NFT mint flows.
+name: suigar-nft
+description: Read or mint Suigar NFT V1 objects with @suigar/sdk. Use when reading and decoding `NftV1Factory`, listing or decoding an owner's `NftV1` objects, deriving the network-specific type with the SDK BCS helper, building `client.suigar.tx.nftV1.mint`, resolving a catalog spec id, or avoiding hard-coded NFT package or factory ids.
 license: MIT
 metadata:
   author: suigar
-  version: "1.1.0"
-  short-description: Look up Suigar NFT V1 objects
+  version: "1.2.0"
+  short-description: Read and mint Suigar NFT V1 objects
   tags:
     - suigar
     - sui
@@ -13,9 +13,9 @@ metadata:
     - nft
 ---
 
-# Look Up Suigar NFT V1
+# Suigar NFT V1
 
-Use this skill for application code that imports `@suigar/sdk` and reads the NFT V1 catalog or NFTs directly owned by an address. If the app has not configured the SDK client yet, use `installation` first.
+Use this skill for application code that imports `@suigar/sdk` and reads the NFT V1 catalog, lists NFTs directly owned by an address, or builds an NFT V1 mint transaction. If the app has not configured the SDK client yet, use `installation` first.
 
 > Source constraint: Use the active client's resolved `packageIds.nftV1`, `objectIds.nftV1Factory`, and `bcs.NftV1.typeTag()`; do not hard-code a mainnet or testnet package, factory id, or Move type string.
 
@@ -27,6 +27,7 @@ Use this skill for application code that imports `@suigar/sdk` and reads the NFT
 4. Derive the owned NFT type with `client.suigar.bcs.NftV1.typeTag({ package: nftV1 })`.
 5. Call `client.core.listOwnedObjects()` with `type`, `content: true`, and pagination.
 6. Decode each owned object with `client.suigar.bcs.NftV1`.
+7. For minting, pass a selected factory `specId` to `client.suigar.tx.nftV1.mint({ owner, specId })`.
 
 ## Catalog Lookup
 
@@ -73,11 +74,24 @@ const nfts = page.objects.map((object) =>
 
 Use the returned objects as the ownership source of truth. Follow `page.cursor` until it is empty when the product needs the full collection. Parse `content` with `NftV1`; do not rely on `objectBcs` for object reads.
 
+## Minting
+
+Build NFT V1 mints with the configured SDK transaction builder. It mints directly to the transaction sender, resolves the selected specification's SUI price from `objectIds.nftV1Factory`, and resolves the NFT package and SweetHouse object from SDK config.
+
+```ts
+const tx = client.suigar.tx.nftV1.mint({
+	owner,
+	specId,
+});
+```
+
+Optional inputs are `gasBudget` and `useGasCoin`. Derive `specId` from the decoded factory catalog; do not hard-code a package-specific Move target or mint price in app code.
+
 ## Boundaries
 
-- `packageIds.nftV1` is a package id for ownership lookup, not a dedicated SDK NFT client method.
+- `packageIds.nftV1` is the package id used by ownership lookup and the mint builder.
 - `objectIds.nftV1Factory` is the catalog object id. Use `client.suigar.bcs.NftV1Factory` to decode its `content`; the SDK does not provide a higher-level catalog client method.
-- NFT V1 mint transactions are outside the SDK. Do not invent a mint builder, transaction target, or MCP tool.
+- The SDK exposes NFT V1 minting only through `client.suigar.tx.nftV1.mint`; do not hand-write the Move target or price lookup.
 - Keep package ids network-aware by deriving them from the configured client on every environment rather than copying values into application constants.
 
 ## Checklist
@@ -86,4 +100,5 @@ Use the returned objects as the ownership source of truth. Follow `page.cursor` 
 2. Get `nftV1` from `packageIds` and `nftV1Factory` from `objectIds`.
 3. Decode the factory with `NftV1Factory.parse(object.content)`.
 4. Query owned objects with `NftV1.typeTag({ package: nftV1 })`, `content: true`, and `NftV1.parse(object.content)`.
-5. Preserve pagination and leave minting outside the SDK.
+5. Preserve pagination for ownership reads.
+6. For minting, build `client.suigar.tx.nftV1.mint({ owner, specId })` with a catalog-derived `specId`.
