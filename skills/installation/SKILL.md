@@ -4,7 +4,7 @@ description: Set up, scaffold, or fix the base @suigar/sdk integration for Suiga
 license: MIT
 metadata:
   author: suigar
-  version: "1.6.0"
+  version: '1.6.0'
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -41,7 +41,7 @@ Use these public imports:
 ```ts
 import { suigar } from '@suigar/sdk';
 import type { SuigarCoin, SuigarNetwork } from '@suigar/sdk';
-import { GAMES, type StandardGame, type PvPGame } from '@suigar/sdk/games';
+import { GAMES, type PvPGame, type StandardGame } from '@suigar/sdk/games';
 import {
 	fromMoveFloat,
 	fromMoveI64,

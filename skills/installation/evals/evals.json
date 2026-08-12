@@ -1,68 +1,68 @@
 {
-  "skill_name": "installation",
-  "source_constraint": "Expected outputs are grounded in the Suigar SDK public API, the installed @suigar/sdk package surface, and current Mysten Sui TypeScript client patterns.",
-  "evals": [
-    {
-      "id": "installation-grpc-extension-setup",
-      "prompt": "Set up @suigar/sdk in my Node app using the current Sui TypeScript SDK. I need a testnet client and a coinflip transaction serialized to base64 for the wallet.",
-      "expected_output": "Shows SuiGrpcClient from @mysten/sui/grpc extended with suigar(), builds a coinflip transaction through client.suigar.tx.createGameBet, and serializes it with client.suigar.serializeTransactionToBase64.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation",
-        "https://sdk.mystenlabs.com/sui"
-      ],
-      "assertions": [
-        "Imports suigar from @suigar/sdk",
-        "Imports SuiGrpcClient from @mysten/sui/grpc",
-        "Constructs the client with both baseUrl and network",
-        "Extends the client with suigar()",
-        "Uses client.suigar.tx.createGameBet for the bet",
-        "Uses client.suigar.serializeTransactionToBase64 for serialization",
-        "Does not import a standalone coinflip builder from @suigar/sdk"
-      ]
-    },
-    {
-      "id": "installation-coin-price-info-override",
-      "prompt": "Our deployed USDC price-info object changed before an SDK release. Show the supported suigar() config override without copying internal builders.",
-      "expected_output": "Overrides config.coins.usdc with coinType, decimals, and priceInfoObjectId without copying internal builders.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"
-      ],
-      "assertions": [
-        "Uses suigar({ config: { coins: { usdc: ... } } })",
-        "Places priceInfoObjectId inside the usdc coin metadata",
-        "Does not copy or import internal transaction builders"
-      ]
-    },
-    {
-      "id": "installation-event-decoding",
-      "prompt": "I receive Suigar transaction events from Sui. How do I decode a BetResultEvent and get game-specific details without manually parsing bytes?",
-      "expected_output": "Uses parseGameEvent(event), client.suigar.bcs.BetResultEvent.parse(event.bcs), parseGameDetails(gameId, decoded.game_details), and fromMoveFloat for Move float fields.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"
-      ],
-      "assertions": [
-        "Uses parseGameEvent from @suigar/sdk/utils",
-        "Parses event.bcs with client.suigar.bcs.BetResultEvent.parse",
-        "Passes the parsed gameId into parseGameDetails",
-        "Mentions fromMoveFloat for generated Move float structs",
-        "Does not hand-decode game_details byte arrays"
-      ]
-    },
-    {
-      "id": "installation-guard-raw-move-numerics",
-      "prompt": "My app receives an unknown generated BCS field that might be a Suigar Move Float or i64. How should I safely convert it without copying the SDK's struct-shape checks?",
-      "expected_output": "Imports isMoveFloat, isMoveI64, fromMoveFloat, and fromMoveI64 from @suigar/sdk/utils; guards the unknown value with the matching predicate before converting it. It distinguishes this raw-payload case from getGameParameters(), which already returns float fields as JavaScript numbers.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"
-      ],
-      "assertions": [
-        "Imports isMoveFloat and isMoveI64 from @suigar/sdk/utils",
-        "Imports fromMoveFloat and fromMoveI64 from @suigar/sdk/utils",
-        "Guards an unknown value with isMoveFloat before fromMoveFloat",
-        "Guards an unknown value with isMoveI64 before fromMoveI64",
-        "States that getGameParameters already normalizes Move float fields",
-        "Does not copy a local structural type guard"
-      ]
-    }
-  ]
+	"skill_name": "installation",
+	"source_constraint": "Expected outputs are grounded in the Suigar SDK public API, the installed @suigar/sdk package surface, and current Mysten Sui TypeScript client patterns.",
+	"evals": [
+		{
+			"id": "installation-grpc-extension-setup",
+			"prompt": "Set up @suigar/sdk in my Node app using the current Sui TypeScript SDK. I need a testnet client and a coinflip transaction serialized to base64 for the wallet.",
+			"expected_output": "Shows SuiGrpcClient from @mysten/sui/grpc extended with suigar(), builds a coinflip transaction through client.suigar.tx.createGameBet, and serializes it with client.suigar.serializeTransactionToBase64.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation",
+				"https://sdk.mystenlabs.com/sui"
+			],
+			"assertions": [
+				"Imports suigar from @suigar/sdk",
+				"Imports SuiGrpcClient from @mysten/sui/grpc",
+				"Constructs the client with both baseUrl and network",
+				"Extends the client with suigar()",
+				"Uses client.suigar.tx.createGameBet for the bet",
+				"Uses client.suigar.serializeTransactionToBase64 for serialization",
+				"Does not import a standalone coinflip builder from @suigar/sdk"
+			]
+		},
+		{
+			"id": "installation-coin-price-info-override",
+			"prompt": "Our deployed USDC price-info object changed before an SDK release. Show the supported suigar() config override without copying internal builders.",
+			"expected_output": "Overrides config.coins.usdc with coinType, decimals, and priceInfoObjectId without copying internal builders.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"
+			],
+			"assertions": [
+				"Uses suigar({ config: { coins: { usdc: ... } } })",
+				"Places priceInfoObjectId inside the usdc coin metadata",
+				"Does not copy or import internal transaction builders"
+			]
+		},
+		{
+			"id": "installation-event-decoding",
+			"prompt": "I receive Suigar transaction events from Sui. How do I decode a BetResultEvent and get game-specific details without manually parsing bytes?",
+			"expected_output": "Uses parseGameEvent(event), client.suigar.bcs.BetResultEvent.parse(event.bcs), parseGameDetails(gameId, decoded.game_details), and fromMoveFloat for Move float fields.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"
+			],
+			"assertions": [
+				"Uses parseGameEvent from @suigar/sdk/utils",
+				"Parses event.bcs with client.suigar.bcs.BetResultEvent.parse",
+				"Passes the parsed gameId into parseGameDetails",
+				"Mentions fromMoveFloat for generated Move float structs",
+				"Does not hand-decode game_details byte arrays"
+			]
+		},
+		{
+			"id": "installation-guard-raw-move-numerics",
+			"prompt": "My app receives an unknown generated BCS field that might be a Suigar Move Float or i64. How should I safely convert it without copying the SDK's struct-shape checks?",
+			"expected_output": "Imports isMoveFloat, isMoveI64, fromMoveFloat, and fromMoveI64 from @suigar/sdk/utils; guards the unknown value with the matching predicate before converting it. It distinguishes this raw-payload case from getGameParameters(), which already returns float fields as JavaScript numbers.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"
+			],
+			"assertions": [
+				"Imports isMoveFloat and isMoveI64 from @suigar/sdk/utils",
+				"Imports fromMoveFloat and fromMoveI64 from @suigar/sdk/utils",
+				"Guards an unknown value with isMoveFloat before fromMoveFloat",
+				"Guards an unknown value with isMoveI64 before fromMoveI64",
+				"States that getGameParameters already normalizes Move float fields",
+				"Does not copy a local structural type guard"
+			]
+		}
+	]
 }

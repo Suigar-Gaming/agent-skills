@@ -4,7 +4,7 @@ description: Build, scaffold, review, or fix standard single-player Suigar game 
 license: MIT
 metadata:
   author: suigar
-  version: "1.3.0"
+  version: '1.3.0'
   short-description: Build standard Suigar game flows
   tags:
     - suigar
@@ -33,7 +33,12 @@ Use this skill for application code that imports `@suigar/sdk` and builds standa
 Use game types from `@suigar/sdk/games`:
 
 ```ts
-import { GAMES, type Game, type StandardGame, type CoinSide } from '@suigar/sdk/games';
+import {
+	GAMES,
+	type CoinSide,
+	type Game,
+	type StandardGame,
+} from '@suigar/sdk/games';
 ```
 
 Do not redefine game id unions unless the local app already has a stricter UI type.
@@ -58,7 +63,7 @@ For partner attribution, use [referrals](../referrals/SKILL.md); it is configure
 ## Game Inputs
 
 | Game | Required inputs | Notes |
-|---|---|---|
+| --- | --- | --- |
 | `coinflip` | `side`: `heads` or `tails` | Preserve the UI-selected side exactly. |
 | `limbo` | `targetMultiplier: number` | Pass human decimal values; the SDK applies scale. |
 | `plinko` | `configId: number` | `configId` comes from live `parameters.configs`. |
@@ -71,7 +76,7 @@ For partner attribution, use [referrals](../referrals/SKILL.md); it is configure
 Read `client.suigar.getGameParameters(gameId, { coinType })` before presenting or validating live stake limits, RTP, or game inputs. The SDK returns generated Move float fields as JavaScript numbers and caches results for 30 minutes by default; pass `ignoreCache: true` when a fresh on-chain read is needed.
 
 | Game | Transaction input fields | On-chain parameters |
-|---|---|---|
+| --- | --- | --- |
 | `coinflip` | `side` | `min_stake`, `max_stake` |
 | `limbo` | `targetMultiplier` | `min_stake`, `max_stake`, `min_target_multiplier`, `max_target_multiplier`, `max_number_of_games` |
 | `plinko` | `configId` | `min_stake`, `max_stake`, `configs.contents`, `max_number_of_balls` |
@@ -174,13 +179,19 @@ const tx = client.suigar.tx.createGameBet('soccer', {
 ## Event Decoding
 
 ```ts
-import { fromMoveFloat, parseGameDetails, parseGameEvent } from '@suigar/sdk/utils';
+import {
+	fromMoveFloat,
+	parseGameDetails,
+	parseGameEvent,
+} from '@suigar/sdk/utils';
 
 const parsed = parseGameEvent(event);
 if (parsed?.eventName === 'BetResultEvent') {
 	const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
 	const gameDetails = parseGameDetails(parsed.gameId, decoded.game_details);
-	const adjustedOraclePrice = fromMoveFloat(decoded.adjusted_oracle_usd_coin_price);
+	const adjustedOraclePrice = fromMoveFloat(
+		decoded.adjusted_oracle_usd_coin_price,
+	);
 }
 ```
 

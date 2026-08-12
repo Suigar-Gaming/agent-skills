@@ -1,0 +1,129 @@
+name: Skill Evals
+
+on:
+  pull_request:
+    paths:
+      - 'skills/**/SKILL.md'
+      - 'skills/**/*.md'
+      - 'skills/**/evals/evals.json'
+      - 'scripts/run-evals.js'
+      - 'scripts/lib/utils.js'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+  workflow_dispatch:
+    inputs:
+      skill:
+        description: 'Run evals for a specific skill (leave empty for all)'
+        required: false
+        type: string
+  schedule:
+    - cron: '0 6 1 * *'
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/setup@v2.0.2
+        with:
+          cache: true
+          install: false
+          runtime: node@24.19.0
+
+      - name: Install dependencies
+        shell: bash
+        run: pnpm install --frozen-lockfile
+
+      - name: Run evals (PR changed skills only)
+        if: github.event_name == 'pull_request'
+        shell: bash
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: pnpm run eval:changed
+
+      - name: Run evals (scheduled all skills)
+        if: github.event_name == 'schedule'
+        shell: bash
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: pnpm run eval
+
+      - name: Run evals (manual)
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "${{ inputs.skill }}" ]; then
+            pnpm run eval -- --skill "${{ inputs.skill }}"
+          else
+            pnpm run eval
+          fi
+
+      - name: Upload eval results
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: eval-results
+          path: scripts/eval-results.json
+
+      - name: Push eval results to eval-results branch
+        if: always() && github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          cp scripts/eval-results.json /tmp/eval-results.json
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan eval-results
+          git rm -rf . > /dev/null 2>&1
+          mkdir -p scripts
+          cp /tmp/eval-results.json scripts/eval-results.json
+          git add -f scripts/eval-results.json
+          git commit -m "Update eval results $(date -u +%Y-%m-%d)"
+          git push origin eval-results --force
+
+      - name: Comment on PR with failures
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v9.0.0
+        with:
+          script: |
+            const fs = require('fs');
+            const resultsPath = 'scripts/eval-results.json';
+            if (!fs.existsSync(resultsPath)) return;
+
+            const results = JSON.parse(fs.readFileSync(resultsPath, 'utf-8'));
+            const failures = results.filter((r) => r.status !== 'PASS');
+            if (failures.length === 0) return;
+
+            let body = '## Skill Eval Failures\n\n';
+            for (const f of failures) {
+              body += `### ${f.skill} / ${f.eval_id} - ${f.status}\n`;
+              if (f.grades) {
+                const failed = f.grades.filter((g) => !g.pass);
+                for (const g of failed) {
+                  body += `- ${g.expectation}\n  - ${g.reason}\n`;
+                }
+              }
+              if (f.error) {
+                body += `- Error: ${f.error}\n`;
+              }
+              body += '\n';
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });

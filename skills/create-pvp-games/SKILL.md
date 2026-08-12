@@ -4,7 +4,7 @@ description: Build, scaffold, review, or fix Suigar PvP game flows using @suigar
 license: MIT
 metadata:
   author: suigar
-  version: "1.4.0"
+  version: '1.4.0'
   short-description: Build Suigar PvP game flows
   tags:
     - suigar
