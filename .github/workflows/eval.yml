@@ -1,0 +1,123 @@
+name: Skill Evals
+
+on:
+  pull_request:
+    paths:
+      - 'skills/**/SKILL.md'
+      - 'skills/**/*.md'
+      - 'skills/**/evals/evals.json'
+      - 'scripts/run-evals.js'
+      - 'scripts/lib/utils.js'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+  workflow_dispatch:
+    inputs:
+      skill:
+        description: 'Run evals for a specific skill (leave empty for all)'
+        required: false
+        type: string
+  schedule:
+    - cron: '0 6 * * 1'
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run evals (PR changed skills only)
+        if: github.event_name == 'pull_request'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: pnpm run eval:changed
+
+      - name: Run evals (scheduled all skills)
+        if: github.event_name == 'schedule'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: pnpm run eval
+
+      - name: Run evals (manual)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          if [ -n "${{ inputs.skill }}" ]; then
+            pnpm run eval -- --skill "${{ inputs.skill }}"
+          else
+            pnpm run eval
+          fi
+
+      - name: Upload eval results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: scripts/eval-results.json
+
+      - name: Push eval results to eval-results branch
+        if: always() && github.event_name != 'pull_request'
+        run: |
+          cp scripts/eval-results.json /tmp/eval-results.json
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan eval-results
+          git rm -rf . > /dev/null 2>&1
+          mkdir -p scripts
+          cp /tmp/eval-results.json scripts/eval-results.json
+          git add scripts/eval-results.json
+          git commit -m "Update eval results $(date -u +%Y-%m-%d)"
+          git push origin eval-results --force
+
+      - name: Comment on PR with failures
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const resultsPath = 'scripts/eval-results.json';
+            if (!fs.existsSync(resultsPath)) return;
+
+            const results = JSON.parse(fs.readFileSync(resultsPath, 'utf-8'));
+            const failures = results.filter((r) => r.status !== 'PASS');
+            if (failures.length === 0) return;
+
+            let body = '## Skill Eval Failures\n\n';
+            for (const f of failures) {
+              body += `### ${f.skill} / ${f.eval_id} - ${f.status}\n`;
+              if (f.grades) {
+                const failed = f.grades.filter((g) => !g.pass);
+                for (const g of failed) {
+                  body += `- ${g.expectation}\n  - ${g.reason}\n`;
+                }
+              }
+              if (f.error) {
+                body += `- Error: ${f.error}\n`;
+              }
+              body += '\n';
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });

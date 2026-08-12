@@ -165,13 +165,13 @@ pnpm install
 Run skill evals with OpenAI:
 
 ```bash
-OPENAI_API_KEY=... pnpm eval
+OPENAI_API_KEY=... pnpm run eval
 ```
 
 Run evals for one skill:
 
 ```bash
-OPENAI_API_KEY=... pnpm eval -- --skill installation
+OPENAI_API_KEY=... pnpm run eval -- --skill installation
 ```
 
 ## Skill Structure

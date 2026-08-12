@@ -8,12 +8,12 @@
  * LLM-as-judge call to grade the response against the eval's assertions.
  *
  * Usage:
- *   pnpm eval
- *   pnpm eval:changed
- *   pnpm eval -- --skill installation
- *   pnpm eval -- --judge-model 5.5-medium
- *   pnpm eval -- --concurrency 5
- *   pnpm eval -- --timeout 60000
+ *   pnpm run eval
+ *   pnpm run eval:changed
+ *   pnpm run eval -- --skill installation
+ *   pnpm run eval -- --judge-model 5.5-medium
+ *   pnpm run eval -- --concurrency 5
+ *   pnpm run eval -- --timeout 60000
  *
  * Environment:
  *   OPENAI_API_KEY   required
