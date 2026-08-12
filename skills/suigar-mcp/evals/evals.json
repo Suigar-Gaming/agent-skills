@@ -5,14 +5,14 @@
     {
       "id": "mcp-install-config",
       "prompt": "Add the Suigar MCP server to my MCP client config. What JSON should I paste and what do I do after?",
-      "expected_output": "Recommends `npx add-mcp @suigar/mcp@beta --name suigar` for detected coding agents, or provides an mcpServers.suigar config using command npx and args ['-y', '@suigar/mcp@beta'] when explicit manual configuration is needed.",
+      "expected_output": "Recommends `npx add-mcp @suigar/mcp@latest --name suigar` for detected coding agents, or provides an mcpServers.suigar config using command npx and args ['-y', '@suigar/mcp@latest'] when explicit manual configuration is needed.",
       "sources": [
         "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
       ],
       "assertions": [
-        "Uses npx add-mcp @suigar/mcp@beta --name suigar or explicitly scopes the answer to manual MCP configuration",
+        "Uses npx add-mcp @suigar/mcp@latest --name suigar or explicitly scopes the answer to manual MCP configuration",
         "When showing manual configuration, includes an mcpServers object with key suigar",
-        "When showing manual configuration, uses command: npx and args containing -y and @suigar/mcp@beta",
+        "When showing manual configuration, uses command: npx and args containing -y and @suigar/mcp@latest",
         "Tells the user to restart or reload the MCP client after config changes",
         "Does not claim installation alone signs transactions or creates a session wallet"
       ]
