@@ -107,11 +107,11 @@ Skills are automatically available once installed. The agent will use them when 
 **Examples:**
 
 ```text
-Set up @suigar/sdk in this app
+Set up Suigar in this app
 ```
 
 ```text
-Build a coinflip transaction with @suigar/sdk
+Build a coinflip transaction
 ```
 
 ```text
@@ -127,11 +127,11 @@ Add a PvP coinflip lobby flow
 ```
 
 ```text
-List this wallet's Suigar NFT V1 objects with @suigar/sdk
+List this wallet's Suigar NFT V1 objects
 ```
 
 ```text
-Mint a Suigar NFT V1 from this catalog specId with @suigar/sdk
+Mint a Suigar NFT V1 from this catalog specId
 ```
 
 ```text
