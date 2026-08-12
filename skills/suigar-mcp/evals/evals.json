@@ -1,190 +1,190 @@
 {
-  "skill_name": "suigar-mcp",
-  "source_constraint": "Expected outputs are grounded in @suigar/mcp behavior as a thin unsigned-transaction layer over @suigar/sdk.",
-  "evals": [
-    {
-      "id": "mcp-install-config",
-      "prompt": "Add the Suigar MCP server to my MCP client config. What JSON should I paste and what do I do after?",
-      "expected_output": "Recommends `npx add-mcp @suigar/mcp@latest --name suigar` for detected coding agents, or provides an mcpServers.suigar config using command npx and args ['-y', '@suigar/mcp@latest'] when explicit manual configuration is needed.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
-      ],
-      "assertions": [
-        "Uses npx add-mcp @suigar/mcp@latest --name suigar or explicitly scopes the answer to manual MCP configuration",
-        "When showing manual configuration, includes an mcpServers object with key suigar",
-        "When showing manual configuration, uses command: npx and args containing -y and @suigar/mcp@latest",
-        "Tells the user to restart or reload the MCP client after config changes",
-        "Does not claim installation alone signs transactions or creates a session wallet"
-      ]
-    },
-    {
-      "id": "mcp-plugin-install",
-      "prompt": "I want to install the published Suigar plugin in Codex from GitHub. How do I add it, and should I edit its .mcp.json myself?",
-      "expected_output": "Uses `codex plugin marketplace add Suigar-Gaming/ts-sdks --ref main`, directs the user to install or enable suigar from the Suigar marketplace source, explains that the repository marketplace resolves packages/mcp/plugin and registers a version-pinned MCP server, and warns not to manually edit generated plugin manifests or .mcp.json.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/ts-sdks/tree/main/packages/mcp/plugin"
-      ],
-      "assertions": [
-        "Uses codex plugin marketplace add Suigar-Gaming/ts-sdks --ref main",
-        "Mentions the Suigar marketplace source or enabling suigar",
-        "States that the repository marketplace resolves packages/mcp/plugin",
-        "States that the plugin registers the MCP server",
-        "States that the MCP package version is pinned by the plugin bundle",
-        "Warns not to manually edit the generated plugin manifest or .mcp.json"
-      ]
-    },
-    {
-      "id": "mcp-claude-plugin-install",
-      "prompt": "How do I install the published Suigar plugin in Claude Code without cloning the repository first?",
-      "expected_output": "Uses `/plugin marketplace add Suigar-Gaming/ts-sdks@main` followed by `/plugin install suigar@suigar`, explaining that the first command adds the GitHub marketplace and the second installs the marketplace-qualified plugin.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/ts-sdks/tree/main/packages/mcp/plugin"
-      ],
-      "assertions": [
-        "Uses /plugin marketplace add Suigar-Gaming/ts-sdks@main",
-        "Uses /plugin install suigar@suigar",
-        "States that the marketplace comes from GitHub",
-        "Does not require cloning the repository or using a local path"
-      ]
-    },
-    {
-      "id": "mcp-live-game-metadata",
-      "prompt": "Before offering Plinko configuration choices, how do I read current on-chain game metadata through Suigar MCP?",
-      "expected_output": "Uses read_game_metadata with the required game: 'plinko', explains that it returns live on-chain parameters, and mentions optional coinType plus ignoreCache: true for a fresh read.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
-      ],
-      "assertions": [
-        "Uses or names read_game_metadata",
-        "Passes game: 'plinko'",
-        "States that game is required",
-        "Mentions live on-chain parameters",
-        "Mentions coinType or ignoreCache",
-        "Does not use read_config as a replacement for the selected game metadata read"
-      ]
-    },
-    {
-      "id": "mcp-coin-price-info-override",
-      "prompt": "My testnet USDC uses a replacement price-info object. Where do I pass that override to the Suigar MCP tool?",
-      "expected_output": "Passes config.coins.usdc.priceInfoObjectId with the USDC coin metadata.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
-      ],
-      "assertions": [
-        "Uses config.coins.usdc.priceInfoObjectId",
-        "Keeps the override in the tool's config input"
-      ]
-    },
-    {
-      "id": "mcp-list-nfts",
-      "prompt": "Use Suigar MCP to show the NFT V1 catalog and the NFTs owned by wallet.sui. I only want a read, not a transaction.",
-      "expected_output": "Uses list_nfts with owner: 'wallet.sui', explains that it is read-only and returns both the NFT V1 catalog and matching owned NFTs, and notes that an App-capable host can render separate catalog and ownership views.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
-      ],
-      "assertions": [
-        "Uses or names list_nfts",
-        "Passes owner: 'wallet.sui' or explains a SuiNS owner is accepted",
-        "States that list_nfts is read-only",
-        "States that the result includes the NFT catalog",
-        "States that the result includes matching owned NFTs",
-        "Does not build or suggest a mint transaction because the user requested only a read"
-      ]
-    },
-    {
-      "id": "mcp-readonly-vs-build-dryrun-execute",
-      "prompt": "I want to inspect what a Suigar limbo bet would do before signing anything. Which Suigar MCP mode should I use, and when would I use build, dry-run, or execute instead?",
-      "expected_output": "Recommends read-only for a resolved plan without bytes, build for unsigned base64 bytes, dry-run for Sui simulation, and execute only when the user explicitly wants paired-wallet approval or session-wallet execution.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
-      ],
-      "assertions": [
-        "Recommends read-only for inspection without bytes",
-        "Explains build returns unsigned base64 transaction bytes",
-        "Explains dry-run simulates the unsigned transaction through Sui APIs",
-        "Explains execute requires paired-wallet approval or a local session wallet",
-        "Mentions limbo uses targetMultiplier"
-      ]
-    },
-    {
-      "id": "mcp-pvp-create-creator-side",
-      "prompt": "Use Suigar MCP to build a PvP coinflip create transaction where the creator chooses tails. Is the field side or creatorSide?",
-      "expected_output": "Routes to build_pvp_coinflip_create_transaction and uses creatorSide: 'tails' for MCP, explaining it maps to the SDK side option.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
-      ],
-      "assertions": [
-        "Uses or names build_pvp_coinflip_create_transaction",
-        "Uses creatorSide: 'tails'",
-        "Explains creatorSide maps to the SDK side option",
-        "Does not route PvP coinflip through build_coinflip_transaction",
-        "Mentions owner and stake are required inputs"
-      ]
-    },
-    {
-      "id": "mcp-soccer-transaction",
-      "prompt": "Use Suigar MCP to build a 1 SUI Soccer transaction for my wallet using ids selected from live Soccer metadata.",
-      "expected_output": "Routes to build_soccer_transaction and supplies owner, stake, configId from parameters.configs, countryId as the key matching the requested country name in parameters.countries.contents, and shotZoneId from the selected config's shot_zone_ids. It explains that build returns unsigned bytes.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
-      ],
-      "assertions": [
-        "Uses or names build_soccer_transaction",
-        "Passes configId from live parameters.configs",
-        "Resolves the requested country name through live parameters.countries.contents and passes its key as countryId",
-        "Passes shotZoneId from the selected config's live shot_zone_ids",
-        "Passes owner and stake",
-        "Mentions read_game_metadata or live Soccer metadata",
-        "Does not use execute mode unless the user asks to execute"
-      ]
-    },
-    {
-      "id": "mcp-referral-commission-claim",
-      "prompt": "Use Suigar MCP to check the SUI referral commission claimable by wallet.sui and then give me unsigned bytes to claim it. Do not submit anything.",
-      "expected_output": "Uses get_referral_commission with owner: 'wallet.sui' to read the simulated amount, then build_referral_commission_claim_transaction in build mode for unsigned bytes. It explains that coinType is optional and defaults to configured SUI, reads can return 0 when unavailable, and build mode does not sign or submit.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
-      ],
-      "assertions": [
-        "Uses or names get_referral_commission",
-        "Uses or names build_referral_commission_claim_transaction",
-        "Passes owner: 'wallet.sui' or explains a SuiNS owner is accepted",
-        "Explains build returns unsigned transaction bytes",
-        "States build mode does not sign or submit the transaction"
-      ]
-    },
-    {
-      "id": "mcp-nft-v1-mint",
-      "prompt": "Use Suigar MCP to build an NFT V1 mint transaction for wallet.sui with this catalog specId. Do not submit it.",
-      "expected_output": "Uses build_nft_v1_mint_transaction in build mode with owner: 'wallet.sui' and specId, explains that the tool resolves the specification price from the configured NFT factory, and does not use execute mode.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
-      ],
-      "assertions": [
-        "Uses or names build_nft_v1_mint_transaction",
-        "Passes owner: 'wallet.sui' or explains a SuiNS owner is accepted",
-        "Passes specId",
-        "Uses build mode",
-        "States the NFT factory/spec price is resolved by MCP or SDK",
-        "Does not use execute mode"
-      ]
-    },
-    {
-      "id": "mcp-session-wallet-execute",
-      "prompt": "I set up a local Suigar session wallet and funded it. Execute a 1 SUI coinflip on heads from that session wallet.",
-      "expected_output": "Uses build_coinflip_transaction with mode: 'execute' and executionWallet: 'session', passes side: 'heads' and stake: 1, explains owner is optional in session execution and must match the session wallet if provided, and warns that the session wallet signs and submits directly from the local keychain-backed wallet.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
-      ],
-      "assertions": [
-        "Uses or names build_coinflip_transaction",
-        "Uses mode: 'execute'",
-        "Uses executionWallet: 'session'",
-        "Passes side: 'heads'",
-        "Passes stake: 1",
-        "Explains session execution signs and submits with the local session wallet",
-        "Does not require owner unless matching the session wallet"
-      ]
-    }
-  ]
+	"skill_name": "suigar-mcp",
+	"source_constraint": "Expected outputs are grounded in @suigar/mcp behavior as a thin unsigned-transaction layer over @suigar/sdk.",
+	"evals": [
+		{
+			"id": "mcp-install-config",
+			"prompt": "Add the Suigar MCP server to my MCP client config. What JSON should I paste and what do I do after?",
+			"expected_output": "Recommends `npx add-mcp @suigar/mcp@latest --name suigar` for detected coding agents, or provides an mcpServers.suigar config using command npx and args ['-y', '@suigar/mcp@latest'] when explicit manual configuration is needed.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+			],
+			"assertions": [
+				"Uses npx add-mcp @suigar/mcp@latest --name suigar or explicitly scopes the answer to manual MCP configuration",
+				"When showing manual configuration, includes an mcpServers object with key suigar",
+				"When showing manual configuration, uses command: npx and args containing -y and @suigar/mcp@latest",
+				"Tells the user to restart or reload the MCP client after config changes",
+				"Does not claim installation alone signs transactions or creates a session wallet"
+			]
+		},
+		{
+			"id": "mcp-plugin-install",
+			"prompt": "I want to install the published Suigar plugin in Codex from GitHub. How do I add it, and should I edit its .mcp.json myself?",
+			"expected_output": "Uses `codex plugin marketplace add Suigar-Gaming/ts-sdks --ref main`, directs the user to install or enable suigar from the Suigar marketplace source, explains that the repository marketplace resolves packages/mcp/plugin and registers a version-pinned MCP server, and warns not to manually edit generated plugin manifests or .mcp.json.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/ts-sdks/tree/main/packages/mcp/plugin"
+			],
+			"assertions": [
+				"Uses codex plugin marketplace add Suigar-Gaming/ts-sdks --ref main",
+				"Mentions the Suigar marketplace source or enabling suigar",
+				"States that the repository marketplace resolves packages/mcp/plugin",
+				"States that the plugin registers the MCP server",
+				"States that the MCP package version is pinned by the plugin bundle",
+				"Warns not to manually edit the generated plugin manifest or .mcp.json"
+			]
+		},
+		{
+			"id": "mcp-claude-plugin-install",
+			"prompt": "How do I install the published Suigar plugin in Claude Code without cloning the repository first?",
+			"expected_output": "Uses `/plugin marketplace add Suigar-Gaming/ts-sdks@main` followed by `/plugin install suigar@suigar`, explaining that the first command adds the GitHub marketplace and the second installs the marketplace-qualified plugin.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/ts-sdks/tree/main/packages/mcp/plugin"
+			],
+			"assertions": [
+				"Uses /plugin marketplace add Suigar-Gaming/ts-sdks@main",
+				"Uses /plugin install suigar@suigar",
+				"States that the marketplace comes from GitHub",
+				"Does not require cloning the repository or using a local path"
+			]
+		},
+		{
+			"id": "mcp-live-game-metadata",
+			"prompt": "Before offering Plinko configuration choices, how do I read current on-chain game metadata through Suigar MCP?",
+			"expected_output": "Uses read_game_metadata with the required game: 'plinko', explains that it returns live on-chain parameters, and mentions optional coinType plus ignoreCache: true for a fresh read.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+			],
+			"assertions": [
+				"Uses or names read_game_metadata",
+				"Passes game: 'plinko'",
+				"States that game is required",
+				"Mentions live on-chain parameters",
+				"Mentions coinType or ignoreCache",
+				"Does not use read_config as a replacement for the selected game metadata read"
+			]
+		},
+		{
+			"id": "mcp-coin-price-info-override",
+			"prompt": "My testnet USDC uses a replacement price-info object. Where do I pass that override to the Suigar MCP tool?",
+			"expected_output": "Passes config.coins.usdc.priceInfoObjectId with the USDC coin metadata.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+			],
+			"assertions": [
+				"Uses config.coins.usdc.priceInfoObjectId",
+				"Keeps the override in the tool's config input"
+			]
+		},
+		{
+			"id": "mcp-list-nfts",
+			"prompt": "Use Suigar MCP to show the NFT V1 catalog and the NFTs owned by wallet.sui. I only want a read, not a transaction.",
+			"expected_output": "Uses list_nfts with owner: 'wallet.sui', explains that it is read-only and returns both the NFT V1 catalog and matching owned NFTs, and notes that an App-capable host can render separate catalog and ownership views.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+			],
+			"assertions": [
+				"Uses or names list_nfts",
+				"Passes owner: 'wallet.sui' or explains a SuiNS owner is accepted",
+				"States that list_nfts is read-only",
+				"States that the result includes the NFT catalog",
+				"States that the result includes matching owned NFTs",
+				"Does not build or suggest a mint transaction because the user requested only a read"
+			]
+		},
+		{
+			"id": "mcp-readonly-vs-build-dryrun-execute",
+			"prompt": "I want to inspect what a Suigar limbo bet would do before signing anything. Which Suigar MCP mode should I use, and when would I use build, dry-run, or execute instead?",
+			"expected_output": "Recommends read-only for a resolved plan without bytes, build for unsigned base64 bytes, dry-run for Sui simulation, and execute only when the user explicitly wants paired-wallet approval or session-wallet execution.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+			],
+			"assertions": [
+				"Recommends read-only for inspection without bytes",
+				"Explains build returns unsigned base64 transaction bytes",
+				"Explains dry-run simulates the unsigned transaction through Sui APIs",
+				"Explains execute requires paired-wallet approval or a local session wallet",
+				"Mentions limbo uses targetMultiplier"
+			]
+		},
+		{
+			"id": "mcp-pvp-create-creator-side",
+			"prompt": "Use Suigar MCP to build a PvP coinflip create transaction where the creator chooses tails. Is the field side or creatorSide?",
+			"expected_output": "Routes to build_pvp_coinflip_create_transaction and uses creatorSide: 'tails' for MCP, explaining it maps to the SDK side option.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+			],
+			"assertions": [
+				"Uses or names build_pvp_coinflip_create_transaction",
+				"Uses creatorSide: 'tails'",
+				"Explains creatorSide maps to the SDK side option",
+				"Does not route PvP coinflip through build_coinflip_transaction",
+				"Mentions owner and stake are required inputs"
+			]
+		},
+		{
+			"id": "mcp-soccer-transaction",
+			"prompt": "Use Suigar MCP to build a 1 SUI Soccer transaction for my wallet using ids selected from live Soccer metadata.",
+			"expected_output": "Routes to build_soccer_transaction and supplies owner, stake, configId from parameters.configs, countryId as the key matching the requested country name in parameters.countries.contents, and shotZoneId from the selected config's shot_zone_ids. It explains that build returns unsigned bytes.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+			],
+			"assertions": [
+				"Uses or names build_soccer_transaction",
+				"Passes configId from live parameters.configs",
+				"Resolves the requested country name through live parameters.countries.contents and passes its key as countryId",
+				"Passes shotZoneId from the selected config's live shot_zone_ids",
+				"Passes owner and stake",
+				"Mentions read_game_metadata or live Soccer metadata",
+				"Does not use execute mode unless the user asks to execute"
+			]
+		},
+		{
+			"id": "mcp-referral-commission-claim",
+			"prompt": "Use Suigar MCP to check the SUI referral commission claimable by wallet.sui and then give me unsigned bytes to claim it. Do not submit anything.",
+			"expected_output": "Uses get_referral_commission with owner: 'wallet.sui' to read the simulated amount, then build_referral_commission_claim_transaction in build mode for unsigned bytes. It explains that coinType is optional and defaults to configured SUI, reads can return 0 when unavailable, and build mode does not sign or submit.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+			],
+			"assertions": [
+				"Uses or names get_referral_commission",
+				"Uses or names build_referral_commission_claim_transaction",
+				"Passes owner: 'wallet.sui' or explains a SuiNS owner is accepted",
+				"Explains build returns unsigned transaction bytes",
+				"States build mode does not sign or submit the transaction"
+			]
+		},
+		{
+			"id": "mcp-nft-v1-mint",
+			"prompt": "Use Suigar MCP to build an NFT V1 mint transaction for wallet.sui with this catalog specId. Do not submit it.",
+			"expected_output": "Uses build_nft_v1_mint_transaction in build mode with owner: 'wallet.sui' and specId, explains that the tool resolves the specification price from the configured NFT factory, and does not use execute mode.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+			],
+			"assertions": [
+				"Uses or names build_nft_v1_mint_transaction",
+				"Passes owner: 'wallet.sui' or explains a SuiNS owner is accepted",
+				"Passes specId",
+				"Uses build mode",
+				"States the NFT factory/spec price is resolved by MCP or SDK",
+				"Does not use execute mode"
+			]
+		},
+		{
+			"id": "mcp-session-wallet-execute",
+			"prompt": "I set up a local Suigar session wallet and funded it. Execute a 1 SUI coinflip on heads from that session wallet.",
+			"expected_output": "Uses build_coinflip_transaction with mode: 'execute' and executionWallet: 'session', passes side: 'heads' and stake: 1, explains owner is optional in session execution and must match the session wallet if provided, and warns that the session wallet signs and submits directly from the local keychain-backed wallet.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"
+			],
+			"assertions": [
+				"Uses or names build_coinflip_transaction",
+				"Uses mode: 'execute'",
+				"Uses executionWallet: 'session'",
+				"Passes side: 'heads'",
+				"Passes stake: 1",
+				"Explains session execution signs and submits with the local session wallet",
+				"Does not require owner unless matching the session wallet"
+			]
+		}
+	]
 }
