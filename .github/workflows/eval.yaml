@@ -89,7 +89,7 @@ jobs:
           git rm -rf . > /dev/null 2>&1
           mkdir -p scripts
           cp /tmp/eval-results.json scripts/eval-results.json
-          git add scripts/eval-results.json
+          git add -f scripts/eval-results.json
           git commit -m "Update eval results $(date -u +%Y-%m-%d)"
           git push origin eval-results --force
 
