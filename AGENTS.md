@@ -44,7 +44,8 @@ The `description` is the trigger surface. Include the concrete Suigar task there
 - Use `create-standard-games` for standard single-player game transactions: `coinflip`, `limbo`, `plinko`, `range`, `soccer`, and `wheel`.
 - Use `create-pvp-games` for PvP game flows. Read its game-specific specification for the selected game; today it includes `references/pvp-coinflip.md` for create, join, cancel, lobby listing, and object/event parsing. Add another specification when a new PvP game is supported.
 - Use `suigar-nft` for application-side NFT V1 ownership, catalog lookups, and mint transaction building using SDK-resolved package/object ids, BCS helpers, and `client.suigar.tx.nftV1.mint`.
-- Use `suigar-mcp` for installing, configuring, operating, or troubleshooting the `@suigar/mcp` server, bundled MCP App, or its Codex, Claude Code, and Cursor plugin bundle. Keep SDK and MCP guidance separate. MCP skills should describe tool usage, read-only/build/dry-run modes, and unsigned transaction behavior. SDK skills should describe application code that imports `@suigar/sdk`.
+- Use `suigar-mcp` for installing, configuring, operating, or troubleshooting the `@suigar/mcp` server, bundled MCP App, or its Codex, Claude Code, and Cursor plugin bundle.
+- Keep SDK and MCP guidance separate. MCP skills should describe tool usage, read-only/build/dry-run modes, and unsigned transaction behavior. SDK skills should describe application code that imports `@suigar/sdk`.
 
 ### Context Efficiency
 
