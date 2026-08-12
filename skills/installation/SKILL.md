@@ -4,7 +4,7 @@ description: Set up, scaffold, or fix the base @suigar/sdk integration for Suiga
 license: MIT
 metadata:
   author: suigar
-  version: "1.5.0"
+  version: "1.6.0"
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -26,7 +26,7 @@ Use this skill for application code that imports `@suigar/sdk`. If the task is a
 3. Extend the existing Sui client with `suigar()`.
 4. Keep all Suigar transaction creation and serialization on that extended client instance.
 5. Use `client.suigar.getConfig()` for supported coins, package ids, and price info when the UI or diagnostics need resolved config.
-6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct. Route partner attribution or referral claims to [referrals](../referrals/SKILL.md), and NFT V1 catalog or ownership reads to `suigar-nft-lookup`.
+6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct. Route partner attribution or referral claims to [referrals](../referrals/SKILL.md), and NFT V1 catalog, ownership, or mint flows to `suigar-nft`.
 
 ## Public Surface
 
@@ -73,6 +73,10 @@ client.suigar.tx.createGameBet(gameId, options);
 client.suigar.tx.pvpCoinflip.createGame(options);
 client.suigar.tx.pvpCoinflip.joinGame(options);
 client.suigar.tx.pvpCoinflip.cancelGame(options);
+client.suigar.tx.referral.claimCommission(options);
+client.suigar.tx.referral.claimLevelUpUsdRewards(options);
+client.suigar.tx.nftV1.mint(options);
+client.suigar.getPvPCoinflipGames(options);
 client.suigar.serializeTransactionToBase64(tx);
 ```
 
@@ -176,7 +180,7 @@ For PvP coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinf
 - Prefer SDK-resolved supported coin metadata from `client.suigar.getConfig()` for debugging, inspection, or UI coin selectors; simple examples can pass the expected coin type directly.
 - Standard games resolve the price-info object id from the selected coin's `priceInfoObjectId` metadata.
 - `packageIds` contains only Move package addresses. Use `objectIds` for singleton objects such as `sweetHouse` and `nftV1Factory`, and `registryIds` for dynamic-field registries.
-- Use `client.suigar.getConfig().packageIds.nftV1` and `objectIds.nftV1Factory` only for NFT V1 catalog or ownership reads; use `suigar-nft-lookup` for that flow.
+- Use `client.suigar.getConfig().packageIds.nftV1` and `objectIds.nftV1Factory` for NFT V1 catalog, ownership, and mint flows; use `suigar-nft` for that flow.
 - Use `SuigarCoin` and `SuigarNetwork` when app code needs supported coin or network types.
 - For object reads, parse object `content`, not `objectBcs`.
 - Do not hand-decode `BetResultEvent.game_details`; use `parseGameEvent(event)` and `parseGameDetails(gameId, ...)`.
