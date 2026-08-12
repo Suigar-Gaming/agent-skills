@@ -1,5 +1,11 @@
 .DS_Store
 node_modules/
+.pnpm-store/
+.turbo/
+package-lock.json
+dist/
+tmp-generated/
+.vitest-cache/
 .env
 .env.*
 !.env.example
