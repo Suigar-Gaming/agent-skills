@@ -4,7 +4,7 @@ description: Configure Suigar SDK partner attribution and referral rewards in a 
 license: MIT
 metadata:
   author: suigar
-  version: "1.0.0"
+  version: '1.0.0'
   short-description: Configure Suigar referrals
   tags:
     - suigar
@@ -53,7 +53,9 @@ const commissionTx = client.suigar.tx.referral.claimCommission({
 
 const claimableLevelUpRewards =
 	await client.suigar.view.referral.getLevelUpUsdRewards({ owner });
-const levelUpRewardsTx = client.suigar.tx.referral.claimLevelUpUsdRewards({ owner });
+const levelUpRewardsTx = client.suigar.tx.referral.claimLevelUpUsdRewards({
+	owner,
+});
 ```
 
 The view methods simulate their matching claim transaction and return `0n` when a claim is unavailable or cannot be simulated. The builders produce unsigned transactions that transfer the claimed coin to `owner`; submit or serialize them through the application's normal wallet flow.

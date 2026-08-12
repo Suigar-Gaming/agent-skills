@@ -1,36 +1,36 @@
 {
-  "skill_name": "referrals",
-  "source_constraint": "Expected outputs are grounded in the public @suigar/sdk referral extension surface.",
-  "evals": [
-    {
-      "id": "referrals-partner-attribution",
-      "prompt": "Our Suigar app needs partner attribution. Can I just add metadata.partner: 'my-affiliate' to every bet? Show the correct setup.",
-      "expected_output": "Explains partner attribution belongs in suigar({ partner }) at extension registration time, partner must be a wallet address, and metadata.partner/referrer should not be set.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/referrals"
-      ],
-      "assertions": [
-        "States that partner is configured through suigar({ partner: '<wallet-address>' })",
-        "States that partner must be a wallet address, not a slug or label",
-        "Warns not to set metadata.partner",
-        "Warns not to set metadata.referrer",
-        "Shows client extension setup with partner configured once"
-      ]
-    },
-    {
-      "id": "referrals-commission-claim",
-      "prompt": "In my @suigar/sdk app, how do I check a referrer's SUI commission and build an unsigned claim transaction without hand-writing a Move call?",
-      "expected_output": "Uses client.suigar.view.referral.getCommission({ owner, coinType }) for the simulated claimable amount and client.suigar.tx.referral.claimCommission({ owner, coinType }) for the unsigned transaction. It explains that the read returns 0n when it cannot be claimed or simulated and the claim transfers the resulting coin to owner.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/referrals"
-      ],
-      "assertions": [
-        "Uses client.suigar.view.referral.getCommission",
-        "Uses client.suigar.tx.referral.claimCommission",
-        "Passes owner and coinType",
-        "Does not hand-write a referral Move target",
-        "States that the claim transaction is unsigned until the app submits it"
-      ]
-    }
-  ]
+	"skill_name": "referrals",
+	"source_constraint": "Expected outputs are grounded in the public @suigar/sdk referral extension surface.",
+	"evals": [
+		{
+			"id": "referrals-partner-attribution",
+			"prompt": "Our Suigar app needs partner attribution. Can I just add metadata.partner: 'my-affiliate' to every bet? Show the correct setup.",
+			"expected_output": "Explains partner attribution belongs in suigar({ partner }) at extension registration time, partner must be a wallet address, and metadata.partner/referrer should not be set.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/referrals"
+			],
+			"assertions": [
+				"States that partner is configured through suigar({ partner: '<wallet-address>' })",
+				"States that partner must be a wallet address, not a slug or label",
+				"Warns not to set metadata.partner",
+				"Warns not to set metadata.referrer",
+				"Shows client extension setup with partner configured once"
+			]
+		},
+		{
+			"id": "referrals-commission-claim",
+			"prompt": "In my @suigar/sdk app, how do I check a referrer's SUI commission and build an unsigned claim transaction without hand-writing a Move call?",
+			"expected_output": "Uses client.suigar.view.referral.getCommission({ owner, coinType }) for the simulated claimable amount and client.suigar.tx.referral.claimCommission({ owner, coinType }) for the unsigned transaction. It explains that the read returns 0n when it cannot be claimed or simulated and the claim transfers the resulting coin to owner.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/referrals"
+			],
+			"assertions": [
+				"Uses client.suigar.view.referral.getCommission",
+				"Uses client.suigar.tx.referral.claimCommission",
+				"Passes owner and coinType",
+				"Does not hand-write a referral Move target",
+				"States that the claim transaction is unsigned until the app submits it"
+			]
+		}
+	]
 }
