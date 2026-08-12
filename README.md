@@ -154,6 +154,26 @@ Use Suigar MCP to build an unsigned PvP coinflip create transaction for 1 SUI on
 Use Suigar MCP to set up a local session wallet and show its balances
 ```
 
+## Development Checks
+
+Install dependencies with pnpm:
+
+```bash
+pnpm install
+```
+
+Run skill evals with Anthropic:
+
+```bash
+ANTHROPIC_API_KEY=... pnpm run eval
+```
+
+Run evals for one skill:
+
+```bash
+ANTHROPIC_API_KEY=... pnpm run eval -- --skill installation
+```
+
 ## Skill Structure
 
 Each skill contains:

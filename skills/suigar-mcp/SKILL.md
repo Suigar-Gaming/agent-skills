@@ -4,7 +4,7 @@ description: Install, configure, operate, or troubleshoot the @suigar/mcp server
 license: MIT
 metadata:
   author: suigar
-  version: "1.5.0"
+  version: '1.5.0'
   short-description: Operate the Suigar MCP server
   tags:
     - suigar
@@ -33,12 +33,12 @@ Configure MCP clients with the published package:
 
 ```json
 {
-  "mcpServers": {
-    "suigar": {
-      "command": "npx",
-      "args": ["-y", "@suigar/mcp@latest"]
-    }
-  }
+	"mcpServers": {
+		"suigar": {
+			"command": "npx",
+			"args": ["-y", "@suigar/mcp@latest"]
+		}
+	}
 }
 ```
 
@@ -104,7 +104,7 @@ Do not invent tools for unsupported games. Slots are backend-driven and are not 
 Use the lightest mode that answers the request:
 
 | Mode | Use when |
-|---|---|
+| --- | --- |
 | `read-only` | The user needs a resolved plan without transaction bytes. |
 | `build` | The user needs unsigned base64 bytes for a wallet or app to sign. |
 | `dry-run` | The user needs raw and summarized Sui simulation data for the unsigned transaction. |
