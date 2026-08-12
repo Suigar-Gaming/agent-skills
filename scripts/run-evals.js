@@ -11,14 +11,14 @@
  *   pnpm run eval
  *   pnpm run eval:changed
  *   pnpm run eval -- --skill installation
- *   pnpm run eval -- --judge-model 5.5-medium
+ *   pnpm run eval -- --judge-model gpt-5.5
  *   pnpm run eval -- --concurrency 5
  *   pnpm run eval -- --timeout 60000
  *
  * Environment:
  *   OPENAI_API_KEY   required
- *   EVAL_MODEL       model for generating responses (default: 5.5-medium)
- *   JUDGE_MODEL      model for grading responses    (default: 5.5-medium)
+ *   EVAL_MODEL       model for generating responses (default: gpt-5.5)
+ *   JUDGE_MODEL      model for grading responses    (default: gpt-5.4-mini)
  */
 import { writeFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
@@ -43,8 +43,12 @@ const concurrencyFlag = getFlag(args, 'concurrency');
 const timeoutFlag = getFlag(args, 'timeout');
 const changedOnly = hasFlag(args, 'changed-only');
 
-const EVAL_MODEL = evalModelFlag ?? process.env.EVAL_MODEL ?? '5.5-medium';
-const JUDGE_MODEL = judgeModelFlag ?? process.env.JUDGE_MODEL ?? '5.5-medium';
+const DEFAULT_EVAL_MODEL = 'gpt-5.5';
+const DEFAULT_JUDGE_MODEL = 'gpt-5.4-mini';
+const EVAL_MODEL =
+	evalModelFlag ?? process.env.EVAL_MODEL ?? DEFAULT_EVAL_MODEL;
+const JUDGE_MODEL =
+	judgeModelFlag ?? process.env.JUDGE_MODEL ?? DEFAULT_JUDGE_MODEL;
 const MAX_OUTPUT_TOKENS_RESPONSE = 4096;
 const MAX_OUTPUT_TOKENS_JUDGE = 2048;
 const CONCURRENCY = parseInt(concurrencyFlag ?? '3', 10);
