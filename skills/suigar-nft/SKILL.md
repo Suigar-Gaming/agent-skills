@@ -4,7 +4,7 @@ description: Read or mint Suigar NFT V1 objects with @suigar/sdk. Use when readi
 license: MIT
 metadata:
   author: suigar
-  version: "1.2.0"
+  version: '1.2.0'
   short-description: Read and mint Suigar NFT V1 objects
   tags:
     - suigar
