@@ -18,7 +18,7 @@ on:
         required: false
         type: string
   schedule:
-    - cron: '0 6 * * 1'
+    - cron: '0 6 1 * *'
 
 jobs:
   eval:
