@@ -49,21 +49,21 @@ jobs:
         if: github.event_name == 'pull_request'
         shell: bash
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: pnpm run eval:changed
 
       - name: Run evals (scheduled all skills)
         if: github.event_name == 'schedule'
         shell: bash
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: pnpm run eval
 
       - name: Run evals (manual)
         if: github.event_name == 'workflow_dispatch'
         shell: bash
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           if [ -n "${{ inputs.skill }}" ]; then
             pnpm run eval -- --skill "${{ inputs.skill }}"

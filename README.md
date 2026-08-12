@@ -162,16 +162,16 @@ Install dependencies with pnpm:
 pnpm install
 ```
 
-Run skill evals with OpenAI:
+Run skill evals with Anthropic:
 
 ```bash
-OPENAI_API_KEY=... pnpm run eval
+ANTHROPIC_API_KEY=... pnpm run eval
 ```
 
 Run evals for one skill:
 
 ```bash
-OPENAI_API_KEY=... pnpm run eval -- --skill installation
+ANTHROPIC_API_KEY=... pnpm run eval -- --skill installation
 ```
 
 ## Skill Structure

@@ -4,25 +4,25 @@
  * Skill Eval Runner
  *
  * Discovers evals from each skill's evals/evals.json, sends the prompt
- * to OpenAI with the skill's reference files as context, then uses an
+ * to Claude with the skill's reference files as context, then uses an
  * LLM-as-judge call to grade the response against the eval's assertions.
  *
  * Usage:
  *   pnpm run eval
  *   pnpm run eval:changed
  *   pnpm run eval -- --skill installation
- *   pnpm run eval -- --judge-model gpt-5.5
+ *   pnpm run eval -- --judge-model claude-haiku-4-5-20251001
  *   pnpm run eval -- --concurrency 5
  *   pnpm run eval -- --timeout 60000
  *
  * Environment:
- *   OPENAI_API_KEY   required
- *   EVAL_MODEL       model for generating responses (default: gpt-5.5)
- *   JUDGE_MODEL      model for grading responses    (default: gpt-5.4-mini)
+ *   ANTHROPIC_API_KEY   required
+ *   EVAL_MODEL          model for generating responses (default: claude-opus-4-6)
+ *   JUDGE_MODEL         model for grading responses    (default: claude-haiku-4-5-20251001)
  */
 import { writeFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
-import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 import {
 	discoverEvalFiles,
 	getExpectations,
@@ -43,45 +43,35 @@ const concurrencyFlag = getFlag(args, 'concurrency');
 const timeoutFlag = getFlag(args, 'timeout');
 const changedOnly = hasFlag(args, 'changed-only');
 
-const DEFAULT_EVAL_MODEL = 'gpt-5.5';
-const DEFAULT_JUDGE_MODEL = 'gpt-5.4-mini';
+const DEFAULT_EVAL_MODEL = 'claude-opus-4-6';
+const DEFAULT_JUDGE_MODEL = 'claude-haiku-4-5-20251001';
 const EVAL_MODEL =
 	evalModelFlag ?? process.env.EVAL_MODEL ?? DEFAULT_EVAL_MODEL;
 const JUDGE_MODEL =
 	judgeModelFlag ?? process.env.JUDGE_MODEL ?? DEFAULT_JUDGE_MODEL;
-const MAX_OUTPUT_TOKENS_RESPONSE = 4096;
-const MAX_OUTPUT_TOKENS_JUDGE = 2048;
+const MAX_TOKENS_RESPONSE = 4096;
+const MAX_TOKENS_JUDGE = 2048;
 const CONCURRENCY = parseInt(concurrencyFlag ?? '3', 10);
 const EVAL_TIMEOUT = parseInt(timeoutFlag ?? '120000', 10);
 
-const client = new OpenAI();
+const client = new Anthropic();
 
-function outputText(result) {
-	if (typeof result.output_text === 'string') return result.output_text;
-
-	return (result.output ?? [])
-		.flatMap((item) => item.content ?? [])
-		.filter(
-			(content) => content.type === 'output_text' || content.type === 'text',
-		)
-		.map((content) => content.text)
+function contentText(message) {
+	return message.content
+		.filter((block) => block.type === 'text')
+		.map((block) => block.text)
 		.join('\n');
 }
 
 async function generateResponse(skillContext, prompt) {
-	const result = await client.responses.create({
+	const response = await client.messages.create({
 		model: EVAL_MODEL,
-		max_output_tokens: MAX_OUTPUT_TOKENS_RESPONSE,
-		input: [
-			{
-				role: 'system',
-				content: `You are an expert Suigar and Sui blockchain developer assistant. Use the following skill reference to answer the user's question.\n\n${skillContext}`,
-			},
-			{ role: 'user', content: prompt },
-		],
+		max_tokens: MAX_TOKENS_RESPONSE,
+		system: `You are an expert Suigar and Sui blockchain developer assistant. Use the following skill reference to answer the user's question.\n\n${skillContext}`,
+		messages: [{ role: 'user', content: prompt }],
 	});
 
-	return outputText(result);
+	return contentText(response);
 }
 
 async function judgeResponse(prompt, response, expectations, expectedOutput) {
@@ -112,13 +102,13 @@ Return ONLY valid JSON - an array where each entry has:
 
 Do not include any text outside the JSON array.`;
 
-	const result = await client.responses.create({
+	const result = await client.messages.create({
 		model: JUDGE_MODEL,
-		max_output_tokens: MAX_OUTPUT_TOKENS_JUDGE,
-		input: [{ role: 'user', content: judgePrompt }],
+		max_tokens: MAX_TOKENS_JUDGE,
+		messages: [{ role: 'user', content: judgePrompt }],
 	});
 
-	const text = outputText(result);
+	const text = contentText(result);
 	const jsonMatch = text.match(/\[[\s\S]*\]/);
 	if (!jsonMatch) {
 		throw new Error(`Judge did not return valid JSON:\n${text}`);
