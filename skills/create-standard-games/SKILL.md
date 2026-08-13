@@ -4,7 +4,7 @@ description: Build, scaffold, review, or fix standard single-player Suigar game 
 license: MIT
 metadata:
   author: suigar
-  version: '1.3.0'
+  version: '1.4.0'
   short-description: Build standard Suigar game flows
   tags:
     - suigar
@@ -23,7 +23,7 @@ Use this skill for application code that imports `@suigar/sdk` and builds standa
 
 1. Confirm the target game id: `coinflip`, `limbo`, `plinko`, `range`, `soccer`, or `wheel`.
 2. Confirm the client has the `suigar()` extension registered.
-3. Build the transaction with `client.suigar.tx.createGameBet(gameId, options)`.
+3. Build the transaction with `client.suigar.tx.createGameBet({ game, ...options })`.
 4. Let the SDK source bet coins through Mysten `coinWithBalance` transaction arguments.
 5. Serialize only if the wallet or transport layer needs bytes.
 6. Decode emitted results with `client.suigar.bcs.BetResultEvent`, `parseGameEvent`, and `parseGameDetails`.
@@ -33,12 +33,7 @@ Use this skill for application code that imports `@suigar/sdk` and builds standa
 Use game types from `@suigar/sdk/games`:
 
 ```ts
-import {
-	GAMES,
-	type CoinSide,
-	type Game,
-	type StandardGame,
-} from '@suigar/sdk/games';
+import { GAMES, type CoinSide, type Game, type StandardGame } from '@suigar/sdk/games';
 ```
 
 Do not redefine game id unions unless the local app already has a stricter UI type.
@@ -73,7 +68,7 @@ For partner attribution, use [referrals](../referrals/SKILL.md); it is configure
 
 ## Live Game Parameters
 
-Read `client.suigar.getGameParameters(gameId, { coinType })` before presenting or validating live stake limits, RTP, or game inputs. The SDK returns generated Move float fields as JavaScript numbers and caches results for 30 minutes by default; pass `ignoreCache: true` when a fresh on-chain read is needed.
+Read `client.suigar.getGameParameters({ game, coinType })` before presenting or validating live stake limits, RTP, or game inputs. The SDK returns generated Move float fields as JavaScript numbers and caches results for 30 minutes by default; pass `ignoreCache: true` when a fresh on-chain read is needed.
 
 | Game | Transaction input fields | On-chain parameters |
 | --- | --- | --- |
@@ -93,11 +88,12 @@ Read `client.suigar.getGameParameters(gameId, { coinType })` before presenting o
 Use `coinflip` when the player chooses a side explicitly:
 
 ```ts
-const tx = client.suigar.tx.createGameBet('coinflip', {
-	owner,
-	coinType: '0x2::sui::SUI',
-	stake: 1_000_000_000n,
-	side: 'heads',
+const tx = client.suigar.tx.createGameBet({
+  game: 'coinflip',
+  owner,
+  coinType: '0x2::sui::SUI',
+  stake: 1_000_000_000n,
+  side: 'heads',
 });
 ```
 
@@ -108,11 +104,12 @@ Preserve the UI-selected side exactly.
 Use `limbo` when the player bets against a target multiplier:
 
 ```ts
-const tx = client.suigar.tx.createGameBet('limbo', {
-	owner,
-	coinType: '0x2::sui::SUI',
-	stake: 1_000_000_000n,
-	targetMultiplier,
+const tx = client.suigar.tx.createGameBet({
+  game: 'limbo',
+  owner,
+  coinType: '0x2::sui::SUI',
+  stake: 1_000_000_000n,
+  targetMultiplier,
 });
 ```
 
@@ -123,11 +120,12 @@ Keep UI decimal inputs as numbers until the SDK converts them using the configur
 Use `plinko` when the game depends on a predefined board configuration:
 
 ```ts
-const tx = client.suigar.tx.createGameBet('plinko', {
-	owner,
-	coinType: '0x2::sui::SUI',
-	stake: 1_000_000_000n,
-	configId,
+const tx = client.suigar.tx.createGameBet({
+  game: 'plinko',
+  owner,
+  coinType: '0x2::sui::SUI',
+  stake: 1_000_000_000n,
+  configId,
 });
 ```
 
@@ -136,13 +134,14 @@ const tx = client.suigar.tx.createGameBet('plinko', {
 Use `range` when the player chooses a bounded interval and optional in-range or out-of-range behavior:
 
 ```ts
-const tx = client.suigar.tx.createGameBet('range', {
-	owner,
-	coinType: '0x2::sui::SUI',
-	stake: 1_000_000_000n,
-	leftPoint,
-	rightPoint,
-	outOfRange,
+const tx = client.suigar.tx.createGameBet({
+  game: 'range',
+  owner,
+  coinType: '0x2::sui::SUI',
+  stake: 1_000_000_000n,
+  leftPoint,
+  rightPoint,
+  outOfRange,
 });
 ```
 
@@ -153,11 +152,12 @@ Do not pre-scale range points in app code.
 Use `wheel` when the game depends on a predefined wheel configuration:
 
 ```ts
-const tx = client.suigar.tx.createGameBet('wheel', {
-	owner,
-	coinType: '0x2::sui::SUI',
-	stake: 1_000_000_000n,
-	configId,
+const tx = client.suigar.tx.createGameBet({
+  game: 'wheel',
+  owner,
+  coinType: '0x2::sui::SUI',
+  stake: 1_000_000_000n,
+  configId,
 });
 ```
 
@@ -166,32 +166,27 @@ const tx = client.suigar.tx.createGameBet('wheel', {
 Use `soccer` with the selected on-chain configuration, country, and shot-zone identifiers:
 
 ```ts
-const tx = client.suigar.tx.createGameBet('soccer', {
-	owner,
-	coinType: '0x2::sui::SUI',
-	stake: 1_000_000_000n,
-	configId,
-	countryId,
-	shotZoneId,
+const tx = client.suigar.tx.createGameBet({
+  game: 'soccer',
+  owner,
+  coinType: '0x2::sui::SUI',
+  stake: 1_000_000_000n,
+  configId,
+  countryId,
+  shotZoneId,
 });
 ```
 
 ## Event Decoding
 
 ```ts
-import {
-	fromMoveFloat,
-	parseGameDetails,
-	parseGameEvent,
-} from '@suigar/sdk/utils';
+import { fromMoveFloat, parseGameDetails, parseGameEvent } from '@suigar/sdk/utils';
 
 const parsed = parseGameEvent(event);
 if (parsed?.eventName === 'BetResultEvent') {
-	const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
-	const gameDetails = parseGameDetails(parsed.gameId, decoded.game_details);
-	const adjustedOraclePrice = fromMoveFloat(
-		decoded.adjusted_oracle_usd_coin_price,
-	);
+  const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
+  const gameDetails = parseGameDetails(parsed.gameId, decoded.game_details);
+  const adjustedOraclePrice = fromMoveFloat(decoded.adjusted_oracle_usd_coin_price);
 }
 ```
 

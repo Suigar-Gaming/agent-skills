@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "unicorn", "oxc", "import", "node", "promise"],
+  "rules": {
+    "import/extensions": [
+      "error",
+      "always",
+      {
+        "ignorePackages": true
+      }
+    ],
+    "no-unused-vars": [
+      "error",
+      {
+        "reportUsedIgnorePattern": true,
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ]
+  }
+}

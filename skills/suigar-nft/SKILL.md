@@ -4,7 +4,7 @@ description: Read or mint Suigar NFT V1 objects with @suigar/sdk. Use when readi
 license: MIT
 metadata:
   author: suigar
-  version: '1.2.0'
+  version: '1.3.0'
   short-description: Read and mint Suigar NFT V1 objects
   tags:
     - suigar
@@ -36,8 +36,8 @@ The catalog object is named `NftV1Factory`. Its resolved object id is `objectIds
 ```ts
 const { nftV1Factory } = client.suigar.getConfig().objectIds;
 const { object } = await client.core.getObject({
-	objectId: nftV1Factory,
-	include: { content: true },
+  objectId: nftV1Factory,
+  include: { content: true },
 });
 
 if (object instanceof Error) throw object;
@@ -45,11 +45,11 @@ if (!object.content) throw new Error('NFT factory did not return content.');
 
 const factory = client.suigar.bcs.NftV1Factory.parse(object.content);
 const specs = factory.specs.contents.map(({ value }) => ({
-	id: value.id,
-	name: value.name,
-	description: value.description,
-	imageUrl: value.url.url,
-	price: value.price,
+  id: value.id,
+  name: value.name,
+  description: value.description,
+  imageUrl: value.url.url,
+  price: value.price,
 }));
 ```
 
@@ -62,14 +62,12 @@ const { nftV1 } = client.suigar.getConfig().packageIds;
 const nftType = client.suigar.bcs.NftV1.typeTag({ package: nftV1 });
 
 const page = await client.core.listOwnedObjects({
-	owner,
-	type: nftType,
-	include: { content: true },
+  owner,
+  type: nftType,
+  include: { content: true },
 });
 
-const nfts = page.objects.map((object) =>
-	client.suigar.bcs.NftV1.parse(object.content),
-);
+const nfts = page.objects.map((object) => client.suigar.bcs.NftV1.parse(object.content));
 ```
 
 Use the returned objects as the ownership source of truth. Follow `page.cursor` until it is empty when the product needs the full collection. Parse `content` with `NftV1`; do not rely on `objectBcs` for object reads.
@@ -80,8 +78,8 @@ Build NFT V1 mints with the configured SDK transaction builder. It mints directl
 
 ```ts
 const tx = client.suigar.tx.nftV1.mint({
-	owner,
-	specId,
+  owner,
+  specId,
 });
 ```
 

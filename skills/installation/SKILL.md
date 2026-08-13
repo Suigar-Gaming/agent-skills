@@ -4,7 +4,7 @@ description: Set up, scaffold, or fix the base @suigar/sdk integration for Suiga
 license: MIT
 metadata:
   author: suigar
-  version: '1.6.0'
+  version: '1.7.0'
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -43,12 +43,12 @@ import { suigar } from '@suigar/sdk';
 import type { SuigarCoin, SuigarNetwork } from '@suigar/sdk';
 import { GAMES, type PvPGame, type StandardGame } from '@suigar/sdk/games';
 import {
-	fromMoveFloat,
-	fromMoveI64,
-	isMoveFloat,
-	isMoveI64,
-	parseGameDetails,
-	parseGameEvent,
+  fromMoveFloat,
+  fromMoveI64,
+  isMoveFloat,
+  isMoveI64,
+  parseGameDetails,
+  parseGameEvent,
 } from '@suigar/sdk/utils';
 ```
 
@@ -69,7 +69,7 @@ Utility behavior worth preserving:
 Do not import individual runtime game builders from `@suigar/sdk`. Use the registered extension:
 
 ```ts
-client.suigar.tx.createGameBet(gameId, options);
+client.suigar.tx.createGameBet({ game, ...options });
 client.suigar.tx.pvpCoinflip.createGame(options);
 client.suigar.tx.pvpCoinflip.joinGame(options);
 client.suigar.tx.pvpCoinflip.cancelGame(options);
@@ -77,7 +77,7 @@ client.suigar.tx.referral.claimCommission(options);
 client.suigar.tx.referral.claimLevelUpUsdRewards(options);
 client.suigar.tx.nftV1.mint(options);
 client.suigar.getPvPCoinflipGames(options);
-client.suigar.serializeTransactionToBase64(tx);
+client.suigar.serializeTransactionToBase64({ transaction: tx });
 ```
 
 ## Client Setup
@@ -89,8 +89,8 @@ import { SuiGrpcClient } from '@mysten/sui/grpc';
 import { suigar } from '@suigar/sdk';
 
 const client = new SuiGrpcClient({
-	baseUrl: 'https://fullnode.testnet.sui.io:443',
-	network: 'testnet',
+  baseUrl: 'https://fullnode.testnet.sui.io:443',
+  network: 'testnet',
 }).$extend(suigar());
 ```
 
@@ -99,9 +99,7 @@ For partner attribution, use the [referrals](../referrals/SKILL.md) skill.
 If the app uses a custom extension name, preserve it consistently:
 
 ```ts
-const client = new SuiGrpcClient({ baseUrl, network }).$extend(
-	suigar({ name: 'suigarGames' }),
-);
+const client = new SuiGrpcClient({ baseUrl, network }).$extend(suigar({ name: 'suigarGames' }));
 
 client.suigarGames;
 ```
@@ -110,19 +108,19 @@ If the published defaults lag a deployment, patch config through `suigar({ confi
 
 ```ts
 const client = new SuiGrpcClient({ baseUrl, network }).$extend(
-	suigar({
-		config: {
-			packageIds: { coinflip: '0x...' },
-			objectIds: { sweetHouse: '0x...' },
-			coins: {
-				sui: {
-					coinType: '0x2::sui::SUI',
-					decimals: 9,
-					priceInfoObjectId: '0x...',
-				},
-			},
-		},
-	}),
+  suigar({
+    config: {
+      packageIds: { coinflip: '0x...' },
+      objectIds: { sweetHouse: '0x...' },
+      coins: {
+        sui: {
+          coinType: '0x2::sui::SUI',
+          decimals: 9,
+          priceInfoObjectId: '0x...',
+        },
+      },
+    },
+  }),
 );
 ```
 
@@ -131,19 +129,22 @@ const client = new SuiGrpcClient({ baseUrl, network }).$extend(
 Serialize only when a wallet, backend, or transport path needs unsigned bytes:
 
 ```ts
-const tx = client.suigar.tx.createGameBet('coinflip', {
-	owner,
-	coinType: '0x2::sui::SUI',
-	stake: 1_000_000_000n,
-	side: 'heads',
+const tx = client.suigar.tx.createGameBet({
+  game: 'coinflip',
+  owner,
+  coinType: '0x2::sui::SUI',
+  stake: 1_000_000_000n,
+  side: 'heads',
 });
 
-const base64 = await client.suigar.serializeTransactionToBase64(tx);
+const base64 = await client.suigar.serializeTransactionToBase64({
+  transaction: tx,
+});
 ```
 
 ## Parameters and Events
 
-Use `client.suigar.getGameParameters(game, { coinType, ...options })` when an app needs live on-chain game bounds or RTP parameters. `coinType` is required because parameters are stored per game and coin type. The SDK already converts generated Move float fields to JavaScript numbers.
+Use `client.suigar.getGameParameters({ game, coinType, ...options })` when an app needs live on-chain game bounds or RTP parameters. `coinType` is required because parameters are stored per game and coin type. The SDK already converts generated Move float fields to JavaScript numbers.
 
 The SDK caches parsed parameters for `cacheTtl`, which defaults to 30 minutes. Pass `ignoreCache: true` to force an on-chain refresh when stale parameters would be risky.
 
@@ -151,11 +152,11 @@ For raw generated BCS data outside `getGameParameters()`, guard unknown values b
 
 ```ts
 if (isMoveFloat(value)) {
-	const number = fromMoveFloat(value);
+  const number = fromMoveFloat(value);
 }
 
 if (isMoveI64(value)) {
-	const number = fromMoveI64(value);
+  const number = fromMoveI64(value);
 }
 ```
 
@@ -164,9 +165,9 @@ Use generated BCS helpers and SDK parsers for events:
 ```ts
 const parsed = parseGameEvent(event);
 if (parsed?.eventName === 'BetResultEvent') {
-	const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
-	const details = parseGameDetails(parsed.gameId, decoded.game_details);
-	const price = fromMoveFloat(decoded.adjusted_oracle_usd_coin_price);
+  const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
+  const details = parseGameDetails(parsed.gameId, decoded.game_details);
+  const price = fromMoveFloat(decoded.adjusted_oracle_usd_coin_price);
 }
 ```
 

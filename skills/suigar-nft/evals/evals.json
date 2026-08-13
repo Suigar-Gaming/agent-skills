@@ -1,56 +1,50 @@
 {
-	"skill_name": "suigar-nft",
-	"source_constraint": "Expected outputs are grounded in the public @suigar/sdk NFT V1 config, BCS surface, owned-object read API, and mint transaction builder.",
-	"evals": [
-		{
-			"id": "nft-v1-owned-object-lookup",
-			"prompt": "List the Suigar NFT V1 objects owned by this connected wallet in my @suigar/sdk app. I need a network-safe implementation without copied package ids.",
-			"expected_output": "Reads nftV1 from client.suigar.getConfig().packageIds, derives the type with client.suigar.bcs.NftV1.typeTag({ package: nftV1 }), calls client.core.listOwnedObjects with the owner, type, and include: { content: true }, then decodes objects with client.suigar.bcs.NftV1.",
-			"sources": [
-				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-nft"
-			],
-			"assertions": [
-				"Reads client.suigar.getConfig().packageIds.nftV1",
-				"Uses client.suigar.bcs.NftV1.typeTag",
-				"Uses client.core.listOwnedObjects",
-				"Passes the owner",
-				"Passes type: nftType",
-				"Requests include: { content: true }",
-				"Uses client.suigar.bcs.NftV1.parse",
-				"Does not hard-code a mainnet or testnet package id"
-			]
-		},
-		{
-			"id": "nft-v1-catalog-lookup",
-			"prompt": "Read the Suigar NFT V1 catalog in my @suigar/sdk app. What is the factory name and the correct network-safe decode path?",
-			"expected_output": "Reads nftV1Factory from client.suigar.getConfig().objectIds, fetches it with client.core.getObject and include: { content: true }, then decodes object.content with client.suigar.bcs.NftV1Factory.parse. It identifies the factory as NftV1Factory.",
-			"sources": [
-				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-nft"
-			],
-			"assertions": [
-				"Reads client.suigar.getConfig().objectIds.nftV1Factory",
-				"Uses client.core.getObject",
-				"Requests include: { content: true }",
-				"Uses client.suigar.bcs.NftV1Factory.parse",
-				"Identifies the factory as NftV1Factory",
-				"Does not hard-code a factory object id"
-			]
-		},
-		{
-			"id": "nft-v1-mint-builder",
-			"prompt": "Can @suigar/sdk mint an NFT V1 after I select a spec from the catalog?",
-			"expected_output": "Uses client.suigar.tx.nftV1.mint({ owner, specId }) after selecting a spec from the decoded NftV1Factory catalog. It explains that the SDK resolves the configured factory, NFT package, SweetHouse object, and spec price, and warns not to hand-write the Move target or hard-code package ids.",
-			"sources": [
-				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-nft"
-			],
-			"assertions": [
-				"Uses client.suigar.tx.nftV1.mint",
-				"Passes owner",
-				"Passes specId",
-				"States that specId should come from the decoded catalog",
-				"Does not hand-write a Move target",
-				"Does not hard-code a package id"
-			]
-		}
-	]
+  "skill_name": "suigar-nft",
+  "source_constraint": "Expected outputs are grounded in the public @suigar/sdk NFT V1 config, BCS surface, owned-object read API, and mint transaction builder.",
+  "evals": [
+    {
+      "id": "nft-v1-owned-object-lookup",
+      "prompt": "List the Suigar NFT V1 objects owned by this connected wallet in my @suigar/sdk app. I need a network-safe implementation without copied package ids.",
+      "expected_output": "Reads nftV1 from client.suigar.getConfig().packageIds, derives the type with client.suigar.bcs.NftV1.typeTag({ package: nftV1 }), calls client.core.listOwnedObjects with the owner, type, and include: { content: true }, then decodes objects with client.suigar.bcs.NftV1.",
+      "sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-nft"],
+      "assertions": [
+        "Reads client.suigar.getConfig().packageIds.nftV1",
+        "Uses client.suigar.bcs.NftV1.typeTag",
+        "Uses client.core.listOwnedObjects",
+        "Passes the owner",
+        "Passes type: nftType",
+        "Requests include: { content: true }",
+        "Uses client.suigar.bcs.NftV1.parse",
+        "Does not hard-code a mainnet or testnet package id"
+      ]
+    },
+    {
+      "id": "nft-v1-catalog-lookup",
+      "prompt": "Read the Suigar NFT V1 catalog in my @suigar/sdk app. What is the factory name and the correct network-safe decode path?",
+      "expected_output": "Reads nftV1Factory from client.suigar.getConfig().objectIds, fetches it with client.core.getObject and include: { content: true }, then decodes object.content with client.suigar.bcs.NftV1Factory.parse. It identifies the factory as NftV1Factory.",
+      "sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-nft"],
+      "assertions": [
+        "Reads client.suigar.getConfig().objectIds.nftV1Factory",
+        "Uses client.core.getObject",
+        "Requests include: { content: true }",
+        "Uses client.suigar.bcs.NftV1Factory.parse",
+        "Identifies the factory as NftV1Factory",
+        "Does not hard-code a factory object id"
+      ]
+    },
+    {
+      "id": "nft-v1-mint-builder",
+      "prompt": "Can @suigar/sdk mint an NFT V1 after I select a spec from the catalog?",
+      "expected_output": "Uses client.suigar.tx.nftV1.mint({ owner, specId }) after selecting a spec from the decoded NftV1Factory catalog. It explains that the SDK resolves the configured factory, NFT package, SweetHouse object, and spec price, and warns not to hand-write the Move target or hard-code package ids.",
+      "sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-nft"],
+      "assertions": [
+        "Uses client.suigar.tx.nftV1.mint",
+        "Passes owner",
+        "Passes specId",
+        "States that specId should come from the decoded catalog",
+        "Does not hand-write a Move target",
+        "Does not hard-code a package id"
+      ]
+    }
+  ]
 }

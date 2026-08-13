@@ -4,7 +4,7 @@ description: Install, configure, operate, or troubleshoot the @suigar/mcp server
 license: MIT
 metadata:
   author: suigar
-  version: '1.5.0'
+  version: '1.6.0'
   short-description: Operate the Suigar MCP server
   tags:
     - suigar
@@ -24,7 +24,7 @@ The MCP server is a thin layer over `@suigar/sdk`. It reads Suigar config, game 
 For the fastest direct installation across detected coding agents, use the package's `add-mcp` command:
 
 ```bash
-npx add-mcp @suigar/mcp@latest --name suigar
+npx add-mcp @suigar/mcp --name suigar
 ```
 
 Use manual stdio configuration only when the user needs to configure one MCP client explicitly or their environment does not support `add-mcp`:
@@ -33,12 +33,12 @@ Configure MCP clients with the published package:
 
 ```json
 {
-	"mcpServers": {
-		"suigar": {
-			"command": "npx",
-			"args": ["-y", "@suigar/mcp@latest"]
-		}
-	}
+  "mcpServers": {
+    "suigar": {
+      "command": "npx",
+      "args": ["-y", "@suigar/mcp"]
+    }
+  }
 }
 ```
 

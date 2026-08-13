@@ -1,32 +1,40 @@
 {
   "name": "@suigar/agent-skills",
   "private": true,
+  "license": "MIT",
   "type": "module",
-  "packageManager": "pnpm@11.21.0+sha512.521705bce689924eac72f5a3587122f362689ef6571e55ba80076fd637c11132ecffada26fad4ea79c485bfddbfd3d5a2a5b05805a77e893de71ec8a6cca3bb1",
+  "scripts": {
+    "eval": "node scripts/run-evals.js",
+    "eval:changed": "node scripts/run-evals.js --changed-only",
+    "prepare": "husky",
+    "oxlint": "oxlint .",
+    "oxlint:fix": "oxlint . --fix",
+    "oxfmt": "oxfmt . --check",
+    "oxfmt:fix": "oxfmt .",
+    "lint": "pnpm run oxlint && pnpm run oxfmt",
+    "lint:fix": "pnpm run oxlint:fix && pnpm run oxfmt:fix"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.116.0",
+    "glob": "^13.0.6"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.3.0",
+    "oxfmt": "^0.63.0",
+    "oxlint": "^1.78.0"
+  },
   "devEngines": {
-    "runtime": {
-      "name": "node",
-      "version": "^24.19.0 || ^26.5.0",
-      "onFail": "warn"
-    },
     "packageManager": {
       "name": "pnpm",
       "version": "11.21.0+sha512.521705bce689924eac72f5a3587122f362689ef6571e55ba80076fd637c11132ecffada26fad4ea79c485bfddbfd3d5a2a5b05805a77e893de71ec8a6cca3bb1",
       "onFail": "warn"
+    },
+    "runtime": {
+      "name": "node",
+      "version": "^24.19.0 || ^26.5.0",
+      "onFail": "warn"
     }
   },
-  "scripts": {
-    "eval": "node scripts/run-evals.js",
-    "eval:changed": "node scripts/run-evals.js --changed-only",
-    "prettier": "prettier --check --ignore-unknown .",
-    "prettier:fix": "prettier --write --ignore-unknown ."
-  },
-	"dependencies": {
-		"@anthropic-ai/sdk": "^0.116.0",
-		"glob": "^13.0.6"
-	},
-  "devDependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
-    "prettier": "^3.9.6"
-  }
+  "packageManager": "pnpm@11.21.0+sha512.521705bce689924eac72f5a3587122f362689ef6571e55ba80076fd637c11132ecffada26fad4ea79c485bfddbfd3d5a2a5b05805a77e893de71ec8a6cca3bb1"
 }

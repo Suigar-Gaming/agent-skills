@@ -16,7 +16,7 @@ Use this specification for application code that imports `@suigar/sdk` and build
 
 ## Live Parameters
 
-Read `client.suigar.getGameParameters('pvp-coinflip', { coinType })` before presenting or validating current PvP stake limits or game settings. Results are cached for 30 minutes by default; use `ignoreCache: true` when the lobby requires a fresh on-chain read.
+Read `client.suigar.getGameParameters({ game: 'pvp-coinflip', coinType })` before presenting or validating current PvP stake limits or game settings. Results are cached for 30 minutes by default; use `ignoreCache: true` when the lobby requires a fresh on-chain read.
 
 ## Public Surface
 
@@ -42,11 +42,11 @@ Optional: `isPrivate`, `metadata`, `gasBudget`, `useGasCoin`.
 
 ```ts
 const tx = client.suigar.tx.pvpCoinflip.createGame({
-	owner,
-	coinType: '0x2::sui::SUI',
-	stake: 1_000_000_000n,
-	side: 'tails',
-	isPrivate: true,
+  owner,
+  coinType: '0x2::sui::SUI',
+  stake: 1_000_000_000n,
+  side: 'tails',
+  isPrivate: true,
 });
 ```
 
@@ -62,9 +62,9 @@ Optional: `metadata`, `gasBudget`, `useGasCoin`.
 
 ```ts
 const tx = client.suigar.tx.pvpCoinflip.joinGame({
-	owner,
-	coinType: '0x2::sui::SUI',
-	gameId: '0xGAME',
+  owner,
+  coinType: '0x2::sui::SUI',
+  gameId: '0xGAME',
 });
 ```
 
@@ -80,9 +80,9 @@ Optional: `metadata`, `gasBudget`, `useGasCoin`.
 
 ```ts
 const tx = client.suigar.tx.pvpCoinflip.cancelGame({
-	owner,
-	coinType: '0x2::sui::SUI',
-	gameId: '0xGAME',
+  owner,
+  coinType: '0x2::sui::SUI',
+  gameId: '0xGAME',
 });
 ```
 
@@ -104,8 +104,8 @@ const games = await client.suigar.getPvPCoinflipGames({ limit: 20 });
 
 ```ts
 const game = await client.suigar.bcs.PvPCoinflipGame.get({
-	client,
-	objectId: '0xGAME',
+  client,
+  objectId: '0xGAME',
 });
 ```
 

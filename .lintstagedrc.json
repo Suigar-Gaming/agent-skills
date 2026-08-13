@@ -1,0 +1,6 @@
+{
+  "*.{json,md,yml,yaml}": "oxfmt",
+  ".github/**/*.{yml,yaml}": "oxfmt",
+  "scripts/**/*.{js,mjs,cjs}": ["oxlint --fix", "oxfmt"],
+  "skills/**/*.{md,json,yml,yaml}": "oxfmt"
+}
