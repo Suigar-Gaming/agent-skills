@@ -13,142 +13,142 @@ export const SKILLS_ROOT = join(ROOT, 'skills');
 
 const envPath = join(ROOT, '.env');
 if (existsSync(envPath)) {
-  for (const line of readFileSync(envPath, 'utf-8').split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-    const eq = trimmed.indexOf('=');
-    if (eq === -1) continue;
-    const key = trimmed.slice(0, eq).trim();
-    const val = trimmed
-      .slice(eq + 1)
-      .trim()
-      .replace(/^["']|["']$/g, '');
-    if (!process.env[key]) process.env[key] = val;
-  }
+	for (const line of readFileSync(envPath, 'utf-8').split('\n')) {
+		const trimmed = line.trim();
+		if (!trimmed || trimmed.startsWith('#')) continue;
+		const eq = trimmed.indexOf('=');
+		if (eq === -1) continue;
+		const key = trimmed.slice(0, eq).trim();
+		const val = trimmed
+			.slice(eq + 1)
+			.trim()
+			.replace(/^["']|["']$/g, '');
+		if (!process.env[key]) process.env[key] = val;
+	}
 }
 
 export function getFlag(args, name) {
-  const prefixed = args.find((a) => a.startsWith(`--${name}=`))?.split('=')[1];
-  if (prefixed) return prefixed;
-  const idx = args.indexOf(`--${name}`);
-  return idx !== -1 ? args[idx + 1] : null;
+	const prefixed = args.find((a) => a.startsWith(`--${name}=`))?.split('=')[1];
+	if (prefixed) return prefixed;
+	const idx = args.indexOf(`--${name}`);
+	return idx !== -1 ? args[idx + 1] : null;
 }
 
 export function hasFlag(args, name) {
-  return args.includes(`--${name}`);
+	return args.includes(`--${name}`);
 }
 
 export class Semaphore {
-  constructor(max) {
-    this._max = max;
-    this._active = 0;
-    this._queue = [];
-  }
+	constructor(max) {
+		this._max = max;
+		this._active = 0;
+		this._queue = [];
+	}
 
-  async acquire() {
-    if (this._active < this._max) {
-      this._active++;
-      return;
-    }
-    await new Promise((resolvePromise) => this._queue.push(resolvePromise));
-  }
+	async acquire() {
+		if (this._active < this._max) {
+			this._active++;
+			return;
+		}
+		await new Promise((resolvePromise) => this._queue.push(resolvePromise));
+	}
 
-  release() {
-    this._active--;
-    if (this._queue.length > 0) {
-      this._active++;
-      this._queue.shift()();
-    }
-  }
+	release() {
+		this._active--;
+		if (this._queue.length > 0) {
+			this._active++;
+			this._queue.shift()();
+		}
+	}
 }
 
 export function withTimeout(promise, ms, label) {
-  return Promise.race([
-    promise,
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error(`Eval timed out after ${ms}ms: ${label}`)), ms),
-    ),
-  ]);
+	return Promise.race([
+		promise,
+		new Promise((_, reject) =>
+			setTimeout(() => reject(new Error(`Eval timed out after ${ms}ms: ${label}`)), ms),
+		),
+	]);
 }
 
 function skillNameFromPath(filePath) {
-  const rel = relative(SKILLS_ROOT, filePath);
-  return rel.split('/')[0];
+	const rel = relative(SKILLS_ROOT, filePath);
+	return rel.split('/')[0];
 }
 
 export function discoverEvalFiles(filename = 'evals.json', { skillFilter, changedOnly } = {}) {
-  const pattern = join(SKILLS_ROOT, `*/evals/${filename}`);
-  let files = glob.sync(pattern, { ignore: ['**/node_modules/**'] });
+	const pattern = join(SKILLS_ROOT, `*/evals/${filename}`);
+	let files = glob.sync(pattern, { ignore: ['**/node_modules/**'] });
 
-  if (skillFilter) {
-    files = files.filter((f) => skillNameFromPath(f) === skillFilter);
-    if (files.length === 0) {
-      console.error(`No evals found for skill: ${skillFilter}`);
-      process.exit(1);
-    }
-  }
+	if (skillFilter) {
+		files = files.filter((f) => skillNameFromPath(f) === skillFilter);
+		if (files.length === 0) {
+			console.error(`No evals found for skill: ${skillFilter}`);
+			process.exit(1);
+		}
+	}
 
-  if (changedOnly) {
-    try {
-      const diff = execSync('git diff --name-only origin/main...HEAD', {
-        cwd: ROOT,
-        encoding: 'utf-8',
-      });
-      const changedSkills = new Set(
-        diff
-          .split('\n')
-          .filter((f) => f.startsWith('skills/'))
-          .map((f) => f.split('/')[1])
-          .filter(Boolean),
-      );
-      files = files.filter((f) => changedSkills.has(skillNameFromPath(f)));
-    } catch {
-      console.warn('Could not determine changed files, running all evals');
-    }
-  }
+	if (changedOnly) {
+		try {
+			const diff = execSync('git diff --name-only origin/main...HEAD', {
+				cwd: ROOT,
+				encoding: 'utf-8',
+			});
+			const changedSkills = new Set(
+				diff
+					.split('\n')
+					.filter((f) => f.startsWith('skills/'))
+					.map((f) => f.split('/')[1])
+					.filter(Boolean),
+			);
+			files = files.filter((f) => changedSkills.has(skillNameFromPath(f)));
+		} catch {
+			console.warn('Could not determine changed files, running all evals');
+		}
+	}
 
-  return files;
+	return files;
 }
 
 export function loadSkillContext(evalFilePath) {
-  const skillDir = resolve(dirname(evalFilePath), '..');
-  const skillName = basename(skillDir);
-  const mdFiles = glob.sync(join(skillDir, '**/*.md'), {
-    ignore: ['**/node_modules/**', '**/evals/**'],
-  });
+	const skillDir = resolve(dirname(evalFilePath), '..');
+	const skillName = basename(skillDir);
+	const mdFiles = glob.sync(join(skillDir, '**/*.md'), {
+		ignore: ['**/node_modules/**', '**/evals/**'],
+	});
 
-  const parts = [];
-  const skillMd = mdFiles.find((f) => basename(f) === 'SKILL.md');
-  if (skillMd) {
-    parts.push(`# ${skillName} - SKILL.md\n\n${readFileSync(skillMd, 'utf-8')}`);
-  }
+	const parts = [];
+	const skillMd = mdFiles.find((f) => basename(f) === 'SKILL.md');
+	if (skillMd) {
+		parts.push(`# ${skillName} - SKILL.md\n\n${readFileSync(skillMd, 'utf-8')}`);
+	}
 
-  for (const f of mdFiles.sort()) {
-    if (basename(f) === 'SKILL.md') continue;
-    const rel = relative(skillDir, f);
-    parts.push(`# ${skillName} - ${rel}\n\n${readFileSync(f, 'utf-8')}`);
-  }
+	for (const f of mdFiles.sort()) {
+		if (basename(f) === 'SKILL.md') continue;
+		const rel = relative(skillDir, f);
+		parts.push(`# ${skillName} - ${rel}\n\n${readFileSync(f, 'utf-8')}`);
+	}
 
-  return parts.join('\n\n---\n\n');
+	return parts.join('\n\n---\n\n');
 }
 
 export function parseEvals(filePath) {
-  const raw = JSON.parse(readFileSync(filePath, 'utf-8'));
-  if (Array.isArray(raw)) return raw;
-  if (raw.evals && Array.isArray(raw.evals)) return raw.evals;
-  throw new Error(`Unexpected eval format in ${filePath}`);
+	const raw = JSON.parse(readFileSync(filePath, 'utf-8'));
+	if (Array.isArray(raw)) return raw;
+	if (raw.evals && Array.isArray(raw.evals)) return raw.evals;
+	throw new Error(`Unexpected eval format in ${filePath}`);
 }
 
 export function getExpectations(ev) {
-  const expectations = ev.expectations ?? ev.assertions;
-  if (!Array.isArray(expectations) || expectations.length === 0) {
-    throw new Error(`Eval ${ev.id ?? '<unknown>'} must define expectations or assertions`);
-  }
-  return expectations;
+	const expectations = ev.expectations ?? ev.assertions;
+	if (!Array.isArray(expectations) || expectations.length === 0) {
+		throw new Error(`Eval ${ev.id ?? '<unknown>'} must define expectations or assertions`);
+	}
+	return expectations;
 }
 
 export function writeGitHubSummary(content) {
-  if (process.env.GITHUB_STEP_SUMMARY) {
-    writeFileSync(process.env.GITHUB_STEP_SUMMARY, content, { flag: 'a' });
-  }
+	if (process.env.GITHUB_STEP_SUMMARY) {
+		writeFileSync(process.env.GITHUB_STEP_SUMMARY, content, { flag: 'a' });
+	}
 }

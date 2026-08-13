@@ -1,5 +1,8 @@
 {
-  "singleQuote": true,
-  "proseWrap": "never",
-  "sortImports": true
+	"useTabs": true,
+	"singleQuote": true,
+	"trailingComma": "all",
+	"semi": true,
+	"proseWrap": "never",
+	"sortPackageJson": true
 }

@@ -28,7 +28,7 @@ import { SuiGrpcClient } from '@mysten/sui/grpc';
 import { suigar } from '@suigar/sdk';
 
 const client = new SuiGrpcClient({ baseUrl, network }).$extend(
-  suigar({ partner: '0xpartner_wallet_address' }),
+	suigar({ partner: '0xpartner_wallet_address' }),
 );
 ```
 
@@ -42,18 +42,18 @@ Read the claimable amount before displaying a reward or asking the wallet to cla
 
 ```ts
 const claimableCommission = await client.suigar.view.referral.getCommission({
-  owner,
-  coinType: '0x2::sui::SUI',
+	owner,
+	coinType: '0x2::sui::SUI',
 });
 
 const commissionTx = client.suigar.tx.referral.claimCommission({
-  owner,
-  coinType: '0x2::sui::SUI',
+	owner,
+	coinType: '0x2::sui::SUI',
 });
 
 const claimableLevelUpRewards = await client.suigar.view.referral.getLevelUpUsdRewards({ owner });
 const levelUpRewardsTx = client.suigar.tx.referral.claimLevelUpUsdRewards({
-  owner,
+	owner,
 });
 ```
 

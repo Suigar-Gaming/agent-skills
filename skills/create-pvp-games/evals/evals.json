@@ -1,68 +1,68 @@
 {
-  "skill_name": "create-pvp-games",
-  "source_constraint": "Expected outputs are grounded in @suigar/sdk PvP coinflip builders, registry lookup behavior, and public BCS helpers.",
-  "evals": [
-    {
-      "id": "pvp-create-private-match",
-      "prompt": "Create a private PvP coinflip match with @suigar/sdk. The creator chooses heads and stakes 2 SUI. Show the transaction code.",
-      "expected_output": "Uses client.suigar.tx.pvpCoinflip.createGame(...), preserves side: 'heads', includes isPrivate: true, owner, coinType, and stake, and does not use createGameBet.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
-      ],
-      "assertions": [
-        "Uses client.suigar.tx.pvpCoinflip.createGame",
-        "Passes side: 'heads'",
-        "Passes isPrivate: true",
-        "Passes owner, coinType, and stake",
-        "Does not use createGameBet for PvP"
-      ]
-    },
-    {
-      "id": "pvp-join-derive-stake",
-      "prompt": "I have a PvP coinflip gameId from a lobby card. Build the join transaction for the connected wallet. Do I need to pass the stake again?",
-      "expected_output": "Builds a join transaction with owner, coinType, and gameId only; explains the SDK derives stake from the live game object and should not receive stake, side, or manual coin inputs for join.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
-      ],
-      "assertions": [
-        "Uses client.suigar.tx.pvpCoinflip.joinGame",
-        "Passes gameId",
-        "Passes owner and coinType",
-        "States the SDK derives stake from gameId or the live game object",
-        "Does not pass stake to join",
-        "Does not pass side to join"
-      ]
-    },
-    {
-      "id": "pvp-lobby-and-resolved-state",
-      "prompt": "Build a PvP coinflip lobby view. How do I list open matches, and can I keep reading the Game object after someone joins?",
-      "expected_output": "Uses client.suigar.getPvPCoinflipGames for unresolved lobby matches, explains registry membership is the pending-state signal, and says joined/resolved games are removed/deleted so resolution should be read from events.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
-      ],
-      "assertions": [
-        "Uses client.suigar.getPvPCoinflipGames for lobby listing",
-        "Mentions options such as limit, cursor, signal, or throwOnError",
-        "Explains unresolved registry membership is the live pending-state signal",
-        "States joined/resolved game objects are deleted or no longer live",
-        "Directs resolved-state handling to emitted PvP events",
-        "Mentions PvPCoinflipGame.get for one specific live pending object"
-      ]
-    },
-    {
-      "id": "pvp-live-parameters",
-      "prompt": "Before opening a PvP coinflip lobby, how do I check the current supported stake limits for SUI?",
-      "expected_output": "Uses client.suigar.getGameParameters({ game: 'pvp-coinflip', coinType }) for current on-chain PvP settings and explains that ignoreCache: true forces a fresh read when needed.",
-      "sources": [
-        "https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
-      ],
-      "assertions": [
-        "Uses client.suigar.getGameParameters",
-        "Passes 'pvp-coinflip' as the game id",
-        "Passes a SUI coinType or explains the configured default",
-        "States that values are current on-chain parameters",
-        "Mentions ignoreCache: true for a fresh lookup"
-      ]
-    }
-  ]
+	"skill_name": "create-pvp-games",
+	"source_constraint": "Expected outputs are grounded in @suigar/sdk PvP coinflip builders, registry lookup behavior, and public BCS helpers.",
+	"evals": [
+		{
+			"id": "pvp-create-private-match",
+			"prompt": "Create a private PvP coinflip match with @suigar/sdk. The creator chooses heads and stakes 2 SUI. Show the transaction code.",
+			"expected_output": "Uses client.suigar.tx.pvpCoinflip.createGame(...), preserves side: 'heads', includes isPrivate: true, owner, coinType, and stake, and does not use createGameBet.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
+			],
+			"assertions": [
+				"Uses client.suigar.tx.pvpCoinflip.createGame",
+				"Passes side: 'heads'",
+				"Passes isPrivate: true",
+				"Passes owner, coinType, and stake",
+				"Does not use createGameBet for PvP"
+			]
+		},
+		{
+			"id": "pvp-join-derive-stake",
+			"prompt": "I have a PvP coinflip gameId from a lobby card. Build the join transaction for the connected wallet. Do I need to pass the stake again?",
+			"expected_output": "Builds a join transaction with owner, coinType, and gameId only; explains the SDK derives stake from the live game object and should not receive stake, side, or manual coin inputs for join.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
+			],
+			"assertions": [
+				"Uses client.suigar.tx.pvpCoinflip.joinGame",
+				"Passes gameId",
+				"Passes owner and coinType",
+				"States the SDK derives stake from gameId or the live game object",
+				"Does not pass stake to join",
+				"Does not pass side to join"
+			]
+		},
+		{
+			"id": "pvp-lobby-and-resolved-state",
+			"prompt": "Build a PvP coinflip lobby view. How do I list open matches, and can I keep reading the Game object after someone joins?",
+			"expected_output": "Uses client.suigar.getPvPCoinflipGames for unresolved lobby matches, explains registry membership is the pending-state signal, and says joined/resolved games are removed/deleted so resolution should be read from events.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
+			],
+			"assertions": [
+				"Uses client.suigar.getPvPCoinflipGames for lobby listing",
+				"Mentions options such as limit, cursor, signal, or throwOnError",
+				"Explains unresolved registry membership is the live pending-state signal",
+				"States joined/resolved game objects are deleted or no longer live",
+				"Directs resolved-state handling to emitted PvP events",
+				"Mentions PvPCoinflipGame.get for one specific live pending object"
+			]
+		},
+		{
+			"id": "pvp-live-parameters",
+			"prompt": "Before opening a PvP coinflip lobby, how do I check the current supported stake limits for SUI?",
+			"expected_output": "Uses client.suigar.getGameParameters({ game: 'pvp-coinflip', coinType }) for current on-chain PvP settings and explains that ignoreCache: true forces a fresh read when needed.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
+			],
+			"assertions": [
+				"Uses client.suigar.getGameParameters",
+				"Passes 'pvp-coinflip' as the game id",
+				"Passes a SUI coinType or explains the configured default",
+				"States that values are current on-chain parameters",
+				"Mentions ignoreCache: true for a fresh lookup"
+			]
+		}
+	]
 }

@@ -43,12 +43,12 @@ import { suigar } from '@suigar/sdk';
 import type { SuigarCoin, SuigarNetwork } from '@suigar/sdk';
 import { GAMES, type PvPGame, type StandardGame } from '@suigar/sdk/games';
 import {
-  fromMoveFloat,
-  fromMoveI64,
-  isMoveFloat,
-  isMoveI64,
-  parseGameDetails,
-  parseGameEvent,
+	fromMoveFloat,
+	fromMoveI64,
+	isMoveFloat,
+	isMoveI64,
+	parseGameDetails,
+	parseGameEvent,
 } from '@suigar/sdk/utils';
 ```
 
@@ -89,8 +89,8 @@ import { SuiGrpcClient } from '@mysten/sui/grpc';
 import { suigar } from '@suigar/sdk';
 
 const client = new SuiGrpcClient({
-  baseUrl: 'https://fullnode.testnet.sui.io:443',
-  network: 'testnet',
+	baseUrl: 'https://fullnode.testnet.sui.io:443',
+	network: 'testnet',
 }).$extend(suigar());
 ```
 
@@ -108,19 +108,19 @@ If the published defaults lag a deployment, patch config through `suigar({ confi
 
 ```ts
 const client = new SuiGrpcClient({ baseUrl, network }).$extend(
-  suigar({
-    config: {
-      packageIds: { coinflip: '0x...' },
-      objectIds: { sweetHouse: '0x...' },
-      coins: {
-        sui: {
-          coinType: '0x2::sui::SUI',
-          decimals: 9,
-          priceInfoObjectId: '0x...',
-        },
-      },
-    },
-  }),
+	suigar({
+		config: {
+			packageIds: { coinflip: '0x...' },
+			objectIds: { sweetHouse: '0x...' },
+			coins: {
+				sui: {
+					coinType: '0x2::sui::SUI',
+					decimals: 9,
+					priceInfoObjectId: '0x...',
+				},
+			},
+		},
+	}),
 );
 ```
 
@@ -130,15 +130,15 @@ Serialize only when a wallet, backend, or transport path needs unsigned bytes:
 
 ```ts
 const tx = client.suigar.tx.createGameBet({
-  game: 'coinflip',
-  owner,
-  coinType: '0x2::sui::SUI',
-  stake: 1_000_000_000n,
-  side: 'heads',
+	game: 'coinflip',
+	owner,
+	coinType: '0x2::sui::SUI',
+	stake: 1_000_000_000n,
+	side: 'heads',
 });
 
 const base64 = await client.suigar.serializeTransactionToBase64({
-  transaction: tx,
+	transaction: tx,
 });
 ```
 
@@ -152,11 +152,11 @@ For raw generated BCS data outside `getGameParameters()`, guard unknown values b
 
 ```ts
 if (isMoveFloat(value)) {
-  const number = fromMoveFloat(value);
+	const number = fromMoveFloat(value);
 }
 
 if (isMoveI64(value)) {
-  const number = fromMoveI64(value);
+	const number = fromMoveI64(value);
 }
 ```
 
@@ -165,9 +165,9 @@ Use generated BCS helpers and SDK parsers for events:
 ```ts
 const parsed = parseGameEvent(event);
 if (parsed?.eventName === 'BetResultEvent') {
-  const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
-  const details = parseGameDetails(parsed.gameId, decoded.game_details);
-  const price = fromMoveFloat(decoded.adjusted_oracle_usd_coin_price);
+	const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
+	const details = parseGameDetails(parsed.gameId, decoded.game_details);
+	const price = fromMoveFloat(decoded.adjusted_oracle_usd_coin_price);
 }
 ```
 

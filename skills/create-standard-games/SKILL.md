@@ -89,11 +89,11 @@ Use `coinflip` when the player chooses a side explicitly:
 
 ```ts
 const tx = client.suigar.tx.createGameBet({
-  game: 'coinflip',
-  owner,
-  coinType: '0x2::sui::SUI',
-  stake: 1_000_000_000n,
-  side: 'heads',
+	game: 'coinflip',
+	owner,
+	coinType: '0x2::sui::SUI',
+	stake: 1_000_000_000n,
+	side: 'heads',
 });
 ```
 
@@ -105,11 +105,11 @@ Use `limbo` when the player bets against a target multiplier:
 
 ```ts
 const tx = client.suigar.tx.createGameBet({
-  game: 'limbo',
-  owner,
-  coinType: '0x2::sui::SUI',
-  stake: 1_000_000_000n,
-  targetMultiplier,
+	game: 'limbo',
+	owner,
+	coinType: '0x2::sui::SUI',
+	stake: 1_000_000_000n,
+	targetMultiplier,
 });
 ```
 
@@ -121,11 +121,11 @@ Use `plinko` when the game depends on a predefined board configuration:
 
 ```ts
 const tx = client.suigar.tx.createGameBet({
-  game: 'plinko',
-  owner,
-  coinType: '0x2::sui::SUI',
-  stake: 1_000_000_000n,
-  configId,
+	game: 'plinko',
+	owner,
+	coinType: '0x2::sui::SUI',
+	stake: 1_000_000_000n,
+	configId,
 });
 ```
 
@@ -135,13 +135,13 @@ Use `range` when the player chooses a bounded interval and optional in-range or 
 
 ```ts
 const tx = client.suigar.tx.createGameBet({
-  game: 'range',
-  owner,
-  coinType: '0x2::sui::SUI',
-  stake: 1_000_000_000n,
-  leftPoint,
-  rightPoint,
-  outOfRange,
+	game: 'range',
+	owner,
+	coinType: '0x2::sui::SUI',
+	stake: 1_000_000_000n,
+	leftPoint,
+	rightPoint,
+	outOfRange,
 });
 ```
 
@@ -153,11 +153,11 @@ Use `wheel` when the game depends on a predefined wheel configuration:
 
 ```ts
 const tx = client.suigar.tx.createGameBet({
-  game: 'wheel',
-  owner,
-  coinType: '0x2::sui::SUI',
-  stake: 1_000_000_000n,
-  configId,
+	game: 'wheel',
+	owner,
+	coinType: '0x2::sui::SUI',
+	stake: 1_000_000_000n,
+	configId,
 });
 ```
 
@@ -167,13 +167,13 @@ Use `soccer` with the selected on-chain configuration, country, and shot-zone id
 
 ```ts
 const tx = client.suigar.tx.createGameBet({
-  game: 'soccer',
-  owner,
-  coinType: '0x2::sui::SUI',
-  stake: 1_000_000_000n,
-  configId,
-  countryId,
-  shotZoneId,
+	game: 'soccer',
+	owner,
+	coinType: '0x2::sui::SUI',
+	stake: 1_000_000_000n,
+	configId,
+	countryId,
+	shotZoneId,
 });
 ```
 
@@ -184,9 +184,9 @@ import { fromMoveFloat, parseGameDetails, parseGameEvent } from '@suigar/sdk/uti
 
 const parsed = parseGameEvent(event);
 if (parsed?.eventName === 'BetResultEvent') {
-  const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
-  const gameDetails = parseGameDetails(parsed.gameId, decoded.game_details);
-  const adjustedOraclePrice = fromMoveFloat(decoded.adjusted_oracle_usd_coin_price);
+	const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
+	const gameDetails = parseGameDetails(parsed.gameId, decoded.game_details);
+	const adjustedOraclePrice = fromMoveFloat(decoded.adjusted_oracle_usd_coin_price);
 }
 ```
 

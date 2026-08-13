@@ -33,12 +33,12 @@ Configure MCP clients with the published package:
 
 ```json
 {
-  "mcpServers": {
-    "suigar": {
-      "command": "npx",
-      "args": ["-y", "@suigar/mcp"]
-    }
-  }
+	"mcpServers": {
+		"suigar": {
+			"command": "npx",
+			"args": ["-y", "@suigar/mcp"]
+		}
+	}
 }
 ```
 

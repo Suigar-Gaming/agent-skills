@@ -42,11 +42,11 @@ Optional: `isPrivate`, `metadata`, `gasBudget`, `useGasCoin`.
 
 ```ts
 const tx = client.suigar.tx.pvpCoinflip.createGame({
-  owner,
-  coinType: '0x2::sui::SUI',
-  stake: 1_000_000_000n,
-  side: 'tails',
-  isPrivate: true,
+	owner,
+	coinType: '0x2::sui::SUI',
+	stake: 1_000_000_000n,
+	side: 'tails',
+	isPrivate: true,
 });
 ```
 
@@ -62,9 +62,9 @@ Optional: `metadata`, `gasBudget`, `useGasCoin`.
 
 ```ts
 const tx = client.suigar.tx.pvpCoinflip.joinGame({
-  owner,
-  coinType: '0x2::sui::SUI',
-  gameId: '0xGAME',
+	owner,
+	coinType: '0x2::sui::SUI',
+	gameId: '0xGAME',
 });
 ```
 
@@ -80,9 +80,9 @@ Optional: `metadata`, `gasBudget`, `useGasCoin`.
 
 ```ts
 const tx = client.suigar.tx.pvpCoinflip.cancelGame({
-  owner,
-  coinType: '0x2::sui::SUI',
-  gameId: '0xGAME',
+	owner,
+	coinType: '0x2::sui::SUI',
+	gameId: '0xGAME',
 });
 ```
 
@@ -104,8 +104,8 @@ const games = await client.suigar.getPvPCoinflipGames({ limit: 20 });
 
 ```ts
 const game = await client.suigar.bcs.PvPCoinflipGame.get({
-  client,
-  objectId: '0xGAME',
+	client,
+	objectId: '0xGAME',
 });
 ```
 
