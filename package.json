@@ -5,9 +5,9 @@
 	"author": "Suigar Gaming <contact.suigar@gmail.com>",
 	"type": "module",
 	"scripts": {
+		"prepare": "husky",
 		"eval": "node scripts/run-evals.js",
 		"eval:changed": "node scripts/run-evals.js --changed-only",
-		"prepare": "husky",
 		"oxlint": "oxlint .",
 		"oxlint:fix": "oxlint . --fix",
 		"oxfmt": "oxfmt . --check",
