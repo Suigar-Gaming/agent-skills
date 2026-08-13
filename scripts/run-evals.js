@@ -22,9 +22,7 @@
  */
 import { writeFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
-
 import Anthropic from '@anthropic-ai/sdk';
-
 import {
 	discoverEvalFiles,
 	getExpectations,

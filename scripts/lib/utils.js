@@ -5,7 +5,6 @@
 import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve } from 'node:path';
-
 import { glob } from 'glob';
 
 export const ROOT = resolve(dirname(new URL(import.meta.url).pathname), '../..');
