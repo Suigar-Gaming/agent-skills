@@ -1,0 +1,11 @@
+{
+	"useTabs": true,
+	"singleQuote": true,
+	"trailingComma": "all",
+	"semi": true,
+	"proseWrap": "never",
+	"sortPackageJson": true,
+	"sortImports": {
+		"newlinesBetween": false
+	}
+}
