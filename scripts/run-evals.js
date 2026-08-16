@@ -45,10 +45,8 @@ const changedOnly = hasFlag(args, 'changed-only');
 
 const DEFAULT_EVAL_MODEL = 'claude-opus-4-6';
 const DEFAULT_JUDGE_MODEL = 'claude-haiku-4-5-20251001';
-const EVAL_MODEL =
-	evalModelFlag ?? process.env.EVAL_MODEL ?? DEFAULT_EVAL_MODEL;
-const JUDGE_MODEL =
-	judgeModelFlag ?? process.env.JUDGE_MODEL ?? DEFAULT_JUDGE_MODEL;
+const EVAL_MODEL = evalModelFlag ?? process.env.EVAL_MODEL ?? DEFAULT_EVAL_MODEL;
+const JUDGE_MODEL = judgeModelFlag ?? process.env.JUDGE_MODEL ?? DEFAULT_JUDGE_MODEL;
 const MAX_TOKENS_RESPONSE = 4096;
 const MAX_TOKENS_JUDGE = 2048;
 const CONCURRENCY = parseInt(concurrencyFlag ?? '3', 10);
@@ -151,11 +149,7 @@ async function runSkillEvals(evalFile) {
 					return { response, grades };
 				};
 
-				const { response, grades } = await withTimeout(
-					work(),
-					EVAL_TIMEOUT,
-					evalId,
-				);
+				const { response, grades } = await withTimeout(work(), EVAL_TIMEOUT, evalId);
 				const passed = grades.filter((g) => g.pass).length;
 				const failed = grades.filter((g) => !g.pass).length;
 				const status = failed === 0 ? 'PASS' : 'FAIL';

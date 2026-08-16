@@ -16,7 +16,7 @@ Use this specification for application code that imports `@suigar/sdk` and build
 
 ## Live Parameters
 
-Read `client.suigar.getGameParameters('pvp-coinflip', { coinType })` before presenting or validating current PvP stake limits or game settings. Results are cached for 30 minutes by default; use `ignoreCache: true` when the lobby requires a fresh on-chain read.
+Read `client.suigar.getGameParameters({ game: 'pvp-coinflip', coinType })` before presenting or validating current PvP stake limits or game settings. Results are cached for 30 minutes by default; use `ignoreCache: true` when the lobby requires a fresh on-chain read.
 
 ## Public Surface
 

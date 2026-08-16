@@ -5,7 +5,7 @@
 		{
 			"id": "standard-coinflip-preserve-side",
 			"prompt": "Wire a Suigar coinflip bet for a React app. The user picks tails, stakes 1 SUI, and the connected wallet is owner. Show the transaction build code.",
-			"expected_output": "Builds a coinflip transaction with client.suigar.tx.createGameBet('coinflip', ...), passes side: 'tails', uses a bigint stake in base units, and does not manually split or select coin objects.",
+			"expected_output": "Builds a coinflip transaction with client.suigar.tx.createGameBet({ game: 'coinflip', ... }), passes side: 'tails', uses a bigint stake in base units, and does not manually split or select coin objects.",
 			"sources": [
 				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-standard-games"
 			],
@@ -31,7 +31,7 @@
 				"Passes rightPoint: 75",
 				"Passes outOfRange: false or equivalent in-range behavior",
 				"Mentions the SDK applies scale",
-				"Uses client.suigar.tx.createGameBet('range', ...)"
+				"Uses client.suigar.tx.createGameBet with game: 'range'"
 			]
 		},
 		{
@@ -52,7 +52,7 @@
 		{
 			"id": "standard-live-game-parameters",
 			"prompt": "Before rendering our Wheel configuration picker, how do I read current Suigar limits and valid configuration data for SUI?",
-			"expected_output": "Uses client.suigar.getGameParameters('wheel', { coinType }) to read current on-chain parameters, explains that returned Move floats are JavaScript numbers, and mentions ignoreCache: true when a fresh lookup is required.",
+			"expected_output": "Uses client.suigar.getGameParameters({ game: 'wheel', coinType }) to read current on-chain parameters, explains that returned Move floats are JavaScript numbers, and mentions ignoreCache: true when a fresh lookup is required.",
 			"sources": [
 				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-standard-games"
 			],
@@ -68,7 +68,7 @@
 		{
 			"id": "standard-soccer-transaction",
 			"prompt": "Build a Suigar Soccer bet for the connected wallet. I have a selected Soccer option from current on-chain metadata, and the player stakes 1 SUI.",
-			"expected_output": "Builds the transaction with client.suigar.tx.createGameBet('soccer', ...), passes owner, coinType, a base-unit stake, configId from parameters.configs, countryId as the key matching the user's country name in parameters.countries.contents, and shotZoneId from the selected config's shot_zone_ids without inventing numeric ids or manually building a Move call.",
+			"expected_output": "Builds the transaction with client.suigar.tx.createGameBet({ game: 'soccer', ... }), passes owner, coinType, a base-unit stake, configId from parameters.configs, countryId as the key matching the user's country name in parameters.countries.contents, and shotZoneId from the selected config's shot_zone_ids without inventing numeric ids or manually building a Move call.",
 			"sources": [
 				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-standard-games"
 			],
