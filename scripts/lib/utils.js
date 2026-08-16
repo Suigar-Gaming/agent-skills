@@ -7,10 +7,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { glob } from 'glob';
 
-export const ROOT = resolve(
-	dirname(new URL(import.meta.url).pathname),
-	'../..',
-);
+export const ROOT = resolve(dirname(new URL(import.meta.url).pathname), '../..');
 export const SKILLS_ROOT = join(ROOT, 'skills');
 
 const envPath = join(ROOT, '.env');
@@ -68,10 +65,7 @@ export function withTimeout(promise, ms, label) {
 	return Promise.race([
 		promise,
 		new Promise((_, reject) =>
-			setTimeout(
-				() => reject(new Error(`Eval timed out after ${ms}ms: ${label}`)),
-				ms,
-			),
+			setTimeout(() => reject(new Error(`Eval timed out after ${ms}ms: ${label}`)), ms),
 		),
 	]);
 }
@@ -81,10 +75,7 @@ function skillNameFromPath(filePath) {
 	return rel.split('/')[0];
 }
 
-export function discoverEvalFiles(
-	filename = 'evals.json',
-	{ skillFilter, changedOnly } = {},
-) {
+export function discoverEvalFiles(filename = 'evals.json', { skillFilter, changedOnly } = {}) {
 	const pattern = join(SKILLS_ROOT, `*/evals/${filename}`);
 	let files = glob.sync(pattern, { ignore: ['**/node_modules/**'] });
 
@@ -128,9 +119,7 @@ export function loadSkillContext(evalFilePath) {
 	const parts = [];
 	const skillMd = mdFiles.find((f) => basename(f) === 'SKILL.md');
 	if (skillMd) {
-		parts.push(
-			`# ${skillName} - SKILL.md\n\n${readFileSync(skillMd, 'utf-8')}`,
-		);
+		parts.push(`# ${skillName} - SKILL.md\n\n${readFileSync(skillMd, 'utf-8')}`);
 	}
 
 	for (const f of mdFiles.sort()) {
@@ -152,9 +141,7 @@ export function parseEvals(filePath) {
 export function getExpectations(ev) {
 	const expectations = ev.expectations ?? ev.assertions;
 	if (!Array.isArray(expectations) || expectations.length === 0) {
-		throw new Error(
-			`Eval ${ev.id ?? '<unknown>'} must define expectations or assertions`,
-		);
+		throw new Error(`Eval ${ev.id ?? '<unknown>'} must define expectations or assertions`);
 	}
 	return expectations;
 }

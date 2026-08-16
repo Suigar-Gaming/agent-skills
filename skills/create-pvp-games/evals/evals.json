@@ -52,7 +52,7 @@
 		{
 			"id": "pvp-live-parameters",
 			"prompt": "Before opening a PvP coinflip lobby, how do I check the current supported stake limits for SUI?",
-			"expected_output": "Uses client.suigar.getGameParameters('pvp-coinflip', { coinType }) for current on-chain PvP settings and explains that ignoreCache: true forces a fresh read when needed.",
+			"expected_output": "Uses client.suigar.getGameParameters({ game: 'pvp-coinflip', coinType }) for current on-chain PvP settings and explains that ignoreCache: true forces a fresh read when needed.",
 			"sources": [
 				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
 			],

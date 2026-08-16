@@ -4,7 +4,7 @@ description: Configure Suigar SDK partner attribution and referral rewards in a 
 license: MIT
 metadata:
   author: suigar
-  version: '1.0.0'
+  version: '1.1.0'
   short-description: Configure Suigar referrals
   tags:
     - suigar
@@ -51,8 +51,7 @@ const commissionTx = client.suigar.tx.referral.claimCommission({
 	coinType: '0x2::sui::SUI',
 });
 
-const claimableLevelUpRewards =
-	await client.suigar.view.referral.getLevelUpUsdRewards({ owner });
+const claimableLevelUpRewards = await client.suigar.view.referral.getLevelUpUsdRewards({ owner });
 const levelUpRewardsTx = client.suigar.tx.referral.claimLevelUpUsdRewards({
 	owner,
 });

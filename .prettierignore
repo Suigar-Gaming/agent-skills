@@ -1,5 +1,0 @@
-node_modules/
-.pnpm-store/
-scripts/eval-results.json
-package.json
-pnpm-lock.yaml

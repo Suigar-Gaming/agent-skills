@@ -69,7 +69,7 @@ Build standard single-player Suigar game flows on top of `@suigar/sdk`.
 **Use when:**
 
 - Building `coinflip`, `limbo`, `plinko`, `range`, `soccer`, or `wheel` bet transactions
-- Mapping UI inputs to `client.suigar.tx.createGameBet`
+- Mapping UI inputs to `client.suigar.tx.createGameBet({ game, ...options })`
 - Reviewing standard game amount, metadata, or coin handling
 - Fixing AI-generated standard Suigar game code
 
@@ -172,6 +172,12 @@ Run evals for one skill:
 
 ```bash
 ANTHROPIC_API_KEY=... pnpm run eval -- --skill installation
+```
+
+Check linting and formatting with Oxlint and Oxfmt:
+
+```bash
+pnpm run lint
 ```
 
 ## Skill Structure
