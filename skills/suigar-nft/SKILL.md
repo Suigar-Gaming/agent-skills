@@ -4,7 +4,7 @@ description: Read or mint Suigar NFT V1 objects with @suigar/sdk. Use when readi
 license: MIT
 metadata:
   author: suigar
-  version: '1.2.0'
+  version: '1.3.0'
   short-description: Read and mint Suigar NFT V1 objects
   tags:
     - suigar
@@ -67,9 +67,7 @@ const page = await client.core.listOwnedObjects({
 	include: { content: true },
 });
 
-const nfts = page.objects.map((object) =>
-	client.suigar.bcs.NftV1.parse(object.content),
-);
+const nfts = page.objects.map((object) => client.suigar.bcs.NftV1.parse(object.content));
 ```
 
 Use the returned objects as the ownership source of truth. Follow `page.cursor` until it is empty when the product needs the full collection. Parse `content` with `NftV1`; do not rely on `objectBcs` for object reads.
