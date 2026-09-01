@@ -6,8 +6,9 @@ on:
       - 'skills/**/SKILL.md'
       - 'skills/**/*.md'
       - 'skills/**/evals/evals.json'
-      - 'scripts/run-evals.js'
-      - 'scripts/lib/utils.js'
+      - 'scripts/run-evals.mjs'
+      - 'scripts/lib/utils.mjs'
+      - 'scripts/validate-skills.mjs'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - 'pnpm-workspace.yaml'
@@ -40,6 +41,9 @@ jobs:
           cache: true
           require-lockfile: true
           runtime: node@24.20.0
+
+      - name: Validate skills
+        run: pnpm run validate
 
       - name: Run evals (PR changed skills only)
         if: github.event_name == 'pull_request'

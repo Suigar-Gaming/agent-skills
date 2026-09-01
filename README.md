@@ -212,6 +212,14 @@ Check linting and formatting with Oxlint and Oxfmt:
 pnpm run lint
 ```
 
+Run deterministic repository validation without an LLM provider:
+
+```bash
+pnpm run validate
+```
+
+This checks skill frontmatter, directory/name consistency, line limits, eval structure, and relative Markdown links.
+
 ## Skill Structure
 
 Each skill contains:
