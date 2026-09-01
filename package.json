@@ -6,8 +6,8 @@
 	"type": "module",
 	"scripts": {
 		"prepare": "husky",
-		"eval": "node scripts/run-evals.js",
-		"eval:changed": "node scripts/run-evals.js --changed-only",
+		"eval": "node scripts/run-evals.mjs",
+		"eval:changed": "node scripts/run-evals.mjs --changed-only",
 		"oxlint": "oxlint .",
 		"oxlint:fix": "oxlint . --fix",
 		"oxfmt": "oxfmt . --check",
