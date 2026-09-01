@@ -12,7 +12,7 @@ Use this specification for application code that imports `@suigar/sdk` and build
 4. Use `client.suigar.getPvPCoinflipGames(options?)` for unresolved lobby state.
 5. Use `client.suigar.bcs.PvPCoinflipGame.get({ client, objectId })` when one live pending game object is needed.
 6. Decode PvP events with generated BCS helpers.
-7. Decode any accompanying standard `BetResultEvent.game_details` with `parseGameEvent` and `parseGameDetails`.
+7. Decode any accompanying standard `BetResultEvent.game_details` with [event parsing](../../event-parsing/references/events.md).
 
 ## Live Parameters
 
@@ -116,9 +116,8 @@ Use:
 - `client.suigar.bcs.PvPCoinflipGameCreatedEvent`
 - `client.suigar.bcs.PvPCoinflipGameResolvedEvent`
 - `client.suigar.bcs.PvPCoinflipGameCancelledEvent`
-- `parseGameEvent(event)` from `@suigar/sdk/utils`
 
-When a flow also decodes `BetResultEvent`, prefer `parseSuigarEvent(event)` for the full decoded event shape. For manual staged decoding, use `parseGameEvent(event)` to retrieve `game`, then `parseGameDetails({ game, gameDetails: decoded.game_details })` so PvP result details are interpreted correctly.
+When a flow also decodes `BetResultEvent`, use [event parsing](../../event-parsing/references/events.md) for the canonical `parseSuigarEvent`, `parseGameEvent`, and `parseGameDetails` pattern.
 
 ## Gotchas
 
@@ -138,4 +137,4 @@ When a flow also decodes `BetResultEvent`, prefer `parseSuigarEvent(event)` for 
 4. Read unresolved lobby state with `client.suigar.getPvPCoinflipGames()`.
 5. Fetch a specific live match with `client.suigar.bcs.PvPCoinflipGame.get({ client, objectId: gameId })` when needed.
 6. Parse emitted PvP events with generated BCS helpers.
-7. Parse `BetResultEvent.game_details` with `parseGameDetails` when displaying bet result details.
+7. Parse `BetResultEvent.game_details` with [event parsing](../../event-parsing/references/events.md) when displaying bet result details.

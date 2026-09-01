@@ -227,20 +227,25 @@ async function main() {
 	const allResults = [];
 	let totalPass = 0;
 	let totalFail = 0;
+	let totalError = 0;
 	let totalEvals = 0;
 
 	for (const skillResults of allSkillResults) {
 		for (const { result, passed, failed } of skillResults) {
 			allResults.push(result);
 			totalPass += passed;
-			totalFail += failed;
+			if (result.status === 'ERROR') {
+				totalError += 1;
+			} else {
+				totalFail += failed;
+			}
 			totalEvals++;
 		}
 	}
 
 	console.log(`\n${'='.repeat(60)}`);
 	console.log(
-		`RESULTS: ${totalEvals} evals, ${totalPass} expectations passed, ${totalFail} failed`,
+		`RESULTS: ${totalEvals} evals, ${totalPass} expectations passed, ${totalFail} failed, ${totalError} errors`,
 	);
 	console.log(`${'='.repeat(60)}\n`);
 
@@ -255,16 +260,16 @@ async function main() {
 			'|-------|------|--------|--------|-------|',
 			...allResults.map(
 				(r) =>
-					`| ${r.skill} | ${r.eval_id} | ${r.status === 'PASS' ? 'PASS' : 'FAIL'} ${r.status} | ${r.passed ?? '-'} | ${r.total ?? '-'} |`,
+					`| ${r.skill} | ${r.eval_id} | ${r.status} | ${r.passed ?? '-'} | ${r.total ?? '-'} |`,
 			),
 			'',
-			`**Total: ${totalPass} passed, ${totalFail} failed across ${totalEvals} evals**`,
+			`**Total: ${totalPass} passed, ${totalFail} failed, ${totalError} errors across ${totalEvals} evals**`,
 		].join('\n');
 
 		writeFileSync(process.env.GITHUB_STEP_SUMMARY, summary, { flag: 'a' });
 	}
 
-	process.exit(totalFail > 0 ? 1 : 0);
+	process.exit(totalFail + totalError > 0 ? 1 : 0);
 }
 
 main().catch((err) => {

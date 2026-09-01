@@ -4,7 +4,7 @@ description: Read or mint Suigar NFT V1 objects with @suigar/sdk. Use when readi
 license: MIT
 metadata:
   author: suigar
-  version: '1.3.0'
+  version: '1.4.0'
   short-description: Read and mint Suigar NFT V1 objects
   tags:
     - suigar
@@ -27,63 +27,13 @@ Use this skill for application code that imports `@suigar/sdk` and reads the NFT
 4. Derive the owned NFT type with `client.suigar.bcs.NftV1.typeTag({ package: nftV1 })`.
 5. Call `client.core.listOwnedObjects()` with `type`, `content: true`, and pagination.
 6. Decode each owned object with `client.suigar.bcs.NftV1`.
-7. For minting, pass a selected factory `specId` to `client.suigar.tx.nftV1.mint({ owner, specId })`.
+7. For catalog and ownership details, read [references/catalog-and-ownership.md](references/catalog-and-ownership.md).
+8. For minting, read [references/minting.md](references/minting.md).
 
-## Catalog Lookup
+## References
 
-The catalog object is named `NftV1Factory`. Its resolved object id is `objectIds.nftV1Factory`.
-
-```ts
-const { nftV1Factory } = client.suigar.getConfig().objectIds;
-const { object } = await client.core.getObject({
-	objectId: nftV1Factory,
-	include: { content: true },
-});
-
-if (object instanceof Error) throw object;
-if (!object.content) throw new Error('NFT factory did not return content.');
-
-const factory = client.suigar.bcs.NftV1Factory.parse(object.content);
-const specs = factory.specs.contents.map(({ value }) => ({
-	id: value.id,
-	name: value.name,
-	description: value.description,
-	imageUrl: value.url.url,
-	price: value.price,
-}));
-```
-
-Preserve the BCS field names when the product needs the full catalog. Convert `u64` fields such as `price`, `supply`, and `available` only at the presentation boundary.
-
-## Ownership Lookup
-
-```ts
-const { nftV1 } = client.suigar.getConfig().packageIds;
-const nftType = client.suigar.bcs.NftV1.typeTag({ package: nftV1 });
-
-const page = await client.core.listOwnedObjects({
-	owner,
-	type: nftType,
-	include: { content: true },
-});
-
-const nfts = page.objects.map((object) => client.suigar.bcs.NftV1.parse(object.content));
-```
-
-Use the returned objects as the ownership source of truth. Follow `page.cursor` until it is empty when the product needs the full collection. Parse `content` with `NftV1`; do not rely on `objectBcs` for object reads.
-
-## Minting
-
-Build NFT V1 mints with the configured SDK transaction builder. It mints directly to the transaction sender, resolves the selected specification's SUI price from `objectIds.nftV1Factory`, and resolves the NFT package and SweetHouse object from SDK config.
-
-```ts
-const tx = client.suigar.tx.nftV1.mint({
-	owner,
-	specId,
-});
-```
-
-Optional inputs are `gasBudget` and `useGasCoin`. Derive `specId` from the decoded factory catalog; do not hard-code a package-specific Move target or mint price in app code.
+- For catalog and ownership lookups, read [references/catalog-and-ownership.md](references/catalog-and-ownership.md).
+- For mint transactions, read [references/minting.md](references/minting.md).
 
 ## Boundaries
 
