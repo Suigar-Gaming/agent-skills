@@ -4,7 +4,7 @@ description: Build, scaffold, review, or fix Suigar SweetHouse public pool flows
 license: MIT
 metadata:
   author: suigar
-  version: '1.0.0'
+  version: '1.1.0'
   short-description: Build SweetHouse pool flows
   tags:
     - suigar
@@ -26,54 +26,17 @@ Use this skill for application code that imports `@suigar/sdk` and builds SweetH
 3. Build one of the `client.suigar.tx.sweetHouse` transactions.
 4. Serialize only if the wallet or transport layer needs unsigned bytes.
 5. Decode `client.suigar.bcs.RedeemRequestCreatedEvent` when the app needs the redeem request id emitted by a redeem request.
+6. For action-specific inputs, examples, and event details, read [references/public-pool.md](references/public-pool.md).
 
 ## Transaction Builders
 
-Deposit supported coins into the SweetHouse public pool and receive staked coins back to `owner`:
+SweetHouse exposes three public pool builders:
 
-```ts
-const tx = client.suigar.tx.sweetHouse.deposit({
-	owner,
-	coinType: '0x2::sui::SUI',
-	amount: 1_000_000_000n,
-});
-```
+- `client.suigar.tx.sweetHouse.deposit(options)`
+- `client.suigar.tx.sweetHouse.redeemRequest(options)`
+- `client.suigar.tx.sweetHouse.claimOwnRedeemRequestAfterDelay(options)`
 
-Optional deposit inputs are `gasBudget` and `useGasCoin`. Set `useGasCoin` only when the app intentionally allows the SUI gas coin to be used for native SUI deposits.
-
-Create a redeem request by spending staked coins for the selected pool:
-
-```ts
-const tx = client.suigar.tx.sweetHouse.redeemRequest({
-	owner,
-	coinType: '0x2::sui::SUI',
-	amount: 1_000_000_000n,
-});
-```
-
-The redeem request builder sources `StakedCoin<coinType>`, not the underlying coin. It does not accept `useGasCoin`.
-
-After the on-chain delay has passed, claim an own redeem request:
-
-```ts
-const tx = client.suigar.tx.sweetHouse.claimOwnRedeemRequestAfterDelay({
-	owner,
-	coinType: '0x2::sui::SUI',
-	requestId,
-});
-```
-
-The signer must be the address that created the redeem request. `requestId` is the redeem request object id, usually obtained from the redeem request transaction effects or `RedeemRequestCreatedEvent`.
-
-## Events
-
-Use the generated BCS helper for SweetHouse redeem events:
-
-```ts
-const event = client.suigar.bcs.RedeemRequestCreatedEvent.parse(suiEvent.bcs);
-```
-
-For general Suigar game result events, use the standard-game or PvP skills instead. `parseSuigarEvent` is for supported game events; SweetHouse redeem events are exposed through the generated BCS helper.
+Read [references/public-pool.md](references/public-pool.md) for required inputs, examples, staked-coin behavior, and redeem event parsing.
 
 ## Gotchas
 
@@ -87,7 +50,7 @@ For general Suigar game result events, use the standard-game or PvP skills inste
 ## Checklist
 
 1. Confirm `suigar()` is registered on the Sui client.
-2. Pick `deposit`, `redeemRequest`, or `claimOwnRedeemRequestAfterDelay`.
+2. Pick `deposit`, `redeemRequest`, or `claimOwnRedeemRequestAfterDelay` and read [references/public-pool.md](references/public-pool.md).
 3. Pass `owner`, `coinType`, and the required `amount` or `requestId`.
 4. Keep `useGasCoin` limited to deposits.
 5. Submit or serialize through the app's normal unsigned transaction flow.

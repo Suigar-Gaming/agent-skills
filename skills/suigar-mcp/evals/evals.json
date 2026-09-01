@@ -18,11 +18,11 @@
 		{
 			"id": "mcp-plugin-install",
 			"prompt": "I want to install the published Suigar plugin in Codex from GitHub. How do I add it, and should I edit its .mcp.json myself?",
-			"expected_output": "Uses `codex plugin marketplace add Suigar-Gaming/ts-sdks --ref main`, directs the user to install or enable suigar from the Suigar marketplace source, explains that the repository marketplace resolves packages/mcp/plugin and registers a version-pinned MCP server, and warns not to manually edit generated plugin manifests or .mcp.json.",
+			"expected_output": "Uses `codex plugin marketplace add Suigar-Gaming/ts-sdks --ref main`, directs the user to install or enable suigar-mcp from the Suigar marketplace source, explains that the repository marketplace resolves packages/mcp/plugin and registers a version-pinned MCP server, and warns not to manually edit generated plugin manifests or .mcp.json.",
 			"sources": ["https://github.com/Suigar-Gaming/ts-sdks/tree/main/packages/mcp/plugin"],
 			"assertions": [
 				"Uses codex plugin marketplace add Suigar-Gaming/ts-sdks --ref main",
-				"Mentions the Suigar marketplace source or enabling suigar",
+				"Mentions the Suigar marketplace source or enabling suigar-mcp",
 				"States that the repository marketplace resolves packages/mcp/plugin",
 				"States that the plugin registers the MCP server",
 				"States that the MCP package version is pinned by the plugin bundle",
@@ -32,11 +32,11 @@
 		{
 			"id": "mcp-claude-plugin-install",
 			"prompt": "How do I install the published Suigar plugin in Claude Code without cloning the repository first?",
-			"expected_output": "Uses `/plugin marketplace add Suigar-Gaming/ts-sdks@main` followed by `/plugin install suigar@suigar`, explaining that the first command adds the GitHub marketplace and the second installs the marketplace-qualified plugin.",
+			"expected_output": "Uses `/plugin marketplace add Suigar-Gaming/ts-sdks@main` followed by `/plugin install suigar-mcp@suigar`, explaining that the first command adds the GitHub marketplace and the second installs the marketplace-qualified plugin.",
 			"sources": ["https://github.com/Suigar-Gaming/ts-sdks/tree/main/packages/mcp/plugin"],
 			"assertions": [
 				"Uses /plugin marketplace add Suigar-Gaming/ts-sdks@main",
-				"Uses /plugin install suigar@suigar",
+				"Uses /plugin install suigar-mcp@suigar",
 				"States that the marketplace comes from GitHub",
 				"Does not require cloning the repository or using a local path"
 			]

@@ -32,28 +32,12 @@
 			]
 		},
 		{
-			"id": "installation-event-decoding",
-			"prompt": "I receive Suigar transaction events from Sui. How do I decode a BetResultEvent and get game-specific details without manually parsing bytes?",
-			"expected_output": "Uses parseSuigarEvent(event) for full decoded game events, or parseGameEvent(event), client.suigar.bcs.BetResultEvent.parse(event.bcs), parseGameDetails({ game, gameDetails: decoded.game_details }), and fromMoveFloat for manual staged decoding.",
-			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"],
-			"assertions": [
-				"Uses parseSuigarEvent or parseGameEvent from @suigar/sdk/utils",
-				"Parses event.bcs with client.suigar.bcs.BetResultEvent.parse when showing manual staged decoding",
-				"Passes the parsed game into parseGameDetails",
-				"Mentions fromMoveFloat for generated Move float structs when showing manual staged decoding",
-				"Does not hand-decode game_details byte arrays"
-			]
-		},
-		{
 			"id": "installation-guard-raw-move-numerics",
 			"prompt": "My app receives an unknown generated BCS field that might be a Suigar Move Float or i64. How should I safely convert it without copying the SDK's struct-shape checks?",
-			"expected_output": "Imports isMoveFloat, isMoveI64, fromMoveFloat, and fromMoveI64 from @suigar/sdk/utils; guards the unknown value with the matching predicate before converting it. It distinguishes this raw-payload case from getGameParameters(), which already returns float fields as JavaScript numbers.",
+			"expected_output": "Routes the raw generated numeric parsing question to the event-parsing skill, while noting that getGameParameters() already returns float fields as JavaScript numbers.",
 			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"],
 			"assertions": [
-				"Imports isMoveFloat and isMoveI64 from @suigar/sdk/utils",
-				"Imports fromMoveFloat and fromMoveI64 from @suigar/sdk/utils",
-				"Guards an unknown value with isMoveFloat before fromMoveFloat",
-				"Guards an unknown value with isMoveI64 before fromMoveI64",
+				"Routes detailed raw generated numeric parsing to event-parsing",
 				"States that getGameParameters already normalizes Move float fields",
 				"Does not copy a local structural type guard"
 			]

@@ -37,7 +37,18 @@ Set up `@suigar/sdk` in an application, wire the `suigar()` client extension, re
 - Installing or scaffolding the base Suigar SDK integration
 - Configuring `SuiGrpcClient` with `suigar()`
 - Working with SDK config, supported coins, or serialization
-- Parsing Suigar events through public SDK utilities
+- Routing event parsing work to the dedicated event-parsing skill
+
+### event-parsing
+
+Parse Suigar SDK events and raw generated numeric values through public SDK utilities and generated BCS helpers.
+
+**Use when:**
+
+- Decoding `BetResultEvent.game_details`
+- Using `parseSuigarEvent`, `parseGameEvent`, or `parseGameDetails`
+- Parsing PvP Coinflip or SweetHouse generated BCS event payloads
+- Safely converting raw Move float or i64 values
 
 ### referrals
 
@@ -200,6 +211,14 @@ Check linting and formatting with Oxlint and Oxfmt:
 ```bash
 pnpm run lint
 ```
+
+Run deterministic repository validation without an LLM provider:
+
+```bash
+pnpm run validate
+```
+
+This checks skill frontmatter, directory/name consistency, line limits, eval structure, and relative Markdown links.
 
 ## Skill Structure
 

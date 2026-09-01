@@ -6,6 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"prepare": "husky",
+		"validate": "node scripts/validate-skills.mjs",
 		"eval": "node scripts/run-evals.mjs",
 		"eval:changed": "node scripts/run-evals.mjs --changed-only",
 		"oxlint": "oxlint .",
