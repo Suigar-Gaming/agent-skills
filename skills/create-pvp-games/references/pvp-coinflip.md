@@ -118,7 +118,7 @@ Use:
 - `client.suigar.bcs.PvPCoinflipGameCancelledEvent`
 - `parseGameEvent(event)` from `@suigar/sdk/utils`
 
-When a flow also decodes `BetResultEvent`, use `parseGameEvent(event)` to retrieve `gameId`, then `parseGameDetails(gameId, decoded.game_details)` so PvP result details are interpreted correctly.
+When a flow also decodes `BetResultEvent`, prefer `parseSuigarEvent(event)` for the full decoded event shape. For manual staged decoding, use `parseGameEvent(event)` to retrieve `game`, then `parseGameDetails({ game, gameDetails: decoded.game_details })` so PvP result details are interpreted correctly.
 
 ## Gotchas
 

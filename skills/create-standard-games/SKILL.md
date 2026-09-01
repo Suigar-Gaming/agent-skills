@@ -1,10 +1,10 @@
 ---
 name: create-standard-games
-description: Build, scaffold, review, or fix standard single-player Suigar game flows using @suigar/sdk. Use when creating coinflip, limbo, plinko, range, soccer, or wheel bet transactions; reading live stake limits, RTP, or game configurations; mapping UI inputs to client.suigar.tx.createGameBet; handling stake/cashStake/betCount/metadata; decoding BetResultEvent; or correcting AI-generated code that manually selects coins, invents game builders, or misroutes standard games through MCP or PvP APIs.
+description: Build, scaffold, review, or fix standard single-player Suigar game flows using @suigar/sdk. Use when creating coinflip, keno, limbo, plinko, range, soccer, or wheel bet transactions; reading live stake limits, RTP, or game configurations; mapping UI inputs to client.suigar.tx.createGameBet; handling stake/cashStake/betCount/metadata; decoding BetResultEvent; or correcting AI-generated code that manually selects coins, invents game builders, or misroutes standard games through MCP, SweetHouse, or PvP APIs.
 license: MIT
 metadata:
   author: suigar
-  version: '1.4.0'
+  version: '1.5.0'
   short-description: Build standard Suigar game flows
   tags:
     - suigar
@@ -21,12 +21,12 @@ Use this skill for application code that imports `@suigar/sdk` and builds standa
 
 ## Default Workflow
 
-1. Confirm the target game id: `coinflip`, `limbo`, `plinko`, `range`, `soccer`, or `wheel`.
+1. Confirm the target game id: `coinflip`, `keno`, `limbo`, `plinko`, `range`, `soccer`, or `wheel`.
 2. Confirm the client has the `suigar()` extension registered.
 3. Build the transaction with `client.suigar.tx.createGameBet({ game, ...options })`.
 4. Let the SDK source bet coins through Mysten `coinWithBalance` transaction arguments.
 5. Serialize only if the wallet or transport layer needs bytes.
-6. Decode emitted results with `client.suigar.bcs.BetResultEvent`, `parseGameEvent`, and `parseGameDetails`.
+6. Decode emitted results with `parseSuigarEvent`, or with `client.suigar.bcs.BetResultEvent`, `parseGameEvent`, and `parseGameDetails` when manual staged decoding is needed.
 
 ## Imports and Types
 
@@ -60,6 +60,7 @@ For partner attribution, use [referrals](../referrals/SKILL.md); it is configure
 | Game | Required inputs | Notes |
 | --- | --- | --- |
 | `coinflip` | `side`: `heads` or `tails` | Preserve the UI-selected side exactly. |
+| `keno` | `configId: number`, `picks: number[]` | `configId` comes from live `parameters.configs`; pass selected board positions as u8-compatible integers. |
 | `limbo` | `targetMultiplier: number` | Pass human decimal values; the SDK applies scale. |
 | `plinko` | `configId: number` | `configId` comes from live `parameters.configs`. |
 | `range` | `leftPoint: number`, `rightPoint: number` | Keep points ordered; optional `outOfRange` and `scale`. |
@@ -73,6 +74,7 @@ Read `client.suigar.getGameParameters({ game, coinType })` before presenting or 
 | Game | Transaction input fields | On-chain parameters |
 | --- | --- | --- |
 | `coinflip` | `side` | `min_stake`, `max_stake` |
+| `keno` | `configId`, `picks` | `min_stake`, `max_stake`, `configs.contents`, `max_number_of_games` |
 | `limbo` | `targetMultiplier` | `min_stake`, `max_stake`, `min_target_multiplier`, `max_target_multiplier`, `max_number_of_games` |
 | `plinko` | `configId` | `min_stake`, `max_stake`, `configs.contents`, `max_number_of_balls` |
 | `range` | `leftPoint`, `rightPoint`, `outOfRange` | `min_stake`, `max_stake`, `min_zone_size`, `max_zone_size`, `max_number_of_games` |
@@ -98,6 +100,23 @@ const tx = client.suigar.tx.createGameBet({
 ```
 
 Preserve the UI-selected side exactly.
+
+### Keno
+
+Use `keno` when the player chooses board picks for a selected Keno configuration:
+
+```ts
+const tx = client.suigar.tx.createGameBet({
+	game: 'keno',
+	owner,
+	coinType: '0x2::sui::SUI',
+	stake: 1_000_000_000n,
+	configId,
+	picks,
+});
+```
+
+Read live parameters before rendering configuration or pick-count choices. Pass `picks` as the selected board positions; the SDK validates each value as a u8-compatible integer and decodes Keno result details such as `picks`, `drawn_numbers`, `hit_count`, `multiplier`, and `payout_amount`.
 
 ### Limbo
 
@@ -180,24 +199,34 @@ const tx = client.suigar.tx.createGameBet({
 ## Event Decoding
 
 ```ts
-import { fromMoveFloat, parseGameDetails, parseGameEvent } from '@suigar/sdk/utils';
+import {
+	fromMoveFloat,
+	parseGameDetails,
+	parseGameEvent,
+	parseSuigarEvent,
+} from '@suigar/sdk/utils';
+
+const resolved = parseSuigarEvent(event);
+if (resolved?.event.type === 'BetResultEvent') {
+	const { game, event: decodedEvent, gameDetails } = resolved;
+}
 
 const parsed = parseGameEvent(event);
-if (parsed?.eventName === 'BetResultEvent') {
+if (parsed?.event === 'BetResultEvent') {
 	const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
-	const gameDetails = parseGameDetails(parsed.gameId, decoded.game_details);
+	const gameDetails = parseGameDetails({ game: parsed.game, gameDetails: decoded.game_details });
 	const adjustedOraclePrice = fromMoveFloat(decoded.adjusted_oracle_usd_coin_price);
 }
 ```
 
-Use `event.bcs` as the event payload when available. `parseGameDetails` preserves on-chain keys and returns decoded string, number, and boolean values.
+Use `event.bcs` as the event payload when available. `parseSuigarEvent` returns `{ game, event: { type, data } }` and includes `gameDetails` for `BetResultEvent`. `parseGameDetails` preserves on-chain keys and returns decoded strings, numbers, booleans, vectors, and `bigint` values for `u64` and `u128`.
 
 ## Gotchas
 
-- Do not model standard games with PvP builders or MCP transaction tool names.
+- Do not model standard games with PvP builders, SweetHouse builders, or MCP transaction tool names.
 - For partner attribution, follow [referrals](../referrals/SKILL.md); do not set `metadata.partner` or `metadata.referrer`.
 - Use `cashStake` only when the withdrawn coin amount must differ from the game stake.
-- `betCount` defaults to `1`; before accepting a larger value, validate against the current game parameters when that game publishes a maximum: Limbo and Range `max_number_of_games`, Plinko `max_number_of_balls`, Soccer `max_number_of_shots`, and Wheel `max_number_of_spins`.
+- `betCount` defaults to `1`; before accepting a larger value, validate against the current game parameters when that game publishes a maximum: Keno, Limbo, and Range `max_number_of_games`, Plinko `max_number_of_balls`, Soccer `max_number_of_shots`, and Wheel `max_number_of_spins`.
 - Pass plain application values in `metadata`; let the SDK encode them.
 - For range, do not pre-scale points in app code. With the default scale `1_000_000`, valid UI values are `0` to `100`.
 - Keep amounts as `bigint` once they leave the UI layer.

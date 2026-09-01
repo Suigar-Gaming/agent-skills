@@ -1,10 +1,10 @@
 ---
 name: installation
-description: Set up, scaffold, or fix the base @suigar/sdk integration for Suigar game apps on Sui. Use when installing the v2 SDK with the current Mysten Sui TypeScript SDK, wiring the suigar() Sui client extension, configuring networks, NFT V1 package id, object ids or coin metadata, serializing transactions, reading SDK config or live game parameters, using public exports, parsing Suigar events, or safely checking and converting generated Move float and i64 values. Use this before standard or PvP game skills when the client setup is missing or questionable.
+description: Set up, scaffold, or fix the base @suigar/sdk integration for Suigar apps on Sui. Use when installing the v2 SDK with the current Mysten Sui TypeScript SDK, wiring the suigar() Sui client extension, configuring networks, NFT V1 package id, object ids or coin metadata, serializing transactions, reading SDK config or live game parameters, using public exports, parsing Suigar events, managing SDK cache reset behavior, or safely checking and converting generated Move float and i64 values. Use this before standard, PvP, SweetHouse, referral, or NFT skills when the client setup is missing or questionable.
 license: MIT
 metadata:
   author: suigar
-  version: '1.7.0'
+  version: '1.8.0'
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -26,7 +26,7 @@ Use this skill for application code that imports `@suigar/sdk`. If the task is a
 3. Extend the existing Sui client with `suigar()`.
 4. Keep all Suigar transaction creation and serialization on that extended client instance.
 5. Use `client.suigar.getConfig()` for supported coins, object ids, NFT V1 package id, and price info when the UI or diagnostics need resolved config.
-6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct. Route partner attribution or referral claims to [referrals](../referrals/SKILL.md), and NFT V1 catalog, ownership, or mint flows to `suigar-nft`.
+6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct. Route SweetHouse deposits, redeem requests, or delayed self-claims to [sweethouse](../sweethouse/SKILL.md), partner attribution or referral claims to [referrals](../referrals/SKILL.md), and NFT V1 catalog, ownership, or mint flows to `suigar-nft`.
 
 ## Public Surface
 
@@ -49,21 +49,22 @@ import {
 	isMoveI64,
 	parseGameDetails,
 	parseGameEvent,
+	parseSuigarEvent,
 } from '@suigar/sdk/utils';
 ```
 
 The package root exposes `suigar`, `SuigarClient`, `SUPPORTED_SUI_NETWORKS`, `SuigarCoin`, and `SuigarNetwork`. Game ids and game-specific option types live in `@suigar/sdk/games`. Parser and numeric helpers live in `@suigar/sdk/utils`.
 
-Use these game-specific public types when useful: `GAMES`, `Game`, `StandardGame`, `PvPGame`, `CoinSide`, `PvPCoinflipAction`, `CreateGameBetOptions`, `CoinflipTransactionOptions`, `LimboTransactionOptions`, `PlinkoTransactionOptions`, `RangeTransactionOptions`, `SoccerTransactionOptions`, `WheelTransactionOptions`, `CreatePvPCoinflipTransactionOptions`, `JoinPvPCoinflipTransactionOptions`, and `CancelPvPCoinflipTransactionOptions`.
+Use these game-specific public types when useful: `GAMES`, `Game`, `StandardGame`, `PvPGame`, `CoinSide`, `PvPCoinflipAction`, `CreateGameBetOptions`, `CoinflipTransactionOptions`, `KenoTransactionOptions`, `LimboTransactionOptions`, `PlinkoTransactionOptions`, `RangeTransactionOptions`, `SoccerTransactionOptions`, `WheelTransactionOptions`, `CreatePvPCoinflipTransactionOptions`, `JoinPvPCoinflipTransactionOptions`, and `CancelPvPCoinflipTransactionOptions`.
 
-Use these utilities instead of local replacements when relevant: `fromMoveI64`, `fromMoveFloat`, `isMoveI64`, `isMoveFloat`, `parseCoinType`, `parseGameDetails`, `parseGameEvent`, `toBigInt`, `toU16`, `toU8`, `DEFAULT_GAS_BUDGET_MIST`, `RANGE_POINT_LIMIT`, `DEFAULT_RANGE_SCALE`, and `DEFAULT_LIMBO_MULTIPLIER_SCALE`.
+Use these utilities instead of local replacements when relevant: `fromMoveI64`, `fromMoveFloat`, `isMoveI64`, `isMoveFloat`, `parseCoinType`, `parseGameDetails`, `parseGameEvent`, `parseSuigarEvent`, `toBigInt`, `toU32`, `toU16`, `toU8`, `DEFAULT_GAS_BUDGET_MIST`, `RANGE_POINT_LIMIT`, `DEFAULT_RANGE_SCALE`, and `DEFAULT_LIMBO_MULTIPLIER_SCALE`.
 
 Utility behavior worth preserving:
 
 - `toBigInt(value)` normalizes non-negative integer-like values to `bigint` and rejects invalid or negative values.
 - `toU8(value)` and `toU16(value)` validate finite integer inputs in their unsigned ranges.
 - `parseCoinType(type)` extracts the normalized first generic coin type from a Move object type string.
-- `parseGameDetails(gameId, gameDetails)` decodes standard `BetResultEvent.game_details` while preserving on-chain keys.
+- `parseGameDetails({ game, gameDetails })` decodes standard `BetResultEvent.game_details` while preserving on-chain keys.
 - `isMoveI64(value)` and `isMoveFloat(value)` guard unknown generated BCS values before `fromMoveI64()` or `fromMoveFloat()` converts them.
 
 Do not import individual runtime game builders from `@suigar/sdk`. Use the registered extension:
@@ -76,6 +77,9 @@ client.suigar.tx.pvpCoinflip.cancelGame(options);
 client.suigar.tx.referral.claimCommission(options);
 client.suigar.tx.referral.claimLevelUpUsdRewards(options);
 client.suigar.tx.nftV1.mint(options);
+client.suigar.tx.sweetHouse.deposit(options);
+client.suigar.tx.sweetHouse.redeemRequest(options);
+client.suigar.tx.sweetHouse.claimOwnRedeemRequestAfterDelay(options);
 client.suigar.getPvPCoinflipGames(options);
 client.suigar.serializeTransactionToBase64({ transaction: tx });
 ```
@@ -149,7 +153,7 @@ const base64 = await client.suigar.serializeTransactionToBase64({
 
 Use `client.suigar.getGameParameters({ game, coinType, ...options })` when an app needs live on-chain game bounds or RTP parameters. `coinType` is required because parameters are stored per game and coin type. The SDK already converts generated Move float fields to JavaScript numbers.
 
-The SDK caches parsed parameters for `cacheTtl`, which defaults to 30 minutes. Pass `ignoreCache: true` to force an on-chain refresh when stale parameters would be risky.
+The SDK caches parsed parameters for `cacheTtl`, which defaults to 30 minutes. Pass `ignoreCache: true` to force an on-chain refresh when stale parameters would be risky. Pass a non-positive `cacheTtl` to `suigar({ cacheTtl })` to disable SDK-managed game parameter caching, or call `client.suigar.reset()` to clear cached reads for that extension instance.
 
 For raw generated BCS data outside `getGameParameters()`, guard unknown values before converting them:
 
@@ -167,10 +171,15 @@ Use generated BCS helpers and SDK parsers for events:
 
 ```ts
 const parsed = parseGameEvent(event);
-if (parsed?.eventName === 'BetResultEvent') {
+if (parsed?.event === 'BetResultEvent') {
 	const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
-	const details = parseGameDetails(parsed.gameId, decoded.game_details);
+	const details = parseGameDetails({ game: parsed.game, gameDetails: decoded.game_details });
 	const price = fromMoveFloat(decoded.adjusted_oracle_usd_coin_price);
+}
+
+const decoded = parseSuigarEvent(event);
+if (decoded?.event.type === 'BetResultEvent') {
+	decoded.gameDetails;
 }
 ```
 
@@ -185,9 +194,10 @@ For PvP Coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinf
 - Standard games resolve the price-info object id from the selected coin's `priceInfoObjectId` metadata.
 - `packageIds.nftV1` is configured by network because it is not resolved from MVR. Generated game, referral, and core bindings use `@suigar/*` MVR names by default, with optional `packageIds` entries for explicit package overrides. Use `objectIds` for singleton objects such as `sweetHouse` and `nftV1Factory`.
 - Use `client.suigar.getConfig().packageIds.nftV1` and `objectIds.nftV1Factory` for NFT V1 catalog, ownership, and mint flows; use `suigar-nft` for that flow.
+- Use [sweethouse](../sweethouse/SKILL.md) for public pool deposits, redeem requests, and delayed redeem-request claims. Those builders live under `client.suigar.tx.sweetHouse` and are not standard game bets.
 - Use `SuigarCoin` and `SuigarNetwork` when app code needs supported coin or network types.
 - For object reads, parse object `content`, not `objectBcs`.
-- Do not hand-decode `BetResultEvent.game_details`; use `parseGameEvent(event)` and `parseGameDetails(gameId, ...)`.
+- Do not hand-decode `BetResultEvent.game_details`; use `parseSuigarEvent(event)` or `parseGameEvent(event)` with `parseGameDetails({ game, gameDetails })`.
 - Do not move SDK runtime builders out of `client.suigar.tx` or rely on private package paths.
 
 ## Implementation Checklist
@@ -197,4 +207,4 @@ For PvP Coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinf
 3. Confirm the client uses the intended supported network.
 4. Keep transaction creation and serialization on the same extended client instance.
 5. Keep the consuming app on ESM and pass the explicit `network` required by current client constructors.
-6. Route game-specific work to the standard or PvP skill after base setup is correct; use [referrals](../referrals/SKILL.md) for attribution or reward claims.
+6. Route game-specific work to the standard or PvP skill after base setup is correct; use [sweethouse](../sweethouse/SKILL.md) for SweetHouse public pool flows and [referrals](../referrals/SKILL.md) for attribution or reward claims.

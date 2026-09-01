@@ -1,0 +1,46 @@
+{
+	"skill_name": "sweethouse",
+	"source_constraint": "Expected outputs are grounded in @suigar/sdk SweetHouse transaction builders and public SDK configuration/BCS helpers.",
+	"evals": [
+		{
+			"id": "sweethouse-deposit",
+			"prompt": "Add a Suigar SweetHouse public pool deposit for 1 SUI from the connected wallet. Show the SDK transaction code.",
+			"expected_output": "Builds the transaction with client.suigar.tx.sweetHouse.deposit({ owner, coinType, amount }) using a base-unit bigint amount, keeps useGasCoin optional for native SUI deposits, and does not route through createGameBet or hand-written Move calls.",
+			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/sweethouse"],
+			"assertions": [
+				"Uses client.suigar.tx.sweetHouse.deposit",
+				"Passes owner and coinType",
+				"Uses amount rather than stake",
+				"Uses a bigint or base-unit amount suitable for SDK app code",
+				"Does not use client.suigar.tx.createGameBet",
+				"Does not hand-write a core::sweethouse Move call"
+			]
+		},
+		{
+			"id": "sweethouse-redeem-request",
+			"prompt": "I have SweetHouse staked SUI coins and need to create a redeem request. Should I pass useGasCoin or normal SUI coin objects?",
+			"expected_output": "Uses client.suigar.tx.sweetHouse.redeemRequest({ owner, coinType, amount }), explains that it spends StakedCoin for the selected pool, and states that redeemRequest does not accept useGasCoin or manual coin object selection.",
+			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/sweethouse"],
+			"assertions": [
+				"Uses client.suigar.tx.sweetHouse.redeemRequest",
+				"Explains that the builder spends staked coins",
+				"Passes owner, coinType, and amount",
+				"States that redeemRequest does not accept useGasCoin",
+				"Does not suggest manually passing coin object ids"
+			]
+		},
+		{
+			"id": "sweethouse-delayed-claim",
+			"prompt": "After a SweetHouse redeem delay expires, how do I claim my own redeem request?",
+			"expected_output": "Builds client.suigar.tx.sweetHouse.claimOwnRedeemRequestAfterDelay({ owner, coinType, requestId }), explains that requestId is the redeem request object id and that the signer/owner must be the request creator.",
+			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/sweethouse"],
+			"assertions": [
+				"Uses client.suigar.tx.sweetHouse.claimOwnRedeemRequestAfterDelay",
+				"Passes owner, coinType, and requestId",
+				"Explains requestId is the redeem request object id",
+				"States that the signer or owner must be the request creator",
+				"Does not route the claim through referral or NFT builders"
+			]
+		}
+	]
+}
