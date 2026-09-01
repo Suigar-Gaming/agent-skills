@@ -26,7 +26,7 @@ Use this skill for application code that imports `@suigar/sdk` and builds standa
 3. Build the transaction with `client.suigar.tx.createGameBet({ game, ...options })`.
 4. Let the SDK source bet coins through Mysten `coinWithBalance` transaction arguments.
 5. Serialize only if the wallet or transport layer needs bytes.
-6. For result display, read [event and numeric parsing](../installation/references/events.md).
+6. For result display, read [event parsing](../event-parsing/references/events.md).
 
 ## Imports and Types
 
@@ -73,7 +73,7 @@ Read `client.suigar.getGameParameters({ game, coinType })` before presenting or 
 
 ## Event Decoding
 
-For `BetResultEvent` parsing and decoded `gameDetails` behavior, read [event and numeric parsing](../installation/references/events.md).
+For `BetResultEvent` parsing and decoded `gameDetails` behavior, read [event parsing](../event-parsing/references/events.md).
 
 ## Gotchas
 
@@ -94,5 +94,5 @@ For `BetResultEvent` parsing and decoded `gameDetails` behavior, read [event and
 2. Verify the base client already has `suigar()` configured.
 3. Build the transaction with `createGameBet`.
 4. Serialize only if the surrounding wallet or transport path needs bytes.
-5. Decode `BetResultEvent` with [event and numeric parsing](../installation/references/events.md).
+5. Decode `BetResultEvent` with [event parsing](../event-parsing/references/events.md).
 6. Keep frontend forms, backend handlers, and event decoding aligned with the same game-specific option shape.
