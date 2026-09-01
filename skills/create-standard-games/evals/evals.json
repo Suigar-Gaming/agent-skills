@@ -37,16 +37,32 @@
 		{
 			"id": "standard-event-decoding",
 			"prompt": "After a Suigar wheel bet resolves, I need to display the result details and adjusted oracle price. What's the right decoding pattern?",
-			"expected_output": "Parses the raw event with parseGameEvent, decodes BetResultEvent from event.bcs, gets details with parseGameDetails(gameId, decoded.game_details), and converts adjusted_oracle_usd_coin_price with fromMoveFloat.",
+			"expected_output": "Uses parseSuigarEvent for the high-level decoded event path, or parses the raw event with parseGameEvent, decodes BetResultEvent from event.bcs, gets details with parseGameDetails({ game, gameDetails: decoded.game_details }), and converts adjusted_oracle_usd_coin_price with fromMoveFloat.",
 			"sources": [
 				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-standard-games"
 			],
 			"assertions": [
-				"Uses parseGameEvent",
+				"Uses parseSuigarEvent or parseGameEvent",
 				"Uses client.suigar.bcs.BetResultEvent.parse(event.bcs)",
-				"Uses parseGameDetails with the gameId from parseGameEvent",
+				"Uses parseGameDetails with the game from parseGameEvent",
 				"Uses fromMoveFloat for adjusted_oracle_usd_coin_price",
 				"Does not hand-decode game_details"
+			]
+		},
+		{
+			"id": "standard-keno-transaction",
+			"prompt": "Build a Suigar Keno bet for selected board picks [1, 7, 20] using config 2 and a 1 SUI stake.",
+			"expected_output": "Builds the transaction with client.suigar.tx.createGameBet({ game: 'keno', ... }), passes owner, coinType, a base-unit stake, configId: 2, and picks: [1, 7, 20], and notes that configId comes from live Keno parameters and picks are u8-compatible board positions.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-standard-games"
+			],
+			"assertions": [
+				"Uses client.suigar.tx.createGameBet",
+				"Uses the game id 'keno'",
+				"Passes configId: 2",
+				"Passes picks: [1, 7, 20]",
+				"Passes owner, coinType, and a base-unit stake",
+				"Does not hand-write a Move target or select coin objects"
 			]
 		},
 		{
