@@ -13,8 +13,12 @@ const { object } = await client.core.getObject({
 	include: { content: true },
 });
 
-if (object instanceof Error) throw object;
-if (!object.content) throw new Error('NFT factory did not return content.');
+if (object instanceof Error) {
+	throw object;
+}
+if (!object.content) {
+	throw new Error('NFT factory did not return content.');
+}
 
 const factory = client.suigar.bcs.NftV1Factory.parse(object.content);
 const specs = factory.specs.contents.map(({ value }) => ({
