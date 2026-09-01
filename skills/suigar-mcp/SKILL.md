@@ -4,7 +4,7 @@ description: Install, configure, operate, or troubleshoot the @suigar/mcp server
 license: MIT
 metadata:
   author: suigar
-  version: '1.7.0'
+  version: '1.8.0'
   short-description: Operate the Suigar MCP server
   tags:
     - suigar
@@ -15,7 +15,7 @@ metadata:
 
 # Suigar MCP
 
-Use this skill for `@suigar/mcp` operation. If the user is writing application code that imports `@suigar/sdk`, use `installation`, `create-standard-games`, `create-pvp-games`, or `suigar-nft` instead.
+Use this skill for `@suigar/mcp` operation. If the user is writing application code that imports `@suigar/sdk`, use `installation`, `create-standard-games`, `create-pvp-games`, [sweethouse](../sweethouse/SKILL.md), [suigar-nft](../suigar-nft/SKILL.md), or [referrals](../referrals/SKILL.md) instead.
 
 The MCP server is a thin layer over `@suigar/sdk`. It reads Suigar config, game metadata, wallet balances, coin objects, NFTs, and referral rewards; builds unsigned transactions; dry-runs unsigned transactions; and can execute only through an explicit paired-wallet approval or a user-created local session wallet.
 
@@ -80,7 +80,7 @@ Start with read tools when network, coin, package, or game support is unclear:
 - `get_referral_commission`: simulate the commission claimable by one referrer for a selected or default coin type.
 - `get_referral_level_up_usd_rewards`: simulate the USD level-up rewards claimable by one referrer.
 
-Use transaction tools for supported on-chain games, referrals, NFT V1 minting, and wallet setup flows:
+Use transaction tools for supported on-chain games, referrals, NFT V1 minting, SweetHouse flows, and wallet setup flows. For modes, required fields, and input gotchas, read [references/transaction-tools.md](references/transaction-tools.md).
 
 - `setup_session_wallet`
 - `fund_session_wallet`
@@ -107,16 +107,7 @@ Do not invent tools for unsupported games. Slots are backend-driven and are not 
 
 ## Modes
 
-Use the lightest mode that answers the request:
-
-| Mode | Use when |
-| --- | --- |
-| `read-only` | The user needs a resolved plan without transaction bytes. |
-| `build` | The user needs unsigned base64 bytes for a wallet or app to sign. |
-| `dry-run` | The user needs raw and summarized Sui simulation data for the unsigned transaction. |
-| `execute` | The user explicitly wants MCP to execute through paired browser-wallet approval or a local session wallet. |
-
-All tool responses should include text `content` and `structuredContent`. App-capable clients may render the bundled Suigar Transaction Inspector UI.
+Use the lightest mode that answers the request. For `read-only`, `build`, `dry-run`, and `execute` behavior, read [references/transaction-tools.md](references/transaction-tools.md).
 
 Use `read_game_metadata` before showing or validating live stake limits, RTP, or Keno, Plinko, Soccer, or Wheel configuration. It requires `game`; use `read_config` instead for broad discovery.
 
@@ -126,65 +117,16 @@ Referral amount reads are read-only simulations of the SDK's real claim transact
 
 SweetHouse tools build public pool deposits, staked-coin redeem requests, and delayed self-claims for existing redeem requests. Use `mode: "read-only"` to explain targets and required inputs without transaction bytes; build, dry-run, and execute modes require SDK-required fields. For SDK application integration, use [sweethouse](../sweethouse/SKILL.md).
 
-Wallet tools manage two different wallet paths. Use `suigar_login`, `suigar_logout`, and `get_connection_status` for paired browser-wallet approval flows. Use `setup_session_wallet`, `get_session_wallet`, and `fund_session_wallet` for a persistent local session wallet; recovery phrases and imported `suiprivkey...` values stay on the localhost setup page and never pass through MCP.
+Wallet tools manage two different wallet paths. Use `suigar_login`, `suigar_logout`, and `get_connection_status` for paired browser-wallet approval flows. Use `setup_session_wallet`, `get_session_wallet`, and `fund_session_wallet` for a persistent local session wallet. For approval and session-wallet boundaries, read [references/wallets.md](references/wallets.md).
 
-## Common Inputs
+## Common Inputs And Game Fields
 
-- `network` defaults to `testnet`; only `testnet` and `mainnet` are supported.
-- `providerUrl` can override the Sui gRPC endpoint.
-- `config` accepts SDK-style `packageIds`, `objectIds`, and coin-metadata overrides. Game, referral, and core packages use `@suigar/*` MVR names by default, with optional `packageIds` entries for explicit package overrides; `nftV1` remains network configured. Put a custom price-info object id beside its coin as `coins.sui.priceInfoObjectId` or `coins.usdc.priceInfoObjectId`; singleton ids such as `sweetHouse` and `nftV1Factory` belong in `objectIds`.
-- `partner` is a top-level partner wallet address forwarded through `suigar({ partner })`.
-- `owner` accepts a Sui address, SuiNS name, or SuiNS subname in build, dry-run, paired-wallet execute, NFT, wallet, and referral reads. In `mode: "execute"` with `executionWallet: "session"`, `owner` is optional and must match the selected session wallet if provided.
-- `coinType` defaults to the SDK-configured SUI coin type.
-- `amount`, `stake`, and `cashStake` are currency amounts, such as `1` or `1.5`, not base units.
-- `betCount` defaults to `1`. For Keno, Limbo, Plinko, Range, Soccer, and Wheel, MCP reads the current game parameters and rejects a value above that game's on-chain maximum; Coinflip does not publish a maximum.
-- Transaction tools that accept `metadata` require JSON-compatible strings, numbers, or booleans. Send large integer metadata values as strings. PvP Coinflip cancel does not accept `metadata`.
-- `gasBudget` is in MIST.
-- `useGasCoin` is for transaction tools that source native SUI coins, including native SUI bets, NFT V1 mint, and SweetHouse deposit, when overriding Mysten's default coin intent behavior. PvP Coinflip cancel and SweetHouse redeem/claim flows do not accept `useGasCoin`.
-- `executionWallet` is `"connected"` or `"session"` for execute mode. `"connected"` opens browser approval; `"session"` signs and submits with the local session wallet.
-- `sessionWalletId` selects a named local session wallet when supported and defaults to the first wallet.
-- Wallet pairing inputs include optional `webUrl`, `timeoutMs`, `maxBodyBytes`, `open`, and `noOpen`; `open` and `noOpen` are mutually exclusive.
-
-Referral claim builders require `owner`; commission claims optionally accept `coinType`, while level-up USD reward claims use configured USDC. Their SDK-built transaction transfers the claimed coin to `owner`.
-
-NFT V1 minting requires `owner` and `specId`; the MCP tool resolves the selected spec's SUI price from the configured NFT factory when building.
-
-Do not pass explicit coin object ids. The MCP package intentionally uses SDK public transaction builders.
-
-## Game Inputs
-
-Standard game fields:
-
-- Coinflip: `side: "heads" | "tails"`
-- Keno: `configId: number` from live `parameters.configs`; `picks: number[]` of player-selected u8-compatible board positions
-- Limbo: `targetMultiplier: number`
-- Plinko: `configId: number` from live `parameters.configs`
-- Range: `leftPoint: number`, `rightPoint: number`, optional `outOfRange`; validate against live bounds
-- Soccer: `configId: number` from `parameters.configs`; resolve the user's country name against `parameters.countries.contents[].value` and pass its `key` as `countryId`; use `shotZoneId: number` from the selected config's `shot_zone_ids`
-- Wheel: `configId: number` from live `parameters.configs`
-
-PvP Coinflip fields:
-
-- Create: `owner`, `stake`, `creatorSide`, optional `isPrivate`
-- Join: `owner`, `gameId`, optional `coinType`
-- Cancel: `owner`, `gameId`, optional `coinType`
-
-PvP Coinflip create uses the MCP field name `creatorSide`; the SDK builder receives that value as `side`.
-
-NFT V1 mint fields:
-
-- Mint: `owner`, `specId`, optional `gasBudget`, optional `useGasCoin`
-
-SweetHouse fields:
-
-- Deposit: `owner`, `amount`, optional `coinType`, optional `gasBudget`, optional `useGasCoin`; deposits a configured coin into the public pool and returns staked coins to `owner`
-- Redeem request: `owner`, `amount`, optional `coinType`, optional `gasBudget`; spends staked coins for the selected pool and creates a redeem request
-- Claim own redeem request after delay: `owner`, `requestId`, optional `coinType`, optional `gasBudget`; `requestId` must be a Sui object id and the signer must be the request creator
+For common MCP inputs, standard game fields, PvP Coinflip fields, NFT mint inputs, referral claim inputs, and SweetHouse fields, read [references/transaction-tools.md](references/transaction-tools.md).
 
 ## Gotchas
 
 - Keep MCP usage read-only with respect to user assets unless the user explicitly requests `execute` mode or session-wallet setup/funding.
-- Paired-wallet `execute` opens browser approval. Session-wallet `execute` signs and submits directly from the local session wallet key stored in the OS keychain, so use it only for a dedicated low-funded wallet the user intentionally set up.
+- Paired-wallet `execute` opens browser approval. Session-wallet `execute` signs and submits directly from the local session wallet key stored in the OS keychain, so use it only for a dedicated low-funded wallet the user intentionally set up. Read [references/wallets.md](references/wallets.md) for wallet-specific behavior.
 - Use `read_config` before building when network, coin, NFT V1 package id, or supported games are uncertain.
 - Pass partner attribution as top-level `partner`; do not set `metadata.partner` or `metadata.referrer`.
 - Use PvP tools for PvP Coinflip. Do not route PvP Coinflip through standard game builders.

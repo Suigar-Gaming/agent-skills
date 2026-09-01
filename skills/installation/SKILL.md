@@ -4,7 +4,7 @@ description: Set up, scaffold, or fix the base @suigar/sdk integration for Suiga
 license: MIT
 metadata:
   author: suigar
-  version: '1.8.0'
+  version: '1.9.0'
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -57,7 +57,7 @@ The package root exposes `suigar`, `SuigarClient`, `SUPPORTED_SUI_NETWORKS`, `Su
 
 Use these game-specific public types when useful: `GAMES`, `Game`, `StandardGame`, `PvPGame`, `CoinSide`, `PvPCoinflipAction`, `CreateGameBetOptions`, `CoinflipTransactionOptions`, `KenoTransactionOptions`, `LimboTransactionOptions`, `PlinkoTransactionOptions`, `RangeTransactionOptions`, `SoccerTransactionOptions`, `WheelTransactionOptions`, `CreatePvPCoinflipTransactionOptions`, `JoinPvPCoinflipTransactionOptions`, and `CancelPvPCoinflipTransactionOptions`.
 
-Use these utilities instead of local replacements when relevant: `fromMoveI64`, `fromMoveFloat`, `isMoveI64`, `isMoveFloat`, `parseCoinType`, `parseGameDetails`, `parseGameEvent`, `parseSuigarEvent`, `toBigInt`, `toU32`, `toU16`, `toU8`, `DEFAULT_GAS_BUDGET_MIST`, `RANGE_POINT_LIMIT`, `DEFAULT_RANGE_SCALE`, and `DEFAULT_LIMBO_MULTIPLIER_SCALE`.
+Use these utilities instead of local replacements when relevant: `fromMoveI64`, `fromMoveFloat`, `isMoveI64`, `isMoveFloat`, `parseCoinType`, `parseGameDetails`, `parseGameEvent`, `parseSuigarEvent`, `toBigInt`, `toU32`, `toU16`, `toU8`, `DEFAULT_GAS_BUDGET_MIST`, `RANGE_POINT_LIMIT`, `DEFAULT_RANGE_SCALE`, and `DEFAULT_LIMBO_MULTIPLIER_SCALE`. For event and raw generated numeric parsing, read [references/events.md](references/events.md).
 
 Utility behavior worth preserving:
 
@@ -155,39 +155,7 @@ Use `client.suigar.getGameParameters({ game, coinType, ...options })` when an ap
 
 The SDK caches parsed parameters for `cacheTtl`, which defaults to 30 minutes. Pass `ignoreCache: true` to force an on-chain refresh when stale parameters would be risky. Pass a non-positive `cacheTtl` to `suigar({ cacheTtl })` to disable SDK-managed game parameter caching, or call `client.suigar.reset()` to clear cached reads for that extension instance.
 
-For raw generated BCS data outside `getGameParameters()`, guard unknown values before converting them:
-
-```ts
-if (isMoveFloat(value)) {
-	const number = fromMoveFloat(value);
-}
-
-if (isMoveI64(value)) {
-	const number = fromMoveI64(value);
-}
-```
-
-Use generated BCS helpers and SDK parsers for events:
-
-```ts
-const parsed = parseGameEvent(event);
-if (parsed?.event === 'BetResultEvent') {
-	const decoded = client.suigar.bcs.BetResultEvent.parse(event.bcs);
-	const details = parseGameDetails({ game: parsed.game, gameDetails: decoded.game_details });
-	const price = fromMoveFloat(decoded.adjusted_oracle_usd_coin_price);
-}
-
-const decoded = parseSuigarEvent(event);
-if (decoded?.event.type === 'BetResultEvent') {
-	const result = {
-		game: decoded.game,
-		event: decoded.event.type,
-		details: decoded.gameDetails,
-	};
-}
-```
-
-For PvP Coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinflipGameResolvedEvent`, and `PvPCoinflipGameCancelledEvent`.
+For event parsing, raw generated BCS numeric conversion, and direct BCS event helpers, read [references/events.md](references/events.md).
 
 ## Gotchas
 
