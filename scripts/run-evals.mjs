@@ -234,8 +234,11 @@ async function main() {
 		for (const { result, passed, failed } of skillResults) {
 			allResults.push(result);
 			totalPass += passed;
-			if (result.status === 'ERROR') totalError += 1;
-			else totalFail += failed;
+			if (result.status === 'ERROR') {
+				totalError += 1;
+			} else {
+				totalFail += failed;
+			}
 			totalEvals++;
 		}
 	}

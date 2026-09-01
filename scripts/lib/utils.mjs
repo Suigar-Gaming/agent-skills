@@ -14,21 +14,29 @@ const envPath = join(ROOT, '.env');
 if (existsSync(envPath)) {
 	for (const line of readFileSync(envPath, 'utf-8').split('\n')) {
 		const trimmed = line.trim();
-		if (!trimmed || trimmed.startsWith('#')) continue;
+		if (!trimmed || trimmed.startsWith('#')) {
+			continue;
+		}
 		const eq = trimmed.indexOf('=');
-		if (eq === -1) continue;
+		if (eq === -1) {
+			continue;
+		}
 		const key = trimmed.slice(0, eq).trim();
 		const val = trimmed
 			.slice(eq + 1)
 			.trim()
 			.replace(/^["']|["']$/g, '');
-		if (!process.env[key]) process.env[key] = val;
+		if (!process.env[key]) {
+			process.env[key] = val;
+		}
 	}
 }
 
 export function getFlag(args, name) {
 	const prefixed = args.find((a) => a.startsWith(`--${name}=`))?.split('=')[1];
-	if (prefixed) return prefixed;
+	if (prefixed) {
+		return prefixed;
+	}
 	const idx = args.indexOf(`--${name}`);
 	return idx !== -1 ? args[idx + 1] : null;
 }
@@ -123,7 +131,9 @@ export function loadSkillContext(evalFilePath) {
 	}
 
 	for (const f of mdFiles.sort()) {
-		if (basename(f) === 'SKILL.md') continue;
+		if (basename(f) === 'SKILL.md') {
+			continue;
+		}
 		const rel = relative(skillDir, f);
 		parts.push(`# ${skillName} - ${rel}\n\n${readFileSync(f, 'utf-8')}`);
 	}
@@ -133,8 +143,12 @@ export function loadSkillContext(evalFilePath) {
 
 export function parseEvals(filePath) {
 	const raw = JSON.parse(readFileSync(filePath, 'utf-8'));
-	if (Array.isArray(raw)) return raw;
-	if (raw.evals && Array.isArray(raw.evals)) return raw.evals;
+	if (Array.isArray(raw)) {
+		return raw;
+	}
+	if (raw.evals && Array.isArray(raw.evals)) {
+		return raw.evals;
+	}
 	throw new Error(`Unexpected eval format in ${filePath}`);
 }
 

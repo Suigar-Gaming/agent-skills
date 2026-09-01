@@ -32,7 +32,9 @@ function readFrontmatter(file) {
 	const fields = {};
 	for (const line of lines.slice(1, end)) {
 		const match = line.match(/^([A-Za-z][\w-]*):\s*(.*)$/);
-		if (match) fields[match[1]] = match[2].replace(/^['"]|['"]$/g, '');
+		if (match) {
+			fields[match[1]] = match[2].replace(/^['"]|['"]$/g, '');
+		}
 	}
 	return { fields, lines };
 }
@@ -41,9 +43,13 @@ function validateMarkdownLinks(file) {
 	const source = readFileSync(file, 'utf8');
 	for (const match of source.matchAll(/\]\(([^)]+)\)/g)) {
 		const target = match[1];
-		if (/^(?:https?:|#)/.test(target)) continue;
+		if (/^(?:https?:|#)/.test(target)) {
+			continue;
+		}
 		const targetPath = resolve(dirname(file), target);
-		if (!existsSync(targetPath)) fail(file, `broken relative link: ${target}`);
+		if (!existsSync(targetPath)) {
+			fail(file, `broken relative link: ${target}`);
+		}
 	}
 }
 
@@ -53,14 +59,24 @@ const skillNames = new Set();
 for (const skillFile of skillFiles) {
 	const skillDir = basename(dirname(skillFile));
 	const parsed = readFrontmatter(skillFile);
-	if (!parsed) continue;
+	if (!parsed) {
+		continue;
+	}
 
 	const { fields, lines } = parsed;
-	if (fields.name !== skillDir) fail(skillFile, `frontmatter name must be ${skillDir}`);
-	if (!fields.description) fail(skillFile, 'frontmatter description is required');
-	if (skillNames.has(fields.name)) fail(skillFile, `duplicate skill name: ${fields.name}`);
+	if (fields.name !== skillDir) {
+		fail(skillFile, `frontmatter name must be ${skillDir}`);
+	}
+	if (!fields.description) {
+		fail(skillFile, 'frontmatter description is required');
+	}
+	if (skillNames.has(fields.name)) {
+		fail(skillFile, `duplicate skill name: ${fields.name}`);
+	}
 	skillNames.add(fields.name);
-	if (lines.length - 1 > 500) fail(skillFile, 'SKILL.md must be 500 lines or fewer');
+	if (lines.length - 1 > 500) {
+		fail(skillFile, 'SKILL.md must be 500 lines or fewer');
+	}
 	validateMarkdownLinks(skillFile);
 
 	const evalFile = join(dirname(skillFile), 'evals', 'evals.json');
@@ -76,7 +92,9 @@ for (const skillFile of skillFiles) {
 			continue;
 		}
 		for (const [index, evaluation] of (Array.isArray(evals) ? evals : evals.evals).entries()) {
-			if (!evaluation.prompt) fail(evalFile, `eval ${index + 1} is missing prompt`);
+			if (!evaluation.prompt) {
+				fail(evalFile, `eval ${index + 1} is missing prompt`);
+			}
 			const expectations = evaluation.expectations ?? evaluation.assertions;
 			if (!Array.isArray(expectations) || expectations.length === 0) {
 				fail(evalFile, `eval ${index + 1} needs expectations or assertions`);
@@ -87,7 +105,9 @@ for (const skillFile of skillFiles) {
 	}
 }
 
-if (skillFiles.length === 0) fail(SKILLS_ROOT, 'no skills found');
+if (skillFiles.length === 0) {
+	fail(SKILLS_ROOT, 'no skills found');
+}
 
 if (failures.length > 0) {
 	console.error(
