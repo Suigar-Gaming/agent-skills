@@ -75,13 +75,13 @@ Build standard single-player Suigar game flows on top of `@suigar/sdk`.
 
 ### create-pvp-games
 
-Build PvP game flows on top of `@suigar/sdk`. The skill includes a dedicated PvP coinflip specification and can grow with one specification per future PvP game.
+Build PvP game flows on top of `@suigar/sdk`. The skill includes a dedicated PvP Coinflip specification and can grow with one specification per future PvP game.
 
 **Use when:**
 
-- Creating, joining, or canceling PvP coinflip matches
-- Listing unresolved PvP coinflip lobby games
-- Reading PvP coinflip game objects or events
+- Creating, joining, or canceling PvP Coinflip matches
+- Listing unresolved PvP Coinflip lobby games
+- Reading PvP Coinflip game objects or events
 - Keeping PvP transaction flows separate from standard game builders
 
 ### suigar-mcp
@@ -123,7 +123,7 @@ Install the local Suigar plugin in Codex
 ```
 
 ```text
-Add a PvP coinflip lobby flow
+Add a PvP Coinflip lobby flow
 ```
 
 ```text
@@ -147,7 +147,7 @@ Dry-run a Suigar MCP limbo transaction for this wallet with a 2.5x target multip
 ```
 
 ```text
-Use Suigar MCP to build an unsigned PvP coinflip create transaction for 1 SUI on tails
+Use Suigar MCP to build an unsigned PvP Coinflip create transaction for 1 SUI on tails
 ```
 
 ```text

@@ -1,8 +1,8 @@
 # PvP Coinflip Specification
 
-Use this specification for application code that imports `@suigar/sdk` and builds PvP coinflip. If the user is using MCP tools instead of SDK code, use `suigar-mcp`; the MCP create input is `creatorSide`, which maps to SDK `side`.
+Use this specification for application code that imports `@suigar/sdk` and builds PvP Coinflip. If the user is using MCP tools instead of SDK code, use `suigar-mcp`; the MCP create input is `creatorSide`, which maps to SDK `side`.
 
-> Source constraint: Treat the SDK PvP coinflip builders, BCS helpers, and registry lookup behavior as authoritative. Do not adapt standard bet builders for PvP.
+> Source constraint: Treat the SDK PvP Coinflip builders, BCS helpers, and registry lookup behavior as authoritative. Do not adapt standard bet builders for PvP.
 
 ## Default Workflow
 
@@ -34,7 +34,7 @@ Use `PvPCoinflipAction` and `PvPGame` from `@suigar/sdk/games` when app code nee
 
 ### Create
 
-Use `create` when the first player opens a PvP coinflip match.
+Use `create` when the first player opens a PvP Coinflip match.
 
 Required: `owner`, `coinType`, `stake`, `side`.
 
@@ -76,7 +76,7 @@ Use `cancel` when the creator cancels an unresolved match.
 
 Required: `owner`, `coinType`, `gameId`.
 
-Optional: `metadata`, `gasBudget`, `useGasCoin`.
+Optional: `gasBudget`. Cancel does not build a bet coin or write metadata, so do not pass `metadata` or `useGasCoin`.
 
 ```ts
 const tx = client.suigar.tx.pvpCoinflip.cancelGame({
@@ -122,7 +122,7 @@ When a flow also decodes `BetResultEvent`, use `parseGameEvent(event)` to retrie
 
 ## Gotchas
 
-- Do not model PvP coinflip with `createGameBet`.
+- Do not model PvP Coinflip with `createGameBet`.
 - Do not pass explicit coin object ids; let the SDK build the coin input from balance.
 - For partner attribution, follow [referrals](../../referrals/SKILL.md); do not set `metadata.partner` or `metadata.referrer`.
 - Treat lobby ids, game ids, and privacy flags as explicit product state.

@@ -67,7 +67,7 @@ For Cursor, install through the Suigar repository marketplace at `https://github
 
 Start with read tools when network, coin, package, or game support is unclear:
 
-- `read_config`: inspect network, provider URL, package ids, configured coins, and supported games.
+- `read_config`: inspect network, provider URL, NFT V1 package id, configured coins, and supported games.
 - `read_game_metadata`: inspect one required game id's live on-chain parameters, package id, default or requested coin type, transaction surface, and support notes. Pass `ignoreCache: true` to refresh SDK-cached parameters.
 - `list_nfts`: read the NFT V1 catalog and matching NFTs owned by one required address or SuiNS name. It returns display-friendly identifiers and NFT image URLs.
 - `get_wallet_balances`: list aggregate balances for the connected wallet, a local session wallet, or an explicit owner.
@@ -124,15 +124,15 @@ Wallet tools manage two different wallet paths. Use `suigar_login`, `suigar_logo
 
 - `network` defaults to `testnet`; only `testnet` and `mainnet` are supported.
 - `providerUrl` can override the Sui gRPC endpoint.
-- `config` accepts SDK-style `packageIds`, `objectIds`, `registryIds`, and coin-metadata overrides. Put a custom price-info object id beside its coin as `coins.sui.priceInfoObjectId` or `coins.usdc.priceInfoObjectId`; singleton ids such as `sweetHouse` and `nftV1Factory` belong in `objectIds`.
+- `config` accepts SDK-style `packageIds`, `objectIds`, and coin-metadata overrides. Game, referral, and core packages use `@suigar/*` MVR names by default, with optional `packageIds` entries for explicit package overrides; `nftV1` remains network configured. Put a custom price-info object id beside its coin as `coins.sui.priceInfoObjectId` or `coins.usdc.priceInfoObjectId`; singleton ids such as `sweetHouse` and `nftV1Factory` belong in `objectIds`.
 - `partner` is a top-level partner wallet address forwarded through `suigar({ partner })`.
 - `owner` accepts a Sui address, SuiNS name, or SuiNS subname in build, dry-run, paired-wallet execute, NFT, wallet, and referral reads. In `mode: "execute"` with `executionWallet: "session"`, `owner` is optional and must match the selected session wallet if provided.
 - `coinType` defaults to the SDK-configured SUI coin type.
 - `stake` and `cashStake` are currency amounts, such as `1` or `1.5`, not base units.
 - `betCount` defaults to `1`. For Limbo, Plinko, Range, Soccer, and Wheel, MCP reads the current game parameters and rejects a value above that game's on-chain maximum; Coinflip does not publish a maximum.
-- `metadata` values must be JSON-compatible strings, numbers, or booleans. Send large integer metadata values as strings.
+- Transaction tools that accept `metadata` require JSON-compatible strings, numbers, or booleans. Send large integer metadata values as strings. PvP Coinflip cancel does not accept `metadata`.
 - `gasBudget` is in MIST.
-- `useGasCoin` is only for native SUI bet coin handling when overriding Mysten's default coin intent behavior.
+- `useGasCoin` is for transaction tools that source native SUI coins, including native SUI bets and NFT V1 mint, when overriding Mysten's default coin intent behavior. PvP Coinflip cancel does not accept `useGasCoin`.
 - `executionWallet` is `"connected"` or `"session"` for execute mode. `"connected"` opens browser approval; `"session"` signs and submits with the local session wallet.
 - `sessionWalletId` selects a named local session wallet when supported and defaults to the first wallet.
 - Wallet pairing inputs include optional `webUrl`, `timeoutMs`, `maxBodyBytes`, `open`, and `noOpen`; `open` and `noOpen` are mutually exclusive.
@@ -154,13 +154,13 @@ Standard game fields:
 - Soccer: `configId: number` from `parameters.configs`; resolve the user's country name against `parameters.countries.contents[].value` and pass its `key` as `countryId`; use `shotZoneId: number` from the selected config's `shot_zone_ids`
 - Wheel: `configId: number` from live `parameters.configs`
 
-PvP coinflip fields:
+PvP Coinflip fields:
 
 - Create: `owner`, `stake`, `creatorSide`, optional `isPrivate`
 - Join: `owner`, `gameId`, optional `coinType`
 - Cancel: `owner`, `gameId`, optional `coinType`
 
-PvP coinflip create uses the MCP field name `creatorSide`; the SDK builder receives that value as `side`.
+PvP Coinflip create uses the MCP field name `creatorSide`; the SDK builder receives that value as `side`.
 
 NFT V1 mint fields:
 
@@ -170,9 +170,9 @@ NFT V1 mint fields:
 
 - Keep MCP usage read-only with respect to user assets unless the user explicitly requests `execute` mode or session-wallet setup/funding.
 - Paired-wallet `execute` opens browser approval. Session-wallet `execute` signs and submits directly from the local session wallet key stored in the OS keychain, so use it only for a dedicated low-funded wallet the user intentionally set up.
-- Use `read_config` before building when network, coin, package ids, or supported games are uncertain.
+- Use `read_config` before building when network, coin, NFT V1 package id, or supported games are uncertain.
 - Pass partner attribution as top-level `partner`; do not set `metadata.partner` or `metadata.referrer`.
-- Use PvP tools for PvP coinflip. Do not route PvP coinflip through standard game builders.
+- Use PvP tools for PvP Coinflip. Do not route PvP Coinflip through standard game builders.
 - Use `read_game_metadata` before supplying any live game input or non-default `betCount`. It provides the valid Plinko/Wheel configs, Soccer configs/countries/shot zones, and limits used by MCP's on-chain maximum validation for Limbo, Plinko, Range, Soccer, and Wheel. For a natural-language Soccer country request, match the returned country name and pass its key as `countryId`; do not guess an ID or substitute an ISO code.
 - For PvP join, expect live object reads while building or dry-running because the SDK resolves the current game stake from the game object.
 - `list_nfts` is read-only. Use `build_nft_v1_mint_transaction` for NFT V1 mint plans, builds, dry-runs, or explicit execute-mode requests.
