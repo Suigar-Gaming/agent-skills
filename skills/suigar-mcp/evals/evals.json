@@ -121,6 +121,20 @@
 			]
 		},
 		{
+			"id": "mcp-keno-transaction",
+			"prompt": "Use Suigar MCP to build a Keno transaction for my wallet with config 2, picks [1, 7, 20], and a 1 SUI stake. Do not execute it.",
+			"expected_output": "Routes to build_keno_transaction in build mode with owner, stake, configId: 2, and picks: [1, 7, 20], explains that build returns unsigned bytes, and does not execute or hand-write a Move call.",
+			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"],
+			"assertions": [
+				"Uses or names build_keno_transaction",
+				"Uses build mode or states it will not execute",
+				"Passes configId: 2",
+				"Passes picks: [1, 7, 20]",
+				"Passes owner and stake",
+				"Does not use execute mode because the user said not to execute"
+			]
+		},
+		{
 			"id": "mcp-referral-commission-claim",
 			"prompt": "Use Suigar MCP to check the SUI referral commission claimable by wallet.sui and then give me unsigned bytes to claim it. Do not submit anything.",
 			"expected_output": "Uses get_referral_commission with owner: 'wallet.sui' to read the simulated amount, then build_referral_commission_claim_transaction in build mode for unsigned bytes. It explains that coinType is optional and defaults to configured SUI, reads can return 0 when unavailable, and build mode does not sign or submit.",
@@ -131,6 +145,33 @@
 				"Passes owner: 'wallet.sui' or explains a SuiNS owner is accepted",
 				"Explains build returns unsigned transaction bytes",
 				"States build mode does not sign or submit the transaction"
+			]
+		},
+		{
+			"id": "mcp-sweethouse-readonly-redeem-plan",
+			"prompt": "Use Suigar MCP to explain what a SweetHouse redeem request would do before I provide amount or owner. I only want a plan.",
+			"expected_output": "Uses build_sweethouse_redeem_request_transaction with mode: 'read-only', explains that read-only returns a plan and required inputs without transaction bytes, and notes that build/dry-run/execute require owner and amount.",
+			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"],
+			"assertions": [
+				"Uses or names build_sweethouse_redeem_request_transaction",
+				"Uses mode: 'read-only'",
+				"Explains read-only returns a plan without transaction bytes",
+				"Mentions owner and amount as required inputs for transaction modes",
+				"Does not require immediate signing or execute mode"
+			]
+		},
+		{
+			"id": "mcp-sweethouse-delayed-claim",
+			"prompt": "Use Suigar MCP to build unsigned bytes for claiming my own SweetHouse redeem request after delay.",
+			"expected_output": "Uses build_sweethouse_claim_own_redeem_request_after_delay_transaction in build mode with owner and requestId, explains requestId must be a Sui object id and the signer must be the request creator, and does not execute.",
+			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"],
+			"assertions": [
+				"Uses or names build_sweethouse_claim_own_redeem_request_after_delay_transaction",
+				"Uses build mode",
+				"Passes or requests owner and requestId",
+				"States requestId must be a Sui object id",
+				"States the signer or owner must be the request creator",
+				"Does not use execute mode"
 			]
 		},
 		{

@@ -4,11 +4,12 @@
 	"groupings": [
 		{
 			"title": "Suigar SDK",
-			"description": "Skills for integrating @suigar/sdk and building referral, NFT V1, standard game, or PvP game flows in applications.",
+			"description": "Skills for integrating @suigar/sdk and building referral, NFT V1, SweetHouse, standard game, or PvP game flows in applications.",
 			"skills": [
 				"installation",
 				"referrals",
 				"suigar-nft",
+				"sweethouse",
 				"create-standard-games",
 				"create-pvp-games"
 			]

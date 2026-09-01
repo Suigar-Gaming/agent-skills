@@ -1,6 +1,6 @@
 ---
 name: create-pvp-games
-description: Build, scaffold, review, or fix Suigar PvP game flows using @suigar/sdk. Use when selecting the correct PvP game specification, designing shared PvP lobby or event-handling architecture, or adding a supported PvP game flow. For PvP coinflip create, join, cancel, lobby, parameter, object, or event work, read references/pvp-coinflip.md.
+description: Build, scaffold, review, or fix Suigar PvP game flows using @suigar/sdk. Use when selecting the correct PvP game specification, designing shared PvP lobby or event-handling architecture, or adding a supported PvP game flow. For PvP Coinflip create, join, cancel, lobby, parameter, object, or event work, read references/pvp-coinflip.md.
 license: MIT
 metadata:
   author: suigar
@@ -20,7 +20,7 @@ Use this skill for application code that imports `@suigar/sdk` and works with Pv
 ## Workflow
 
 1. Identify the exact PvP game before choosing SDK builders, parameters, objects, or events.
-2. For PvP coinflip, read [the PvP coinflip specification](references/pvp-coinflip.md).
+2. For PvP Coinflip, read [the PvP Coinflip specification](references/pvp-coinflip.md).
 3. For another PvP game, use its dedicated specification when available; do not adapt the coinflip builder, input shape, registry, or events.
 4. Keep shared UI concerns—lobby state, connected owner, supported coin metadata, unsigned serialization, and event display—separate from a game's transaction semantics.
 

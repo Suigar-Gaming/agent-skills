@@ -33,7 +33,7 @@ import {
 	ROOT,
 	Semaphore,
 	withTimeout,
-} from './lib/utils.js';
+} from './lib/utils.mjs';
 
 const args = process.argv.slice(2);
 const skillFlag = getFlag(args, 'skill');
