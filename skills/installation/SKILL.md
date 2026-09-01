@@ -26,7 +26,7 @@ Use this skill for application code that imports `@suigar/sdk`. If the task is a
 3. Extend the existing Sui client with `suigar()`.
 4. Keep all Suigar transaction creation and serialization on that extended client instance.
 5. Use `client.suigar.getConfig()` for supported coins, object ids, NFT V1 package id, and price info when the UI or diagnostics need resolved config.
-6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct. Route SweetHouse deposits, redeem requests, or delayed self-claims to [sweethouse](../sweethouse/SKILL.md), partner attribution or referral claims to [referrals](../referrals/SKILL.md), and NFT V1 catalog, ownership, or mint flows to `suigar-nft`.
+6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct. Route SweetHouse deposits, redeem requests, or delayed self-claims to [sweethouse](../sweethouse/SKILL.md), partner attribution or referral claims to [referrals](../referrals/SKILL.md), and NFT V1 catalog, ownership, or mint flows to [suigar-nft](../suigar-nft/SKILL.md).
 
 ## Public Surface
 
@@ -179,7 +179,11 @@ if (parsed?.event === 'BetResultEvent') {
 
 const decoded = parseSuigarEvent(event);
 if (decoded?.event.type === 'BetResultEvent') {
-	decoded.gameDetails;
+	const result = {
+		game: decoded.game,
+		event: decoded.event.type,
+		details: decoded.gameDetails,
+	};
 }
 ```
 
@@ -193,7 +197,7 @@ For PvP Coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinf
 - Prefer SDK-resolved supported coin metadata from `client.suigar.getConfig()` for debugging, inspection, or UI coin selectors; simple examples can pass the expected coin type directly.
 - Standard games resolve the price-info object id from the selected coin's `priceInfoObjectId` metadata.
 - `packageIds.nftV1` is configured by network because it is not resolved from MVR. Generated game, referral, and core bindings use `@suigar/*` MVR names by default, with optional `packageIds` entries for explicit package overrides. Use `objectIds` for singleton objects such as `sweetHouse` and `nftV1Factory`.
-- Use `client.suigar.getConfig().packageIds.nftV1` and `objectIds.nftV1Factory` for NFT V1 catalog, ownership, and mint flows; use `suigar-nft` for that flow.
+- Use `client.suigar.getConfig().packageIds.nftV1` and `objectIds.nftV1Factory` for NFT V1 catalog, ownership, and mint flows; use [suigar-nft](../suigar-nft/SKILL.md) for that flow.
 - Use [sweethouse](../sweethouse/SKILL.md) for public pool deposits, redeem requests, and delayed redeem-request claims. Those builders live under `client.suigar.tx.sweetHouse` and are not standard game bets.
 - Use `SuigarCoin` and `SuigarNetwork` when app code needs supported coin or network types.
 - For object reads, parse object `content`, not `objectBcs`.
@@ -207,4 +211,4 @@ For PvP Coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinf
 3. Confirm the client uses the intended supported network.
 4. Keep transaction creation and serialization on the same extended client instance.
 5. Keep the consuming app on ESM and pass the explicit `network` required by current client constructors.
-6. Route game-specific work to the standard or PvP skill after base setup is correct; use [sweethouse](../sweethouse/SKILL.md) for SweetHouse public pool flows and [referrals](../referrals/SKILL.md) for attribution or reward claims.
+6. Route game-specific work to the standard or PvP skill after base setup is correct; use [sweethouse](../sweethouse/SKILL.md) for SweetHouse public pool flows, [suigar-nft](../suigar-nft/SKILL.md) for NFT V1 catalog/ownership/mint flows, and [referrals](../referrals/SKILL.md) for attribution or reward claims.

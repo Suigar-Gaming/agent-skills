@@ -208,7 +208,11 @@ import {
 
 const resolved = parseSuigarEvent(event);
 if (resolved?.event.type === 'BetResultEvent') {
-	const { game, event: decodedEvent, gameDetails } = resolved;
+	const result = {
+		game: resolved.game,
+		event: resolved.event.type,
+		details: resolved.gameDetails,
+	};
 }
 
 const parsed = parseGameEvent(event);
