@@ -62,26 +62,38 @@ Read the Suigar NFT V1 catalog, list owned NFTs, and build NFT V1 mint transacti
 - Deriving the NFT type with the active SDK BCS helper
 - Keeping NFT reads network-aware without hard-coded package ids
 
+### sweethouse
+
+Build SweetHouse public pool flows on top of `@suigar/sdk`.
+
+**Use when:**
+
+- Depositing supported coins into the SweetHouse public pool
+- Creating redeem requests from SweetHouse staked coins
+- Claiming an own redeem request after the on-chain delay
+- Decoding SweetHouse redeem request events
+- Keeping SweetHouse liquidity flows separate from game, referral, NFT, or MCP APIs
+
 ### create-standard-games
 
 Build standard single-player Suigar game flows on top of `@suigar/sdk`.
 
 **Use when:**
 
-- Building `coinflip`, `limbo`, `plinko`, `range`, `soccer`, or `wheel` bet transactions
+- Building `coinflip`, `keno`, `limbo`, `plinko`, `range`, `soccer`, or `wheel` bet transactions
 - Mapping UI inputs to `client.suigar.tx.createGameBet({ game, ...options })`
 - Reviewing standard game amount, metadata, or coin handling
 - Fixing AI-generated standard Suigar game code
 
 ### create-pvp-games
 
-Build PvP game flows on top of `@suigar/sdk`. The skill includes a dedicated PvP coinflip specification and can grow with one specification per future PvP game.
+Build PvP game flows on top of `@suigar/sdk`. The skill includes a dedicated PvP Coinflip specification and can grow with one specification per future PvP game.
 
 **Use when:**
 
-- Creating, joining, or canceling PvP coinflip matches
-- Listing unresolved PvP coinflip lobby games
-- Reading PvP coinflip game objects or events
+- Creating, joining, or canceling PvP Coinflip matches
+- Listing unresolved PvP Coinflip lobby games
+- Reading PvP Coinflip game objects or events
 - Keeping PvP transaction flows separate from standard game builders
 
 ### suigar-mcp
@@ -97,6 +109,7 @@ Install, configure, operate, or troubleshoot the `@suigar/mcp` server, bundled M
 - Setting up, inspecting, or funding a local session wallet
 - Browsing the NFT V1 catalog and a wallet's matching NFTs through `list_nfts`
 - Building NFT V1 mint transactions through `build_nft_v1_mint_transaction`
+- Building SweetHouse deposit, redeem request, or delayed redeem claim transactions
 - Building, dry-running, or explicitly executing transactions in read-only, build, dry-run, or execute mode
 - Explaining MCP support boundaries for Suigar games
 
@@ -115,6 +128,10 @@ Build a coinflip transaction
 ```
 
 ```text
+Deposit into the SweetHouse public pool
+```
+
+```text
 Configure the Suigar MCP server
 ```
 
@@ -123,7 +140,7 @@ Install the local Suigar plugin in Codex
 ```
 
 ```text
-Add a PvP coinflip lobby flow
+Add a PvP Coinflip lobby flow
 ```
 
 ```text
@@ -147,7 +164,11 @@ Dry-run a Suigar MCP limbo transaction for this wallet with a 2.5x target multip
 ```
 
 ```text
-Use Suigar MCP to build an unsigned PvP coinflip create transaction for 1 SUI on tails
+Use Suigar MCP to build a read-only SweetHouse redeem request plan
+```
+
+```text
+Use Suigar MCP to build an unsigned PvP Coinflip create transaction for 1 SUI on tails
 ```
 
 ```text

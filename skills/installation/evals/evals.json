@@ -34,13 +34,13 @@
 		{
 			"id": "installation-event-decoding",
 			"prompt": "I receive Suigar transaction events from Sui. How do I decode a BetResultEvent and get game-specific details without manually parsing bytes?",
-			"expected_output": "Uses parseGameEvent(event), client.suigar.bcs.BetResultEvent.parse(event.bcs), parseGameDetails(gameId, decoded.game_details), and fromMoveFloat for Move float fields.",
+			"expected_output": "Uses parseSuigarEvent(event) for full decoded game events, or parseGameEvent(event), client.suigar.bcs.BetResultEvent.parse(event.bcs), parseGameDetails({ game, gameDetails: decoded.game_details }), and fromMoveFloat for manual staged decoding.",
 			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"],
 			"assertions": [
-				"Uses parseGameEvent from @suigar/sdk/utils",
-				"Parses event.bcs with client.suigar.bcs.BetResultEvent.parse",
-				"Passes the parsed gameId into parseGameDetails",
-				"Mentions fromMoveFloat for generated Move float structs",
+				"Uses parseSuigarEvent or parseGameEvent from @suigar/sdk/utils",
+				"Parses event.bcs with client.suigar.bcs.BetResultEvent.parse when showing manual staged decoding",
+				"Passes the parsed game into parseGameDetails",
+				"Mentions fromMoveFloat for generated Move float structs when showing manual staged decoding",
 				"Does not hand-decode game_details byte arrays"
 			]
 		},
