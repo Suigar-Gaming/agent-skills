@@ -43,6 +43,7 @@ jobs:
           runtime: node@24.20.0
 
       - name: Validate skills
+        shell: bash
         run: pnpm run validate
 
       - name: Run evals (PR changed skills only)
