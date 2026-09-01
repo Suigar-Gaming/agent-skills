@@ -16,7 +16,7 @@
 		"lint:fix": "pnpm run oxlint:fix && pnpm run oxfmt:fix"
 	},
 	"dependencies": {
-		"@anthropic-ai/sdk": "^0.117.1",
+		"@anthropic-ai/sdk": "^0.122.0",
 		"glob": "^13.0.6"
 	},
 	"devDependencies": {
