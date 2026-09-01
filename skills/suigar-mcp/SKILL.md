@@ -4,7 +4,7 @@ description: Install, configure, operate, or troubleshoot the @suigar/mcp server
 license: MIT
 metadata:
   author: suigar
-  version: '1.8.0'
+  version: '1.9.0'
   short-description: Operate the Suigar MCP server
   tags:
     - suigar
@@ -54,13 +54,13 @@ For Codex, add the public Suigar marketplace from GitHub:
 codex plugin marketplace add Suigar-Gaming/ts-sdks --ref main
 ```
 
-The repository marketplace resolves the plugin at `packages/mcp/plugin`. After adding it, install or enable `suigar` from the Suigar source in the Plugins directory. Use a local path only while developing unpublished changes in a checkout.
+The repository marketplace resolves the plugin at `packages/mcp/plugin`. After adding it, install or enable `suigar-mcp` from the Suigar source in the Plugins directory. Use a local path only while developing unpublished changes in a checkout.
 
 For Claude Code, add the public Suigar marketplace from GitHub and install the plugin:
 
 ```text
 /plugin marketplace add Suigar-Gaming/ts-sdks@main
-/plugin install suigar@suigar
+/plugin install suigar-mcp@suigar
 ```
 
 For Cursor, install through the Suigar repository marketplace at `https://github.com/Suigar-Gaming/ts-sdks` and reload Cursor. Do not tell users to manually edit the generated plugin manifests or their version-pinned `.mcp.json`.
