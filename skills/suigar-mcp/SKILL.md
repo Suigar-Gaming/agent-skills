@@ -4,7 +4,7 @@ description: Install, configure, operate, or troubleshoot the @suigar/mcp server
 license: MIT
 metadata:
   author: suigar
-  version: '1.9.0'
+  version: '1.9.1'
   short-description: Operate the Suigar MCP server
   tags:
     - suigar
@@ -19,7 +19,7 @@ Use this skill for `@suigar/mcp` operation. If the user is writing application c
 
 The MCP server is a thin layer over `@suigar/sdk`. It reads Suigar config, game metadata, wallet balances, coin objects, NFTs, and referral rewards; builds unsigned transactions; dry-runs unsigned transactions; and can execute only through an explicit paired-wallet approval or a user-created local session wallet.
 
-Target the beta package when matching the current MCP surface: `@suigar/mcp@beta` resolves to `1.0.0-beta.27`, which uses `@suigar/sdk@2.0.0-beta.41`.
+Target the beta package when matching the current MCP surface: `@suigar/mcp@beta` resolves to `1.0.0-beta.28`, which uses `@suigar/sdk@2.0.0-beta.42`.
 
 ## Install or Add the Plugin
 
@@ -136,3 +136,6 @@ For common MCP inputs, standard game fields, PvP Coinflip fields, NFT mint input
 - Use `get_referral_commission` or `get_referral_level_up_usd_rewards` before presenting a claimable referral amount. Use the matching referral claim transaction tool only for a plan, build, dry-run, or explicit execute-mode request.
 - Use SweetHouse transaction tools for public pool liquidity flows. Do not route deposits or redeem requests through standard game, referral, or NFT builders.
 - Surface tool errors with the missing field, unsupported config, network, or coin detail needed for retry.
+- The server targets MCP 2026-07-28: modern clients send version and capabilities in each request’s `_meta` and may call `server/discover` without initialization. Older clients can still use the initialization handshake. For embedded stdio startup, use `startSuigarMcpServer()`; for programmatic integration, use `createSuigarMcpServer()` and connect it through the MCP SDK 2 transport.
+- When using the ext-apps 2 / MCP SDK 2 server, distinguish returned tool failures (`isError: true`) from rejected protocol requests. An unknown tool rejects with invalid params (`-32602`); refresh `tools/list` and use an advertised name. Schema-validation failures are tool errors, and Suigar handler failures include text and structured error details. Existing MCP Apps 1.x hosts remain compatible.
+- Invalid SDK configuration—including package/object ids, coin metadata, or missing price-info object ids—and invalid top-level partner values surface as `TypeError`; correct the affected `config` or `partner` input before retrying.
