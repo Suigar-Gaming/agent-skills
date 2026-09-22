@@ -4,7 +4,7 @@ description: Set up, scaffold, or fix the base @suigar/sdk integration for Suiga
 license: MIT
 metadata:
   author: suigar
-  version: '1.9.0'
+  version: '1.9.1'
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -150,6 +150,7 @@ For event parsing, raw generated BCS numeric conversion, and direct BCS event he
 
 ## Gotchas
 
+- Invalid package/object ids, coin metadata (`coinType`, `decimals`, or `priceInfoObjectId`), or missing price-info object ids throw `TypeError`. Unsupported networks and coin types throw `RangeError`.
 - Keep frontends and backends on the same `owner` wallet address used to build transactions.
 - Keep amounts as `bigint` once they leave the UI layer.
 - Use `client.suigar.getConfig().coins` for supported `coinType` and `decimals`; do not duplicate decimal constants in app code unless runtime config requires it.
