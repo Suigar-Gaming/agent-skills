@@ -21,6 +21,7 @@ App-capable clients may render the bundled Suigar Transaction Inspector UI. All 
 - `providerUrl` can override the Sui gRPC endpoint.
 - `config` accepts SDK-style `packageIds`, `objectIds`, and coin-metadata overrides. Game, referral, and core packages use `@suigar/*` MVR names by default, with optional `packageIds` entries for explicit package overrides; `nftV1` remains network configured. Put a custom price-info object id beside its coin as `coins.sui.priceInfoObjectId` or `coins.usdc.priceInfoObjectId`; singleton ids such as `sweetHouse` and `nftV1Factory` belong in `objectIds`.
 - `partner` is a top-level partner wallet address forwarded through `suigar({ partner })`.
+- Invalid package/object ids, coin metadata (`coinType`, `decimals`, or `priceInfoObjectId`), missing price-info object ids, and invalid top-level partner values throw `TypeError`. Correct the affected override or partner before retrying.
 - `owner` accepts a Sui address, SuiNS name, or SuiNS subname in build, dry-run, paired-wallet execute, NFT, wallet, SweetHouse, and referral reads.
 - `coinType` defaults to the SDK-configured SUI coin type.
 - `amount`, `stake`, and `cashStake` are currency amounts, such as `1` or `1.5`, not base units.
