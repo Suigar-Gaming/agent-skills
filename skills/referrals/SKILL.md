@@ -4,7 +4,7 @@ description: Configure Suigar SDK partner attribution and referral rewards in a 
 license: MIT
 metadata:
   author: suigar
-  version: '1.1.0'
+  version: '1.1.1'
   short-description: Configure Suigar referrals
   tags:
     - suigar
@@ -33,6 +33,8 @@ const client = new SuiGrpcClient({ baseUrl, network }).$extend(
 ```
 
 `partner` must be a wallet address. Do not pass a campaign slug, label, or display name. Do not set `metadata.partner` or `metadata.referrer` on game transactions; the extension applies the configured partner across supported bet flows.
+
+The SDK normalizes `partner` and throws `TypeError` for invalid addresses, blank strings, or non-string runtime values. `undefined` leaves attribution unset.
 
 Keep the configured partner stable for the lifetime of the client. If an application changes it per campaign or session, create or select the correctly configured client before building transactions.
 
