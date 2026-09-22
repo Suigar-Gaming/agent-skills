@@ -35,6 +35,8 @@ In `mode: "execute"` with `executionWallet: "session"`, MCP signs and submits di
 
 When `executionWallet` is `"session"`, `owner` is optional and must match the selected session wallet if provided.
 
+Wallet validation uses `TypeError` for malformed recovery phrases and `RangeError` for unsupported private-key schemes or oversized bridge requests. Local setup pages display the error message. Expiration, missing wallet state, and unavailable keychain storage remain operational errors.
+
 ## Wallet Reads
 
 Use these read tools for balances and coin objects:
