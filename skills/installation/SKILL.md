@@ -4,7 +4,7 @@ description: Set up, scaffold, or fix the base @suigar/sdk integration for Suiga
 license: MIT
 metadata:
   author: suigar
-  version: '1.9.1'
+  version: '1.9.2'
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -22,7 +22,7 @@ Use this skill for application code that imports `@suigar/sdk`. If the task is a
 ## Default Workflow
 
 1. Confirm the app already uses the current Mysten Sui client APIs.
-2. Install or verify `@suigar/sdk`, `@mysten/sui`, and `@mysten/bcs`.
+2. Install or verify `@suigar/sdk`, `@mysten/sui`, and `@mysten/bcs`, matching the SDK package's Node.js and peer dependency requirements.
 3. Extend the existing Sui client with `suigar()`.
 4. Keep all Suigar transaction creation and serialization on that extended client instance.
 5. Use `client.suigar.getConfig()` for supported coins, object ids, NFT V1 package id, and price info when the UI or diagnostics need resolved config.

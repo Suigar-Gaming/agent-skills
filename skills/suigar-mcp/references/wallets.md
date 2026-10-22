@@ -17,6 +17,8 @@ In `mode: "execute"` with `executionWallet: "connected"`, MCP opens browser appr
 
 Wallet pairing inputs include optional `webUrl`, `timeoutMs`, `maxBodyBytes`, `open`, and `noOpen`; `open` and `noOpen` are mutually exclusive.
 
+Wallet bridges and session setup require 32-byte hexadecimal state tokens and compare the decoded bytes using timing-safe equality. For invalid pairing, approval, logout, or setup state errors, restart the corresponding flow and use its newly generated URL with its state token intact.
+
 ## Local Session Wallet
 
 Use these tools for persistent local session wallets:
@@ -34,6 +36,8 @@ Use these tools for persistent local session wallets:
 In `mode: "execute"` with `executionWallet: "session"`, MCP signs and submits directly with the local session wallet key stored in the OS keychain. Use this only for a dedicated low-funded wallet the user intentionally set up.
 
 When `executionWallet` is `"session"`, `owner` is optional and must match the selected session wallet if provided.
+
+For game tools, session execution accepts a custom `providerUrl` and top-level `partner`, but rejects any `config` override. Omit `config` to use the trusted SDK defaults. Before signing, the server requires exactly one `MoveCall` targeting the selected game's package and module; other transaction commands such as coin splitting may still be present. If verification fails, surface the error rather than changing the transaction to bypass the check.
 
 Wallet validation uses `TypeError` for malformed recovery phrases and `RangeError` for unsupported private-key schemes or oversized bridge requests. Local setup pages display the error message. Expiration, missing wallet state, and unavailable keychain storage remain operational errors.
 
