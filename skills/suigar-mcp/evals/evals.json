@@ -5,12 +5,12 @@
 		{
 			"id": "mcp-install-config",
 			"prompt": "Add the Suigar MCP server to my MCP client config. What JSON should I paste and what do I do after?",
-			"expected_output": "Recommends `npx add-mcp @suigar/mcp --name suigar` for detected coding agents, or provides an mcpServers.suigar config using command npx and args ['-y', '@suigar/mcp'] when explicit manual configuration is needed.",
+			"expected_output": "Recommends `npx add-mcp @suigar/mcp@beta --name suigar` for detected coding agents, or provides an mcpServers.suigar config using command npx and args ['-y', '@suigar/mcp@beta'] when explicit manual configuration is needed.",
 			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"],
 			"assertions": [
-				"Uses npx add-mcp @suigar/mcp --name suigar or explicitly scopes the answer to manual MCP configuration",
+				"Uses npx add-mcp @suigar/mcp@beta --name suigar or explicitly scopes the answer to manual MCP configuration",
 				"When showing manual configuration, includes an mcpServers object with key suigar",
-				"When showing manual configuration, uses command: npx and args containing -y and @suigar/mcp",
+				"When showing manual configuration, uses command: npx and args containing -y and @suigar/mcp@beta",
 				"Tells the user to restart or reload the MCP client after config changes",
 				"Does not claim installation alone signs transactions or creates a session wallet"
 			]
@@ -201,6 +201,21 @@
 				"Passes stake: 1",
 				"Explains session execution signs and submits with the local session wallet",
 				"Does not require owner unless matching the session wallet"
+			]
+		},
+		{
+			"id": "mcp-session-wallet-custom-provider",
+			"prompt": "I have a funded local session wallet. Execute a 1 SUI coinflip on heads with my custom providerUrl and top-level partner. Do I also need config.packageIds.coinflip to make session execution work?",
+			"expected_output": "Uses build_coinflip_transaction with mode: execute, executionWallet: session, stake: 1, side: heads, and the supplied providerUrl and top-level partner. Omits config because session game execution rejects SDK config overrides. Explains that the server checks exactly one MoveCall targeting the selected game package and module before signing, and surfaces verification errors instead of bypassing them.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/ts-sdks/blob/main/packages/mcp/src/tools/handlers/games.ts"
+			],
+			"assertions": [
+				"Uses build_coinflip_transaction in execute mode with executionWallet: session",
+				"Allows custom providerUrl and top-level partner for session game execution",
+				"Omits config and explains SDK config overrides are rejected for session game execution",
+				"Explains that exactly one MoveCall must target the selected game package and module before signing",
+				"Does not suggest bypassing transaction verification or silently switching to browser execution"
 			]
 		}
 	]
