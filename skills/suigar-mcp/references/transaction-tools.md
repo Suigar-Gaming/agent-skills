@@ -29,6 +29,8 @@ App-capable clients may render the bundled Suigar Transaction Inspector UI. All 
 - `executionWallet` is `"connected"` or `"session"` for execute mode. `"connected"` opens browser approval; `"session"` signs and submits with the local session wallet.
 - `sessionWalletId` selects a named local session wallet when supported and defaults to the first wallet.
 
+For game tools using `mode: "execute"` with `executionWallet: "session"`, omit `config`: SDK config overrides are rejected, while custom `providerUrl` and top-level `partner` are accepted. The server checks that exactly one `MoveCall` targets the selected game's package and module before signing. See [wallets.md](wallets.md) for session-wallet behavior.
+
 Transaction tools that accept `metadata` require JSON-compatible strings, numbers, or booleans. Send large integer metadata values as strings.
 
 `useGasCoin` is for transaction tools that source native SUI coins, including native SUI bets, NFT V1 mint, and SweetHouse deposit, when overriding Mysten's default coin intent behavior. PvP Coinflip cancel and SweetHouse redeem/claim flows do not accept `useGasCoin`.

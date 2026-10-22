@@ -4,7 +4,7 @@ description: Install, configure, operate, or troubleshoot the @suigar/mcp server
 license: MIT
 metadata:
   author: suigar
-  version: '1.9.1'
+  version: '1.9.2'
   short-description: Operate the Suigar MCP server
   tags:
     - suigar
@@ -19,14 +19,12 @@ Use this skill for `@suigar/mcp` operation. If the user is writing application c
 
 The MCP server is a thin layer over `@suigar/sdk`. It reads Suigar config, game metadata, wallet balances, coin objects, NFTs, and referral rewards; builds unsigned transactions; dry-runs unsigned transactions; and can execute only through an explicit paired-wallet approval or a user-created local session wallet.
 
-Target the beta package when matching the current MCP surface: `@suigar/mcp@beta` resolves to `1.0.0-beta.29`, which uses `@suigar/sdk@2.0.0-beta.43`.
-
 ## Install or Add the Plugin
 
-For the fastest direct installation across detected coding agents, use the package's `add-mcp` command:
+Use `@suigar/mcp@beta` for the MCP surface described here. For direct installation across detected coding agents:
 
 ```bash
-npx add-mcp @suigar/mcp --name suigar
+npx add-mcp @suigar/mcp@beta --name suigar
 ```
 
 Use manual stdio configuration only when the user needs to configure one MCP client explicitly or their environment does not support `add-mcp`:
@@ -38,7 +36,7 @@ Configure MCP clients with the published package:
 	"mcpServers": {
 		"suigar": {
 			"command": "npx",
-			"args": ["-y", "@suigar/mcp"]
+			"args": ["-y", "@suigar/mcp@beta"]
 		}
 	}
 }
