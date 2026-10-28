@@ -30,6 +30,8 @@ Use this skill for application code that imports `@suigar/sdk` and works with Pv
 
 ## Boundaries
 
+SDK-owned optional PvP transaction fields accept explicit `undefined`, including with `exactOptionalPropertyTypes`; this behaves like omitting the option.
+
 - Treat each PvP game as a separate on-chain flow with its own inputs, builders, state lifecycle, and events.
 - Do not route PvP game transactions through `createGameBet`, which is only for standard games.
 - Use `client.suigar.getConfig().coins` for supported coin metadata and keep wallet addresses consistent as `owner`.

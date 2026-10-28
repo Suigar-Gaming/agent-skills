@@ -30,6 +30,8 @@ Use this skill for application code that imports `@suigar/sdk`. If the task is a
 
 ## Public Surface
 
+SDK-owned optional extension fields (`config`, `partner`, and `cacheTtl`) accept explicit `undefined`, including with `exactOptionalPropertyTypes`. An undefined field behaves like an omitted option; nested configuration overrides still require valid configured values.
+
 The package exposes these public entrypoints:
 
 - `@suigar/sdk`

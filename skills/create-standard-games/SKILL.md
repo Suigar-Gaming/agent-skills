@@ -40,6 +40,8 @@ Do not redefine game id unions unless the local app already has a stricter UI ty
 
 ## Shared Options
 
+SDK-owned optional bet fields accept explicit `undefined`, including with `exactOptionalPropertyTypes`; the SDK applies the same defaults as when those fields are omitted.
+
 Every standard bet uses:
 
 - `owner: string`
