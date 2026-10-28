@@ -18,6 +18,8 @@ import {
 
 ## Game Events
 
+Use events from the Sui core API (`SuiClientTypes.Event`), with `eventType`, `module`, and `bcs: Uint8Array`.
+
 Prefer `parseSuigarEvent(event)` when the raw Sui event includes BCS bytes. It resolves the supported Suigar `game`, decodes the event payload, and includes decoded `gameDetails` for `BetResultEvent`.
 
 ```ts
@@ -30,6 +32,8 @@ if (decoded?.event.type === 'BetResultEvent') {
 	};
 }
 ```
+
+The normalized result is `{ game, event: { type, data } }`, with `gameDetails` only for `BetResultEvent`. Read the raw decoded fields from `decoded.event.data`; the top-level game details parser does not normalize Move float structs inside that data. Unsupported events or missing/non-`Uint8Array` BCS return `null`; malformed supported payloads can throw, so isolate failures per event when processing a mixed stream.
 
 Use manual staged decoding when the app needs direct access to `BetResultEvent` data:
 
@@ -49,7 +53,7 @@ if (parsed?.event === 'BetResultEvent') {
 
 For PvP Coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinflipGameResolvedEvent`, and `PvPCoinflipGameCancelledEvent` when direct event parsing is needed.
 
-For SweetHouse redeem events, use `client.suigar.bcs.RedeemRequestCreatedEvent`; `parseSuigarEvent` is for supported game events.
+For SweetHouse redeem events, use `client.suigar.bcs.RedeemRequestCreatedEvent`; for referral claim events, use `client.suigar.bcs.ReferrerClaimCommissionBalanceEvent` or `client.suigar.bcs.ReferrerClaimLevelUpUsdRewardsEvent`. `parseSuigarEvent` is for supported game events. Match the event type before choosing a generated helper.
 
 ## Raw Move Numerics
 
@@ -64,5 +68,7 @@ if (isMoveI64(value)) {
 	const number = fromMoveI64(value);
 }
 ```
+
+Known vector detail fields are decoded as arrays: for example, Keno `picks` and `drawn_numbers` are `number[]`, while `payout_amount` is `bigint` and `multiplier` is a JavaScript number. Unknown detail keys fall back to string decoding; they are not automatically interpreted as arbitrary numeric fields. Event `metadata` stays a raw vec-map of bytes and follows the application's own encoding contract.
 
 Parsed `u64` and `u128` game detail values return `bigint` to preserve precision. Convert them to display strings or decimal UI values only at the presentation boundary.

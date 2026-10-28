@@ -4,7 +4,7 @@ description: Build, scaffold, review, or fix Suigar PvP game flows using @suigar
 license: MIT
 metadata:
   author: suigar
-  version: '1.5.0'
+  version: '1.6.0'
   short-description: Build Suigar PvP game flows
   tags:
     - suigar
@@ -29,6 +29,8 @@ Use this skill for application code that imports `@suigar/sdk` and works with Pv
 - `pvp-coinflip`: create, join, cancel, unresolved-lobby reads, parameter reads, object reads, and event decoding. Read `references/pvp-coinflip.md`.
 
 ## Boundaries
+
+SDK-owned optional PvP transaction fields accept explicit `undefined`, including with `exactOptionalPropertyTypes`; this behaves like omitting the option.
 
 - Treat each PvP game as a separate on-chain flow with its own inputs, builders, state lifecycle, and events.
 - Do not route PvP game transactions through `createGameBet`, which is only for standard games.

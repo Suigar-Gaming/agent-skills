@@ -11,14 +11,14 @@
  *   pnpm run eval
  *   pnpm run eval:changed
  *   pnpm run eval -- --skill installation
- *   pnpm run eval -- --judge-model claude-haiku-4-5-20251001
+ *   pnpm run eval -- --judge-model claude-haiku-5-5
  *   pnpm run eval -- --concurrency 5
  *   pnpm run eval -- --timeout 60000
  *
  * Environment:
  *   ANTHROPIC_API_KEY   required
- *   EVAL_MODEL          model for generating responses (default: claude-opus-4-6)
- *   JUDGE_MODEL         model for grading responses    (default: claude-haiku-4-5-20251001)
+ *   EVAL_MODEL          model for generating responses (default: claude-opus-5-5)
+ *   JUDGE_MODEL         model for grading responses    (default: claude-haiku-5-5)
  */
 import { writeFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
@@ -43,8 +43,8 @@ const concurrencyFlag = getFlag(args, 'concurrency');
 const timeoutFlag = getFlag(args, 'timeout');
 const changedOnly = hasFlag(args, 'changed-only');
 
-const DEFAULT_EVAL_MODEL = 'claude-opus-4-6';
-const DEFAULT_JUDGE_MODEL = 'claude-haiku-4-5-20251001';
+const DEFAULT_EVAL_MODEL = 'claude-opus-5-5';
+const DEFAULT_JUDGE_MODEL = 'claude-haiku-5-5';
 const EVAL_MODEL = evalModelFlag ?? process.env.EVAL_MODEL ?? DEFAULT_EVAL_MODEL;
 const JUDGE_MODEL = judgeModelFlag ?? process.env.JUDGE_MODEL ?? DEFAULT_JUDGE_MODEL;
 const MAX_TOKENS_RESPONSE = 4096;
@@ -65,6 +65,7 @@ async function generateResponse(skillContext, prompt) {
 	const response = await client.messages.create({
 		model: EVAL_MODEL,
 		max_tokens: MAX_TOKENS_RESPONSE,
+		...(EVAL_MODEL === 'claude-haiku-5-5' ? { thinking: { type: 'disabled' } } : {}),
 		system: `You are an expert Suigar developer assistant for Sui applications.
 
 Answer as if you are helping an engineer integrate Suigar. Ground your response in the provided skill reference and keep the SDK and MCP surfaces separate:
@@ -113,6 +114,7 @@ Do not include any text outside the JSON array.`;
 	const result = await client.messages.create({
 		model: JUDGE_MODEL,
 		max_tokens: MAX_TOKENS_JUDGE,
+		...(JUDGE_MODEL === 'claude-haiku-5-5' ? { thinking: { type: 'disabled' } } : {}),
 		messages: [{ role: 'user', content: judgePrompt }],
 	});
 

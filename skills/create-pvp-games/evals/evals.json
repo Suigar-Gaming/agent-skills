@@ -63,6 +63,21 @@
 				"States that values are current on-chain parameters",
 				"Mentions ignoreCache: true for a fresh lookup"
 			]
+		},
+		{
+			"id": "pvp-default-page-and-coin-type",
+			"prompt": "I need the SDK default PvP lobby page size while passing an AbortSignal. How do I get the coin type for joining each match and the next-page cursor?",
+			"expected_output": "Imports DEFAULT_QUERY_LIMIT from utils and passes it with signal, uses each game.coin_type, and explains that the helper returns an array without pagination metadata.",
+			"sources": [
+				"https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/create-pvp-games"
+			],
+			"assertions": [
+				"Imports DEFAULT_QUERY_LIMIT from @suigar/sdk/utils",
+				"Passes limit: DEFAULT_QUERY_LIMIT alongside signal",
+				"Uses game.coin_type for the selected match",
+				"Does not invent a cursor or hasNextPage property on the returned array",
+				"Explains that skipped object failures can reduce the returned page length"
+			]
 		}
 	]
 }
