@@ -49,6 +49,7 @@ Parse Suigar SDK events and raw generated numeric values through public SDK util
 - Using `parseSuigarEvent`, `parseGameEvent`, or `parseGameDetails`
 - Parsing PvP Coinflip or SweetHouse generated BCS event payloads
 - Safely converting raw Move float or i64 values
+- Handling core API event bytes, vector game details, and referral claim events
 
 ### referrals
 
@@ -103,7 +104,7 @@ Build PvP game flows on top of `@suigar/sdk`. The skill includes a dedicated PvP
 **Use when:**
 
 - Creating, joining, or canceling PvP Coinflip matches
-- Listing unresolved PvP Coinflip lobby games
+- Listing unresolved PvP Coinflip lobby games with the SDK default page size and derived coin types
 - Reading PvP Coinflip game objects or events
 - Keeping PvP transaction flows separate from standard game builders
 

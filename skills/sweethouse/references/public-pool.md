@@ -25,7 +25,7 @@ Optional:
 - `gasBudget`
 - `useGasCoin`
 
-Set `useGasCoin` only when the app intentionally allows the SUI gas coin to be used for native SUI deposits.
+Omit `useGasCoin` to preserve Mysten's default native SUI coin intent behavior; set it only when the application needs to override that behavior.
 
 ## Redeem Request
 

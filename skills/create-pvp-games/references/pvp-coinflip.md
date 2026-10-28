@@ -97,9 +97,19 @@ Keep cancellation tied to the on-chain `gameId`; do not reuse create or join pay
 - Per-object fetch or parse failures are skipped by default so a stale registry entry does not reject the whole lookup.
 - Pass `throwOnError: true` when the caller wants strict rejection.
 - Forward supported dynamic-field options such as `limit`, `cursor`, or `signal`.
+- Calling without options uses `DEFAULT_QUERY_LIMIT` (`50`); passing an options object replaces that default, so include the limit explicitly when adding other options.
+- Each entry includes `coin_type`, derived from the Move object type. Use that coin type when joining or canceling the selected match.
+- The method returns an array for one registry page, without a next-page cursor or `hasNextPage`. Do not invent a `games.cursor` property or treat an empty parsed array as proof that no further registry entries exist; per-object failures can remove entries from the result.
 
 ```ts
-const games = await client.suigar.getPvPCoinflipGames({ limit: 20 });
+import { DEFAULT_QUERY_LIMIT } from '@suigar/sdk/utils';
+
+const games = await client.suigar.getPvPCoinflipGames({
+	limit: DEFAULT_QUERY_LIMIT,
+});
+for (const game of games) {
+	console.log(game.id, game.coin_type);
+}
 ```
 
 ```ts

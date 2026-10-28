@@ -1,10 +1,10 @@
 ---
 name: event-parsing
-description: Parse Suigar SDK events and raw generated numeric values. Use when decoding BetResultEvent.game_details, handling parseSuigarEvent, parseGameEvent, parseGameDetails, PvP Coinflip event BCS helpers, SweetHouse redeem events, or converting raw Move float and i64 values safely.
+description: Parse Suigar SDK events and raw generated numeric values. Use when decoding BetResultEvent.game_details, handling parseSuigarEvent, parseGameEvent, parseGameDetails, PvP Coinflip event BCS helpers, SweetHouse redeem or referral claim events, or converting raw Move float and i64 values safely.
 license: MIT
 metadata:
   author: suigar
-  version: '1.0.0'
+  version: '1.1.0'
   short-description: Parse Suigar events
   tags:
     - suigar
@@ -31,6 +31,6 @@ Use this skill for application code that imports `@suigar/sdk` and parses Suigar
 ## Boundaries
 
 - Standard game and PvP bet result events use the shared game-event parsing path.
-- SweetHouse redeem events use `client.suigar.bcs.RedeemRequestCreatedEvent`.
+- SweetHouse redeem events use `client.suigar.bcs.RedeemRequestCreatedEvent`; referral claim events use their matching generated BCS helpers in [the event reference](references/events.md).
 - `client.suigar.getGameParameters()` already returns generated Move float fields as JavaScript numbers.
 - Parsed `u64` and `u128` game detail values return `bigint` to preserve precision.

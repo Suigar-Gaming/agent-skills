@@ -4,7 +4,7 @@ description: Set up, scaffold, or fix the base @suigar/sdk integration for Suiga
 license: MIT
 metadata:
   author: suigar
-  version: '1.9.2'
+  version: '1.10.0'
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -51,12 +51,13 @@ The package root exposes `suigar`, `SuigarClient`, `SUPPORTED_SUI_NETWORKS`, `Su
 
 Use these game-specific public types when useful: `GAMES`, `Game`, `StandardGame`, `PvPGame`, `CoinSide`, `PvPCoinflipAction`, `CreateGameBetOptions`, `CoinflipTransactionOptions`, `KenoTransactionOptions`, `LimboTransactionOptions`, `PlinkoTransactionOptions`, `RangeTransactionOptions`, `SoccerTransactionOptions`, `WheelTransactionOptions`, `CreatePvPCoinflipTransactionOptions`, `JoinPvPCoinflipTransactionOptions`, and `CancelPvPCoinflipTransactionOptions`.
 
-Use these utilities instead of local replacements when relevant: `parseCoinType`, `toBigInt`, `toU32`, `toU16`, `toU8`, `DEFAULT_GAS_BUDGET_MIST`, `RANGE_POINT_LIMIT`, `DEFAULT_RANGE_SCALE`, and `DEFAULT_LIMBO_MULTIPLIER_SCALE`. For event helpers, Move float/i64 conversion, and raw generated numeric parsing, use [event-parsing](../event-parsing/SKILL.md).
+Use these utilities instead of local replacements when relevant: `parseCoinType`, `toBigInt`, `toU32`, `toU16`, `toU8`, `DEFAULT_QUERY_LIMIT`, `DEFAULT_GAS_BUDGET_MIST`, `RANGE_POINT_LIMIT`, `DEFAULT_RANGE_SCALE`, and `DEFAULT_LIMBO_MULTIPLIER_SCALE`. For event helpers, Move float/i64 conversion, and raw generated numeric parsing, use [event-parsing](../event-parsing/SKILL.md).
 
 Utility behavior worth preserving:
 
-- `toBigInt(value)` normalizes non-negative integer-like values to `bigint` and rejects invalid or negative values.
-- `toU8(value)` and `toU16(value)` validate finite integer inputs in their unsigned ranges.
+- `toBigInt(value)` accepts `bigint`, finite numbers, integer strings, and booleans. Number inputs truncate toward zero (`5.9` becomes `5n`); it does not convert currency decimals into base units. Convert UI amounts with the configured coin decimals before calling builders, and prefer exact strings or `bigint` over imprecise numbers. Invalid inputs throw `TypeError`; negative normalized values throw `RangeError`.
+- `toU8(value)`, `toU16(value)`, and `toU32(value)` validate integer inputs in `0..255`, `0..65535`, and `0..4294967295`, respectively; they do not truncate fractions.
+- `DEFAULT_QUERY_LIMIT` is `50`. `getPvPCoinflipGames()` uses it when options are omitted; include `limit: DEFAULT_QUERY_LIMIT` when also passing a cursor or another option.
 - `parseCoinType(type)` extracts the normalized first generic coin type from a Move object type string.
 - Event parsing, `parseGameDetails`, and raw Move float/i64 conversion belong in [event-parsing](../event-parsing/SKILL.md).
 
@@ -76,6 +77,16 @@ client.suigar.tx.sweetHouse.claimOwnRedeemRequestAfterDelay(options);
 client.suigar.getPvPCoinflipGames(options);
 client.suigar.serializeTransactionToBase64({ transaction: tx });
 ```
+
+## Runtime and Installation
+
+Use an ESM project (`"type": "module"`) with Node.js `^24.0.0 || ^26.0.0`. Match the installed SDK's peer dependency ranges for `@mysten/sui@2` and `@mysten/bcs@2`; pre-2.0 Sui clients are unsupported. The v2 surface is currently published as a beta:
+
+```bash
+npm install @suigar/sdk@beta @mysten/sui@2 @mysten/bcs@2
+```
+
+Use the package version required by the application when it is already pinned. The SDK is also available through JSR (`pnpm add jsr:@suigar/sdk`).
 
 ## Client Setup
 
