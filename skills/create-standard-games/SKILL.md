@@ -13,13 +13,13 @@ metadata:
     - standard-games
 ---
 
-# Create Standard Suigar Games
+# Create standard Suigar games
 
 Use this skill for application code that imports `@suigar/sdk` and builds standard single-player game transactions. If the app setup is missing, use `installation` first. If the user is using `@suigar/mcp` tools, use `suigar-mcp` instead.
 
-> Source constraint: Treat the SDK public API as the source of truth. Do not invent transaction builders or hand-copy Move call internals into app code.
+Use the SDK public API. Do not invent transaction builders or hand-copy Move call internals into app code.
 
-## Default Workflow
+## Default workflow
 
 1. Confirm the target game id and read that game's reference before designing fields, validation, or result display.
 2. Confirm the client has the `suigar()` extension registered.
@@ -28,7 +28,7 @@ Use this skill for application code that imports `@suigar/sdk` and builds standa
 5. Serialize only if the wallet or transport layer needs bytes.
 6. For result display, read [event parsing](../event-parsing/references/events.md).
 
-## Imports and Types
+## Imports and types
 
 Use game types from `@suigar/sdk/games`:
 
@@ -38,7 +38,7 @@ import { GAMES, type CoinSide, type Game, type StandardGame } from '@suigar/sdk/
 
 Do not redefine game id unions unless the local app already has a stricter UI type.
 
-## Shared Options
+## Shared options
 
 SDK-owned optional bet fields accept explicit `undefined`, including with `exactOptionalPropertyTypes`; the SDK applies the same defaults as when those fields are omitted.
 
@@ -55,9 +55,9 @@ Every standard bet uses:
 
 Set `useGasCoin` only when the app needs to override Mysten's default native SUI coin intent behavior. Do not pass coin object ids, split coins manually, or add custom bet coin callbacks.
 
-For partner attribution, use [referrals](../referrals/SKILL.md); it is configured once at the extension level, not in a bet payload.
+For partner attribution, use [referrals](../referrals/SKILL.md); configure it once at the extension level and omit it from bet payloads.
 
-## Game Inputs
+## Game inputs
 
 Read the selected game reference for required inputs, live parameter fields, transaction examples, and decoded result details:
 
@@ -69,11 +69,11 @@ Read the selected game reference for required inputs, live parameter fields, tra
 - `soccer`: read [references/soccer.md](references/soccer.md).
 - `wheel`: read [references/wheel.md](references/wheel.md).
 
-## Live Game Parameters
+## Live game parameters
 
 Read `client.suigar.getGameParameters({ game, coinType })` before presenting or validating live stake limits, RTP, or game inputs. The SDK returns generated Move float fields as JavaScript numbers and caches results for 30 minutes by default; pass `ignoreCache: true` when a fresh on-chain read is needed. `coinType` comes from `client.suigar.getConfig().coins`, not game parameters.
 
-## Event Decoding
+## Event decoding
 
 For `BetResultEvent` parsing and decoded `gameDetails` behavior, read [event parsing](../event-parsing/references/events.md).
 
@@ -86,15 +86,15 @@ For `BetResultEvent` parsing and decoded `gameDetails` behavior, read [event par
 - Pass plain application values in `metadata`; let the SDK encode them.
 - For range, do not pre-scale points in app code. With the default scale `1_000_000`, valid UI values are `0` to `100`.
 - Keep amounts as `bigint` once they leave the UI layer.
-- Ensure the same connected wallet address is used as `owner`.
+- Use the connected wallet address as `owner` throughout the flow.
 - Use `client.suigar.getConfig().coins` when the UI needs supported coin types and decimals.
 - Metadata remains generic `VecMap<string, vector<u8>>` data in events; decode it according to the app's own metadata contract.
 
-## Implementation Checklist
+## Implementation checklist
 
 1. Confirm the target standard game id.
 2. Verify the base client already has `suigar()` configured.
 3. Build the transaction with `createGameBet`.
 4. Serialize only if the surrounding wallet or transport path needs bytes.
 5. Decode `BetResultEvent` with [event parsing](../event-parsing/references/events.md).
-6. Keep frontend forms, backend handlers, and event decoding aligned with the same game-specific option shape.
+6. Use the same game-specific option shape in frontend forms, backend handlers, and event decoding.

@@ -1,4 +1,4 @@
-# Coinflip Specification
+# Coinflip specification
 
 Use this specification for `client.suigar.tx.createGameBet({ game: 'coinflip', ... })` when the player chooses a coin side.
 
@@ -45,7 +45,7 @@ const tx = client.suigar.tx.createGameBet({
 
 Preserve the UI-selected side exactly. Do not substitute random local coin-flip logic before building the transaction.
 
-## Result Details
+## Result details
 
 `BetResultEvent.game_details` includes:
 

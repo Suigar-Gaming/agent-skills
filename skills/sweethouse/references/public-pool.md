@@ -1,6 +1,6 @@
-# SweetHouse Public Pool Specification
+# SweetHouse public pool specification
 
-Use this specification for SDK application code that deposits into SweetHouse, creates redeem requests from staked coins, or claims an own redeem request after the delay.
+Use this specification for SDK application code that deposits into SweetHouse, creates redeem requests from staked coins, or claims a redeem request created by the signer after the delay.
 
 ## Deposit
 
@@ -27,7 +27,7 @@ Optional:
 
 Omit `useGasCoin` to preserve Mysten's default native SUI coin intent behavior; set it only when the application needs to override that behavior.
 
-## Redeem Request
+## Redeem request
 
 Create a redeem request by spending staked coins for the selected pool:
 
@@ -51,9 +51,9 @@ Optional:
 
 The redeem request builder sources `StakedCoin<coinType>`, not the underlying coin. It does not accept `useGasCoin` or explicit coin object ids.
 
-## Claim Own Redeem Request After Delay
+## Claim own redeem request after delay
 
-After the on-chain delay has passed, claim an own redeem request:
+After the on-chain delay has passed, claim your own redeem request:
 
 ```ts
 const tx = client.suigar.tx.sweetHouse.claimOwnRedeemRequestAfterDelay({

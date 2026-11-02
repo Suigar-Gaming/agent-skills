@@ -1,4 +1,4 @@
-# Wheel Specification
+# Wheel specification
 
 Use this specification for `client.suigar.tx.createGameBet({ game: 'wheel', ... })` when the game depends on a selected Wheel configuration.
 
@@ -47,7 +47,7 @@ const tx = client.suigar.tx.createGameBet({
 
 Do not duplicate wheel configuration constants in application code when live parameters are available.
 
-## Result Details
+## Result details
 
 `BetResultEvent.game_details` includes:
 

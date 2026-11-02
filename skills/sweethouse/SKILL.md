@@ -17,18 +17,18 @@ metadata:
 
 Use this skill for application code that imports `@suigar/sdk` and builds SweetHouse public pool transactions. If the app has not configured the SDK client yet, use `installation` first. If the user is using `@suigar/mcp` tools, use `suigar-mcp` instead.
 
-> Source constraint: Use `client.suigar.tx.sweetHouse`. Do not hand-write `core::sweethouse` Move calls, hard-code SweetHouse object ids, or route deposits and redeem requests through game bet builders.
+Use `client.suigar.tx.sweetHouse`. Do not hand-write `core::sweethouse` Move calls, hard-code SweetHouse object ids, or route deposits and redeem requests through game bet builders.
 
-## Default Workflow
+## Default workflow
 
 1. Confirm the client is extended with `suigar()` for the intended network.
 2. Resolve supported coins and `objectIds.sweetHouse` from `client.suigar.getConfig()` when UI or diagnostics need them.
 3. Build one of the `client.suigar.tx.sweetHouse` transactions.
 4. Serialize only if the wallet or transport layer needs unsigned bytes.
-5. Decode `client.suigar.bcs.RedeemRequestCreatedEvent` when the app needs the redeem request id emitted by a redeem request.
+5. Decode `client.suigar.bcs.RedeemRequestCreatedEvent` when the app needs the emitted redeem request id.
 6. For action-specific inputs, examples, and event details, read [references/public-pool.md](references/public-pool.md).
 
-## Transaction Builders
+## Transaction builders
 
 SweetHouse exposes three public pool builders:
 
