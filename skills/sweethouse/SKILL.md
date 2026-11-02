@@ -4,7 +4,7 @@ description: Build, scaffold, review, or fix Suigar SweetHouse public pool flows
 license: MIT
 metadata:
   author: suigar
-  version: '1.1.0'
+  version: '1.1.1'
   short-description: Build SweetHouse pool flows
   tags:
     - suigar

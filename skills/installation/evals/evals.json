@@ -41,6 +41,30 @@
 				"States that getGameParameters already normalizes Move float fields",
 				"Does not copy a local structural type guard"
 			]
+		},
+		{
+			"id": "installation-currency-and-runtime",
+			"prompt": "Set up the v2 SDK in a new Node application. Can I pass toBigInt(1.5) as the stake for 1.5 SUI?",
+			"expected_output": "Uses the beta SDK with Sui 2 and BCS 2 in an ESM app on supported Node, explains that toBigInt truncates rather than scaling currency, and uses 1500000000n for 1.5 SUI.",
+			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"],
+			"assertions": [
+				"Specifies Node.js ^24.0.0 || ^26.0.0 and ESM",
+				"Uses @mysten/sui@2 and @mysten/bcs@2",
+				"Explains toBigInt(1.5) becomes 1n, not 1.5 SUI in base units",
+				"Uses 1_500_000_000n or equivalent exact base units for 1.5 SUI"
+			]
+		},
+		{
+			"id": "installation-strict-optional-options",
+			"prompt": "With exactOptionalPropertyTypes enabled, can I forward partner: undefined and cacheTtl: undefined into suigar(), and betCount: undefined into createGameBet? Does that mean config.coins.usdc.decimals can also be undefined?",
+			"expected_output": "SDK-owned optional extension and transaction values accept explicit undefined and use normal defaults, while nested config overrides must provide valid concrete values or omit fields.",
+			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/installation"],
+			"assertions": [
+				"Allows explicit undefined for partner, cacheTtl and betCount",
+				"Explains undefined has the same behavior as omitting these SDK-owned options",
+				"Keeps nested config override values concrete or omits the field",
+				"Does not disable strict TypeScript checks or introduce casts to bypass them"
+			]
 		}
 	]
 }
