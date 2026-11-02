@@ -4,7 +4,7 @@ description: Install, configure, operate, or troubleshoot the @suigar/mcp server
 license: MIT
 metadata:
   author: suigar
-  version: '1.9.2'
+  version: '1.10.0'
   short-description: Operate the Suigar MCP server
   tags:
     - suigar
@@ -21,7 +21,7 @@ The MCP server is a thin layer over `@suigar/sdk`. It reads Suigar config, game 
 
 ## Install or Add the Plugin
 
-Use `@suigar/mcp@beta` for the MCP surface described here. For direct installation across detected coding agents:
+Use Node.js `^24.0.0 || ^26.0.0` and `@suigar/mcp@beta` for the MCP surface described here. For direct installation across detected coding agents:
 
 ```bash
 npx add-mcp @suigar/mcp@beta --name suigar

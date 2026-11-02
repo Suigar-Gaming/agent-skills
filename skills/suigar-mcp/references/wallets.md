@@ -29,13 +29,15 @@ Use these tools for persistent local session wallets:
 
 `setup_session_wallet` opens a local, user-only setup page to create or recover a persistent session wallet. Recovery phrases and imported `suiprivkey...` values stay on the localhost setup page and never pass through MCP.
 
-`get_session_wallet` returns the local session wallet public address, balances, and funding links without exposing the private key.
+Session wallets are named and persistent across restarts and shared between networks. Use the returned wallet's UUID as `sessionWalletId` on supported wallet reads and game/SweetHouse tools to select it; omitting the ID selects the first saved wallet. Do not infer that the most recently created wallet becomes the default.
 
-`fund_session_wallet` returns a paired-wallet funding URL for the local session wallet address.
+`get_session_wallet` returns the local session wallet public address, balances, funding QR code, and funding links without exposing the private key. It can show a setup link when no wallet exists.
+
+`fund_session_wallet` requires a paired browser wallet and opens a prefilled funding form for the selected session wallet. The user chooses the coin and amount and signs the transfer in the browser.
 
 In `mode: "execute"` with `executionWallet: "session"`, MCP signs and submits directly with the local session wallet key stored in the OS keychain. Use this only for a dedicated low-funded wallet the user intentionally set up.
 
-When `executionWallet` is `"session"`, `owner` is optional and must match the selected session wallet if provided.
+On game and SweetHouse tools, when `executionWallet` is `"session"`, `owner` is optional and must match the selected session wallet if provided. NFT mint and referral claims do not accept session execution inputs; use browser approval for those flows.
 
 For game tools, session execution accepts a custom `providerUrl` and top-level `partner`, but rejects any `config` override. Omit `config` to use the trusted SDK defaults. Before signing, the server requires exactly one `MoveCall` targeting the selected game's package and module; other transaction commands such as coin splitting may still be present. If verification fails, surface the error rather than changing the transaction to bypass the check.
 

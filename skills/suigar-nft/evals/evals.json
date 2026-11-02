@@ -45,6 +45,18 @@
 				"Does not hand-write a Move target",
 				"Does not hard-code a package id"
 			]
+		},
+		{
+			"id": "nft-owned-pagination-and-content",
+			"prompt": "List all owned NFT V1 objects, including when a filtered page is empty but hasNextPage is true. What if content is missing?",
+			"expected_output": "Continues pagination using hasNextPage and cursor, requests content, and checks it before BCS parsing.",
+			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-nft"],
+			"assertions": [
+				"Uses client.core.listOwnedObjects with include: { content: true }",
+				"Uses hasNextPage and cursor to continue pagination",
+				"Does not stop solely on an empty objects array",
+				"Checks missing content before NftV1.parse"
+			]
 		}
 	]
 }

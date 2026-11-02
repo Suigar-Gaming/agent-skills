@@ -44,10 +44,15 @@ const page = await client.core.listOwnedObjects({
 	include: { content: true },
 });
 
-const nfts = page.objects.map((object) => client.suigar.bcs.NftV1.parse(object.content));
+const nfts = page.objects.map((object) => {
+	if (!object.content) {
+		throw new Error(`NFT ${object.objectId} did not return content.`);
+	}
+	return client.suigar.bcs.NftV1.parse(object.content);
+});
 ```
 
-Use the returned objects as the ownership source of truth. Follow `page.cursor` until it is empty when the product needs the full collection. Parse `content` with `NftV1`; do not rely on `objectBcs` for object reads.
+Use the returned objects as the ownership source of truth. Use `page.hasNextPage` to decide whether to request another page and pass `page.cursor` into that request when the product needs the full collection. Do not stop solely because a page contains no matching objects. Parse `content` with `NftV1`; do not rely on `objectBcs` for object reads.
 
 ## Boundaries
 

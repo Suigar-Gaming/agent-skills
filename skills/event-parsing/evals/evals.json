@@ -28,6 +28,19 @@
 				"States that getGameParameters already normalizes Move float fields",
 				"Does not copy a local structural type guard"
 			]
+		},
+		{
+			"id": "event-parsing-core-bytes-and-vectors",
+			"prompt": "My core API Keno event has Uint8Array BCS. What does parseSuigarEvent return for picks, payout_amount and raw event fields? What happens without bytes or with malformed bytes?",
+			"expected_output": "Describes event.data versus gameDetails, vector picks and bigint payout, and distinguishes null results from decoding exceptions.",
+			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/event-parsing"],
+			"assertions": [
+				"Uses core API eventType, module and Uint8Array bcs",
+				"Reads raw payload from event.data and decoded fields from gameDetails",
+				"Explains picks are an array and payout_amount is bigint",
+				"Explains missing BCS returns null while malformed supported payloads may throw",
+				"Does not claim raw event.data Move floats are already JavaScript numbers"
+			]
 		}
 	]
 }
