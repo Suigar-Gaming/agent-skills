@@ -1,8 +1,8 @@
-# Event And Numeric Parsing Specification
+# Event and numeric parsing specification
 
 Use this specification when the task is about parsing Suigar events, decoding `BetResultEvent.game_details`, or safely converting raw generated Move numeric structs.
 
-## Public Imports
+## Public imports
 
 ```ts
 import {
@@ -16,7 +16,7 @@ import {
 } from '@suigar/sdk/utils';
 ```
 
-## Game Events
+## Game events
 
 Use events from the Sui core API (`SuiClientTypes.Event`), with `eventType`, `module`, and `bcs: Uint8Array`.
 
@@ -55,7 +55,7 @@ For PvP Coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinf
 
 For SweetHouse redeem events, use `client.suigar.bcs.RedeemRequestCreatedEvent`; for referral claim events, use `client.suigar.bcs.ReferrerClaimCommissionBalanceEvent` or `client.suigar.bcs.ReferrerClaimLevelUpUsdRewardsEvent`. `parseSuigarEvent` is for supported game events. Match the event type before choosing a generated helper.
 
-## Raw Move Numerics
+## Raw Move numerics
 
 `client.suigar.getGameParameters()` already converts generated Move float fields to JavaScript numbers. Use the guards only when raw generated BCS data comes from another path.
 

@@ -1,4 +1,4 @@
-# Keno Specification
+# Keno specification
 
 Use this specification for `client.suigar.tx.createGameBet({ game: 'keno', ... })` when the player chooses board positions for a selected Keno configuration.
 
@@ -49,7 +49,7 @@ const tx = client.suigar.tx.createGameBet({
 
 Do not hand-write the Keno Move call or pre-encode `picks`.
 
-## Result Details
+## Result details
 
 `BetResultEvent.game_details` includes:
 

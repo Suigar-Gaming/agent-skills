@@ -1,6 +1,6 @@
-# Suigar Agent Skills
+# Suigar agent skills
 
-A collection of skills for AI coding agents working with Suigar on Sui. Skills are packaged instructions that extend agent capabilities.
+Skills for coding agents building with Suigar on Sui.
 
 Skills follow the [Agent Skills](https://agentskills.io/) format.
 
@@ -26,13 +26,13 @@ Install all skills:
 npx skills add Suigar-Gaming/agent-skills
 ```
 
-## Available Skills
+## Available skills
 
 ### installation
 
-Set up `@suigar/sdk` in an application, wire the `suigar()` client extension, resolve config, serialize transactions, and use public SDK exports correctly.
+Set up `@suigar/sdk` in an application, wire the `suigar()` client extension, resolve config, serialize transactions, and use public SDK exports.
 
-**Use when:**
+Use when:
 
 - Installing or scaffolding the base Suigar SDK integration
 - Configuring `SuiGrpcClient` with `suigar()`
@@ -43,7 +43,7 @@ Set up `@suigar/sdk` in an application, wire the `suigar()` client extension, re
 
 Parse Suigar SDK events and raw generated numeric values through public SDK utilities and generated BCS helpers.
 
-**Use when:**
+Use when:
 
 - Decoding `BetResultEvent.game_details`
 - Using `parseSuigarEvent`, `parseGameEvent`, or `parseGameDetails`
@@ -55,7 +55,7 @@ Parse Suigar SDK events and raw generated numeric values through public SDK util
 
 Configure partner attribution and claim referral rewards through `@suigar/sdk`.
 
-**Use when:**
+Use when:
 
 - Configuring `suigar({ partner })` with a partner wallet address
 - Checking claimable referral commission or level-up USD rewards
@@ -66,7 +66,7 @@ Configure partner attribution and claim referral rewards through `@suigar/sdk`.
 
 Read the Suigar NFT V1 catalog, list owned NFTs, and build NFT V1 mint transactions using SDK-resolved package and object ids plus BCS helpers.
 
-**Use when:**
+Use when:
 
 - Listing an owner's NFT V1 objects
 - Reading and decoding the NFT V1 catalog factory
@@ -76,21 +76,21 @@ Read the Suigar NFT V1 catalog, list owned NFTs, and build NFT V1 mint transacti
 
 ### sweethouse
 
-Build SweetHouse public pool flows on top of `@suigar/sdk`.
+Build SweetHouse public pool transactions with `@suigar/sdk`.
 
-**Use when:**
+Use when:
 
 - Depositing supported coins into the SweetHouse public pool
 - Creating redeem requests from SweetHouse staked coins
-- Claiming an own redeem request after the on-chain delay
+- Claiming your own redeem request after the on-chain delay
 - Decoding SweetHouse redeem request events
 - Keeping SweetHouse liquidity flows separate from game, referral, NFT, or MCP APIs
 
 ### create-standard-games
 
-Build standard single-player Suigar game flows on top of `@suigar/sdk`.
+Build standard single-player Suigar game transactions with `@suigar/sdk`.
 
-**Use when:**
+Use when:
 
 - Building `coinflip`, `keno`, `limbo`, `plinko`, `range`, `soccer`, or `wheel` bet transactions
 - Mapping UI inputs to `client.suigar.tx.createGameBet({ game, ...options })`
@@ -99,9 +99,9 @@ Build standard single-player Suigar game flows on top of `@suigar/sdk`.
 
 ### create-pvp-games
 
-Build PvP game flows on top of `@suigar/sdk`. The skill includes a dedicated PvP Coinflip specification and can grow with one specification per future PvP game.
+Build PvP game flows with `@suigar/sdk`. PvP Coinflip has its own specification; add a separate specification for each new PvP game.
 
-**Use when:**
+Use when:
 
 - Creating, joining, or canceling PvP Coinflip matches
 - Listing unresolved PvP Coinflip lobby games with the SDK default page size and derived coin types
@@ -112,7 +112,7 @@ Build PvP game flows on top of `@suigar/sdk`. The skill includes a dedicated PvP
 
 Install, configure, operate, or troubleshoot the `@suigar/mcp` server, bundled MCP App, or plugin bundle for Codex, Claude Code, and Cursor.
 
-**Use when:**
+Use when:
 
 - Adding the Suigar MCP server to an MCP client
 - Installing the Suigar plugin from a supported marketplace
@@ -127,9 +127,9 @@ Install, configure, operate, or troubleshoot the `@suigar/mcp` server, bundled M
 
 ## Usage
 
-Skills are automatically available once installed. The agent will use them when relevant tasks are detected.
+Once installed, agents can use the skills for matching tasks.
 
-**Examples:**
+Examples:
 
 ```text
 Set up Suigar in this app
@@ -187,7 +187,7 @@ Use Suigar MCP to build an unsigned PvP Coinflip create transaction for 1 SUI on
 Use Suigar MCP to set up a local session wallet and show its balances
 ```
 
-## Development Checks
+## Development checks
 
 Install dependencies with pnpm:
 
@@ -213,7 +213,7 @@ Check linting and formatting with Oxlint and Oxfmt:
 pnpm run lint
 ```
 
-Run deterministic repository validation without an LLM provider:
+Validate the repository without an LLM provider:
 
 ```bash
 pnpm run validate
@@ -221,7 +221,7 @@ pnpm run validate
 
 This checks skill frontmatter, directory/name consistency, line limits, eval structure, and relative Markdown links.
 
-## Skill Structure
+## Skill structure
 
 Each skill contains:
 

@@ -1,14 +1,12 @@
 # AGENTS.md
 
-This file provides guidance to AI coding agents when working with Suigar agent skills.
+## Repository overview
 
-## Repository Overview
+This repository contains skills for coding agents building with Suigar on Sui. They cover SDK integration, MCP server operation, and game-specific transaction rules.
 
-This repository contains skills for AI coding agents that build with Suigar on Sui. Skills are packaged instructions that extend an agent with Suigar SDK integration patterns, MCP server operation guidance, and game-specific transaction guardrails.
+## Creating or updating a skill
 
-## Creating or Updating a Skill
-
-### Directory Structure
+### Directory structure
 
 ```text
 skills/
@@ -23,7 +21,7 @@ skills/
 - `SKILL.md` is required and must use that exact uppercase filename.
 - `scripts/`, `references/`, and `lib/` are optional. Add them only when they directly support the skill.
 
-### SKILL.md Format
+### SKILL.md format
 
 ```md
 ---
@@ -36,21 +34,21 @@ description: Use when {specific Suigar task, product surface, or trigger}.
 {Concise instructions for the agent.}
 ```
 
-The `description` is the trigger surface. Include the concrete Suigar task there: SDK setup, standard game transactions, a specific PvP game flow, MCP server operation, or skill discovery.
+The `description` tells agents when to use the skill. Name the Suigar task: SDK setup, standard game transactions, a specific PvP game flow, MCP server operation, or skill discovery.
 
-### Suigar Skill Boundaries
+### Suigar skill boundaries
 
 - Use `installation` for base `@suigar/sdk` setup, client extension wiring, config, serialization, and public exports.
 - Use `event-parsing` for Suigar event decoding, `BetResultEvent.game_details`, generated BCS event helpers, and raw Move float or i64 conversion.
 - Use `create-standard-games` for standard single-player game transactions: `coinflip`, `keno`, `limbo`, `plinko`, `range`, `soccer`, and `wheel`.
-- Use `create-pvp-games` for PvP game flows. Read its game-specific specification for the selected game; today it includes `references/pvp-coinflip.md` for create, join, cancel, lobby listing, and object/event parsing. Add another specification when a new PvP game is supported.
+- Use `create-pvp-games` for PvP game flows. Read the specification for the selected game. It currently includes `references/pvp-coinflip.md` for create, join, cancel, lobby listing, and object/event parsing. Add another specification when a new PvP game is supported.
 - Use `suigar-nft` for application-side NFT V1 ownership, catalog lookups, and mint transaction building using SDK-resolved package/object ids, BCS helpers, and `client.suigar.tx.nftV1.mint`.
 - Use `sweethouse` for public pool deposits, redeem requests, and delayed self-claims.
 - Use `referrals` for SDK partner attribution and referral reward claims.
 - Use `suigar-mcp` for installing, configuring, operating, or troubleshooting the `@suigar/mcp` server, bundled MCP App, or its Codex, Claude Code, and Cursor plugin bundle.
 - Keep SDK and MCP guidance separate. MCP skills should describe tool usage, read-only/build/dry-run modes, and unsigned transaction behavior. SDK skills should describe application code that imports `@suigar/sdk`.
 
-### Context Efficiency
+### Context efficiency
 
 - Keep each `SKILL.md` concise and under 500 lines.
 - Move detailed reference material to directly linked files under `references/`.
@@ -58,7 +56,7 @@ The `description` is the trigger surface. Include the concrete Suigar task there
 - Keep SDK architecture details out of these skills unless they are needed for public usage guidance.
 - Do not add README files inside individual skills.
 
-### Script Requirements
+### Script requirements
 
 If a skill needs scripts:
 
@@ -68,7 +66,7 @@ If a skill needs scripts:
 - Clean up temporary files with traps when scripts create them.
 - Reference scripts by relative path, such as `node scripts/{script}.mjs`.
 
-## End-User Installation
+## End-user installation
 
 Document installation through skills.sh-compatible commands:
 
