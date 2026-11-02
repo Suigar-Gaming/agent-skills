@@ -17,9 +17,9 @@ metadata:
 
 Use this skill for application code that imports `@suigar/sdk`. For referral reads or unsigned claims through `@suigar/mcp`, use `suigar-mcp` instead.
 
-> Source constraint: Use the public SDK extension surface. Do not hand-write referral Move calls or duplicate referral data in per-game metadata.
+Use the public SDK extension API. Do not hand-write referral Move calls or duplicate referral data in per-game metadata.
 
-## Partner Attribution
+## Partner attribution
 
 Configure attribution once when registering the client extension:
 
@@ -38,7 +38,7 @@ The SDK normalizes `partner` and throws `TypeError` for invalid addresses, blank
 
 Keep the configured partner stable for the lifetime of the client. If an application changes it per campaign or session, create or select the correctly configured client before building transactions.
 
-## Referral Rewards
+## Referral rewards
 
 Read the claimable amount before displaying a reward or asking the wallet to claim it. Commission claims use a selected supported coin; level-up USD reward claims use the configured USDC coin.
 
@@ -63,10 +63,10 @@ The view methods simulate their matching claim transaction and return `0n` when 
 
 Use `client.suigar.getConfig().coins` for supported commission `coinType` values and display decimals. Do not infer that a balance is claimable simply because a referrer or partner exists.
 
-## Implementation Checklist
+## Implementation checklist
 
 1. Register `suigar({ partner })` once when attribution is required.
 2. Pass a wallet address as `partner`; never put referral values in transaction metadata.
 3. Read a claimable amount with the matching `client.suigar.view.referral` method.
 4. Build the matching unsigned `client.suigar.tx.referral` transaction only when a claim is requested.
-5. Keep `owner` aligned with the wallet that will receive and submit the claim.
+5. Set `owner` to the wallet that will receive and submit the claim.

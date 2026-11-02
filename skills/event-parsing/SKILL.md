@@ -13,20 +13,20 @@ metadata:
     - events
 ---
 
-# Suigar Event Parsing
+# Suigar event parsing
 
 Use this skill for application code that imports `@suigar/sdk` and parses Suigar events or raw generated numeric structs. If the task is only SDK setup, use `installation` first. If the user is using `@suigar/mcp` tool output, use `suigar-mcp` instead.
 
-> Source constraint: Use public SDK utilities and generated BCS helpers. Do not hand-decode `BetResultEvent.game_details` or copy SDK numeric struct guards into app code.
+Use public SDK utilities and generated BCS helpers. Do not hand-decode `BetResultEvent.game_details` or copy SDK numeric struct guards into app code.
 
-## Default Workflow
+## Default workflow
 
 1. Confirm the event source includes BCS bytes when payload decoding is needed.
 2. Prefer `parseSuigarEvent(event)` for supported game events.
 3. Use generated BCS helpers for direct event parsing when the app needs specific event payloads.
 4. Use `parseGameDetails({ game, gameDetails })` for manual `BetResultEvent.game_details` decoding.
 5. Use raw Move numeric guards only for generated BCS values that did not come from SDK-normalized reads.
-6. For the canonical parser and numeric conversion patterns, read [references/events.md](references/events.md).
+6. For parser and numeric conversion examples, read [references/events.md](references/events.md).
 
 ## Boundaries
 

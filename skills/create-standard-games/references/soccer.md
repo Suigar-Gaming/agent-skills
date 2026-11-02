@@ -1,4 +1,4 @@
-# Soccer Specification
+# Soccer specification
 
 Use this specification for `client.suigar.tx.createGameBet({ game: 'soccer', ... })` when the player selects a Soccer configuration, country, and shot zone from live metadata.
 
@@ -55,7 +55,7 @@ const tx = client.suigar.tx.createGameBet({
 
 Keep the UI selection tied to the same live parameter snapshot used for validation.
 
-## Result Details
+## Result details
 
 `BetResultEvent.game_details` includes:
 

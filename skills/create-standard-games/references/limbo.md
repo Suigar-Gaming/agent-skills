@@ -1,4 +1,4 @@
-# Limbo Specification
+# Limbo specification
 
 Use this specification for `client.suigar.tx.createGameBet({ game: 'limbo', ... })` when the player bets against a target multiplier.
 
@@ -48,7 +48,7 @@ const tx = client.suigar.tx.createGameBet({
 
 Keep UI multiplier input as a decimal number until it reaches the SDK.
 
-## Result Details
+## Result details
 
 `BetResultEvent.game_details` includes:
 

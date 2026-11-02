@@ -1,8 +1,8 @@
-# NFT V1 Catalog And Ownership Specification
+# NFT V1 catalog and ownership specification
 
 Use this specification for SDK application code that reads the Suigar NFT V1 factory catalog or lists NFT V1 objects owned by an address.
 
-## Catalog Lookup
+## Catalog lookup
 
 The catalog object is named `NftV1Factory`. Its resolved object id is `objectIds.nftV1Factory`.
 
@@ -32,7 +32,7 @@ const specs = factory.specs.contents.map(({ value }) => ({
 
 Preserve the BCS field names when the product needs the full catalog. Convert `u64` fields such as `price`, `supply`, and `available` only at the presentation boundary.
 
-## Ownership Lookup
+## Ownership lookup
 
 ```ts
 const { nftV1 } = client.suigar.getConfig().packageIds;

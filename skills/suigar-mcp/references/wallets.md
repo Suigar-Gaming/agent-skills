@@ -1,8 +1,8 @@
-# MCP Wallets Specification
+# MCP wallets specification
 
 Use this specification for `@suigar/mcp` wallet reads, paired browser-wallet approval, and local session-wallet behavior.
 
-## Paired Browser Wallet
+## Paired browser wallet
 
 Use these tools for browser-mediated wallet pairing:
 
@@ -19,7 +19,7 @@ Wallet pairing inputs include optional `webUrl`, `timeoutMs`, `maxBodyBytes`, `o
 
 Wallet bridges and session setup require 32-byte hexadecimal state tokens and compare the decoded bytes using timing-safe equality. For invalid pairing, approval, logout, or setup state errors, restart the corresponding flow and use its newly generated URL with its state token intact.
 
-## Local Session Wallet
+## Local session wallet
 
 Use these tools for persistent local session wallets:
 
@@ -39,15 +39,15 @@ In `mode: "execute"` with `executionWallet: "session"`, MCP signs and submits di
 
 On game and SweetHouse tools, when `executionWallet` is `"session"`, `owner` is optional and must match the selected session wallet if provided. NFT mint and referral claims do not accept session execution inputs; use browser approval for those flows.
 
-For game tools, session execution accepts a custom `providerUrl` and top-level `partner`, but rejects any `config` override. Omit `config` to use the trusted SDK defaults. Before signing, the server requires exactly one `MoveCall` targeting the selected game's package and module; other transaction commands such as coin splitting may still be present. If verification fails, surface the error rather than changing the transaction to bypass the check.
+For game tools, session execution accepts a custom `providerUrl` and top-level `partner`, but rejects any `config` override. Omit `config` to use the trusted SDK defaults. Before signing, the server requires exactly one `MoveCall` targeting the selected game's package and module; other transaction commands such as coin splitting may still be present. If verification fails, report the error. Do not change the transaction to bypass the check.
 
 Wallet validation uses `TypeError` for malformed recovery phrases and `RangeError` for unsupported private-key schemes or oversized bridge requests. Local setup pages display the error message. Expiration, missing wallet state, and unavailable keychain storage remain operational errors.
 
-## Wallet Reads
+## Wallet reads
 
 Use these read tools for balances and coin objects:
 
 - `get_wallet_balances`: aggregate balances for the connected wallet, a local session wallet, or an explicit owner
 - `list_wallet_coins`: paginated individual coin objects for the connected wallet, a local session wallet, or an explicit owner
 
-`owner` accepts a Sui address, SuiNS name, or SuiNS subname. Surface tool errors with the missing owner, network, or coin detail needed for retry.
+`owner` accepts a Sui address, SuiNS name, or SuiNS subname. Report tool errors with the missing owner, network, or coin detail needed to retry.

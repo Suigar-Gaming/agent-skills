@@ -1,4 +1,4 @@
-# MCP Transaction Tools Specification
+# MCP transaction tools specification
 
 Use this specification for `@suigar/mcp` transaction routing, modes, common inputs, and game-specific fields.
 
@@ -17,7 +17,7 @@ The default mode is `build`; pass `mode: "read-only"` explicitly for a plan with
 
 App-capable clients may render the bundled Suigar Transaction Inspector UI. The App inspects results; signing and execution occur through the wallet paths described below. All tool responses should include text `content` and `structuredContent`.
 
-## Common Inputs
+## Common inputs
 
 - `network` defaults to `testnet`; only `testnet` and `mainnet` are supported.
 - `providerUrl` can override the Sui gRPC endpoint.
@@ -38,9 +38,9 @@ Transaction tools that accept `metadata` require JSON-compatible strings, number
 
 `useGasCoin` is for transaction tools that source native SUI coins, including native SUI bets, NFT V1 mint, and SweetHouse deposit, when overriding Mysten's default coin intent behavior. PvP Coinflip cancel and SweetHouse redeem/claim flows do not accept `useGasCoin`.
 
-Do not pass explicit coin object ids. The MCP package intentionally uses SDK public transaction builders.
+Do not pass explicit coin object ids. The MCP package uses public SDK transaction builders.
 
-## Standard Game Tools
+## Standard game tools
 
 - `build_coinflip_transaction`: `owner`, `stake`, `side`
 - `build_keno_transaction`: `owner`, `stake`, `configId`, `picks`
@@ -54,7 +54,7 @@ Use `read_game_metadata` before showing or validating live stake limits, RTP, Ke
 
 For natural-language Soccer country requests, match the returned country name in `parameters.countries.contents[].value` and pass its `key` as `countryId`; do not guess an ID or substitute an ISO code.
 
-## PvP Coinflip Tools
+## PvP Coinflip tools
 
 - `build_pvp_coinflip_create_transaction`: `owner`, `stake`, `creatorSide`, optional `isPrivate`
 - `build_pvp_coinflip_join_transaction`: `owner`, `gameId`, optional `coinType`
@@ -64,7 +64,7 @@ PvP Coinflip create uses the MCP field name `creatorSide`; the SDK builder recei
 
 For PvP join, expect live object reads while building or dry-running because the SDK resolves the current game stake from the game object.
 
-## NFT, Referral, And SweetHouse Tools
+## NFT, referral, and SweetHouse tools
 
 - `build_nft_v1_mint_transaction`: `owner`, `specId`, optional `gasBudget`, optional `useGasCoin`
 - `build_referral_commission_claim_transaction`: `owner`, optional `coinType`

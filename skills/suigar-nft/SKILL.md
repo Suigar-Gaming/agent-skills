@@ -17,9 +17,9 @@ metadata:
 
 Use this skill for application code that imports `@suigar/sdk` and reads the NFT V1 catalog, lists NFTs directly owned by an address, or builds an NFT V1 mint transaction. If the app has not configured the SDK client yet, use `installation` first.
 
-> Source constraint: Use the active client's resolved `packageIds.nftV1`, `objectIds.nftV1Factory`, and `bcs.NftV1.typeTag()`; do not hard-code a mainnet or testnet package, factory id, or Move type string.
+Use the active client's resolved `packageIds.nftV1`, `objectIds.nftV1Factory`, and `bcs.NftV1.typeTag()`; do not hard-code a mainnet or testnet package, factory id, or Move type string.
 
-## Default Workflow
+## Default workflow
 
 1. Extend the Sui client with `suigar()` for the intended network.
 2. Read `nftV1` from `client.suigar.getConfig().packageIds` and `nftV1Factory` from `objectIds`.
@@ -40,7 +40,7 @@ Use this skill for application code that imports `@suigar/sdk` and reads the NFT
 - `packageIds.nftV1` is the package id used by ownership lookup and the mint builder.
 - `objectIds.nftV1Factory` is the catalog object id. Use `client.suigar.bcs.NftV1Factory` to decode its `content`; the SDK does not provide a higher-level catalog client method.
 - The SDK exposes NFT V1 minting only through `client.suigar.tx.nftV1.mint`; do not hand-write the Move target or price lookup.
-- Keep package ids network-aware by deriving them from the configured client on every environment rather than copying values into application constants.
+- Derive package ids from the configured client in each environment. Do not copy them into application constants.
 
 ## Checklist
 

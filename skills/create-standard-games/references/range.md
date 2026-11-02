@@ -1,4 +1,4 @@
-# Range Specification
+# Range specification
 
 Use this specification for `client.suigar.tx.createGameBet({ game: 'range', ... })` when the player chooses a bounded interval and optionally targets the outside of that interval.
 
@@ -56,7 +56,7 @@ const tx = client.suigar.tx.createGameBet({
 
 Do not pre-scale range points in app code. With the default scale `1_000_000`, valid UI values are `0` to `100`; pass those human values to the SDK.
 
-## Result Details
+## Result details
 
 `BetResultEvent.game_details` includes:
 
