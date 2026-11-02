@@ -1,4 +1,4 @@
-# NFT V1 Minting Specification
+# NFT V1 minting specification
 
 Use this specification for SDK application code that builds a Suigar NFT V1 mint transaction after selecting a catalog specification.
 

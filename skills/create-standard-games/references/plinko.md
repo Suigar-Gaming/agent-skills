@@ -1,4 +1,4 @@
-# Plinko Specification
+# Plinko specification
 
 Use this specification for `client.suigar.tx.createGameBet({ game: 'plinko', ... })` when the game depends on a selected Plinko board configuration.
 
@@ -47,7 +47,7 @@ const tx = client.suigar.tx.createGameBet({
 
 Do not duplicate board configuration constants in application code when live parameters are available.
 
-## Result Details
+## Result details
 
 `BetResultEvent.game_details` includes:
 

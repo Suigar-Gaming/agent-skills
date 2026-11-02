@@ -13,22 +13,22 @@ metadata:
     - installation
 ---
 
-# Suigar SDK Installation
+# Suigar SDK installation
 
 Use this skill for application code that imports `@suigar/sdk`. If the task is about installing, configuring, operating, or troubleshooting `@suigar/mcp`, its bundled MCP App, or its plugin bundle, use the `suigar-mcp` skill instead.
 
-> Source constraint: Prefer public Suigar SDK entrypoints and installed package docs/source when available. Do not guess private exports or copy internal helpers into app code.
+Prefer public Suigar SDK entrypoints and installed package documentation or source when available. Do not guess private exports or copy internal helpers into app code.
 
-## Default Workflow
+## Default workflow
 
 1. Confirm the app already uses the current Mysten Sui client APIs.
 2. Install or verify `@suigar/sdk`, `@mysten/sui`, and `@mysten/bcs`, matching the SDK package's Node.js and peer dependency requirements.
 3. Extend the existing Sui client with `suigar()`.
 4. Keep all Suigar transaction creation and serialization on that extended client instance.
 5. Use `client.suigar.getConfig()` for supported coins, object ids, NFT V1 package id, and price info when the UI or diagnostics need resolved config.
-6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup is correct. Route SweetHouse deposits, redeem requests, or delayed self-claims to [sweethouse](../sweethouse/SKILL.md), partner attribution or referral claims to [referrals](../referrals/SKILL.md), and NFT V1 catalog, ownership, or mint flows to [suigar-nft](../suigar-nft/SKILL.md).
+6. Route game transaction work to `create-standard-games` or `create-pvp-games` after setup. Route SweetHouse deposits, redeem requests, or delayed self-claims to [sweethouse](../sweethouse/SKILL.md), partner attribution or referral claims to [referrals](../referrals/SKILL.md), and NFT V1 catalog, ownership, or mint flows to [suigar-nft](../suigar-nft/SKILL.md).
 
-## Public Surface
+## Public surface
 
 SDK-owned optional extension fields (`config`, `partner`, and `cacheTtl`) accept explicit `undefined`, including with `exactOptionalPropertyTypes`. An undefined field behaves like an omitted option; nested configuration overrides still require valid configured values.
 
@@ -53,7 +53,7 @@ Use these game-specific public types when useful: `GAMES`, `Game`, `StandardGame
 
 Use these utilities instead of local replacements when relevant: `parseCoinType`, `toBigInt`, `toU32`, `toU16`, `toU8`, `DEFAULT_QUERY_LIMIT`, `DEFAULT_GAS_BUDGET_MIST`, `RANGE_POINT_LIMIT`, `DEFAULT_RANGE_SCALE`, and `DEFAULT_LIMBO_MULTIPLIER_SCALE`. For event helpers, Move float/i64 conversion, and raw generated numeric parsing, use [event-parsing](../event-parsing/SKILL.md).
 
-Utility behavior worth preserving:
+Utility behavior:
 
 - `toBigInt(value)` accepts `bigint`, finite numbers, integer strings, and booleans. Number inputs truncate toward zero (`5.9` becomes `5n`); it does not convert currency decimals into base units. Convert UI amounts with the configured coin decimals before calling builders, and prefer exact strings or `bigint` over imprecise numbers. Invalid inputs throw `TypeError`; negative normalized values throw `RangeError`.
 - `toU8(value)`, `toU16(value)`, and `toU32(value)` validate integer inputs in `0..255`, `0..65535`, and `0..4294967295`, respectively; they do not truncate fractions.
@@ -78,7 +78,7 @@ client.suigar.getPvPCoinflipGames(options);
 client.suigar.serializeTransactionToBase64({ transaction: tx });
 ```
 
-## Runtime and Installation
+## Runtime and installation
 
 Use an ESM project (`"type": "module"`) with Node.js `^24.0.0 || ^26.0.0`. Match the installed SDK's peer dependency ranges for `@mysten/sui@2` and `@mysten/bcs@2`; pre-2.0 Sui clients are unsupported. The v2 surface is currently published as a beta:
 
@@ -88,7 +88,7 @@ npm install @suigar/sdk@beta @mysten/sui@2 @mysten/bcs@2
 
 Use the package version required by the application when it is already pinned. The SDK is also available through JSR (`pnpm add jsr:@suigar/sdk`).
 
-## Client Setup
+## Client setup
 
 Prefer the Sui gRPC client extension pattern:
 
@@ -153,7 +153,7 @@ const base64 = await client.suigar.serializeTransactionToBase64({
 });
 ```
 
-## Parameters and Events
+## Parameters and events
 
 Use `client.suigar.getGameParameters({ game, coinType, ...options })` when an app needs live on-chain game bounds or RTP parameters. `coinType` is required because parameters are stored per game and coin type. The SDK already converts generated Move float fields to JavaScript numbers.
 
@@ -177,11 +177,11 @@ For event parsing, raw generated BCS numeric conversion, and direct BCS event he
 - Do not hand-decode `BetResultEvent.game_details`; use [event-parsing](../event-parsing/SKILL.md).
 - Do not move SDK runtime builders out of `client.suigar.tx` or rely on private package paths.
 
-## Implementation Checklist
+## Implementation checklist
 
 1. Install and import `@suigar/sdk`, `@mysten/sui`, and `@mysten/bcs`.
 2. Extend the current Sui client with `suigar()`.
 3. Confirm the client uses the intended supported network.
 4. Keep transaction creation and serialization on the same extended client instance.
 5. Keep the consuming app on ESM and pass the explicit `network` required by current client constructors.
-6. Route game-specific work to the standard or PvP skill after base setup is correct; use [sweethouse](../sweethouse/SKILL.md) for SweetHouse public pool flows, [suigar-nft](../suigar-nft/SKILL.md) for NFT V1 catalog/ownership/mint flows, [event-parsing](../event-parsing/SKILL.md) for event or raw numeric parsing, and [referrals](../referrals/SKILL.md) for attribution or reward claims.
+6. Route game-specific work to the standard or PvP skill after base setup; use [sweethouse](../sweethouse/SKILL.md) for SweetHouse public pool flows, [suigar-nft](../suigar-nft/SKILL.md) for NFT V1 catalog/ownership/mint flows, [event-parsing](../event-parsing/SKILL.md) for event or raw numeric parsing, and [referrals](../referrals/SKILL.md) for attribution or reward claims.

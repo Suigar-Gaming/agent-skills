@@ -17,9 +17,9 @@ metadata:
 
 Use this skill for `@suigar/mcp` operation. If the user is writing application code that imports `@suigar/sdk`, use `installation`, `create-standard-games`, `create-pvp-games`, [sweethouse](../sweethouse/SKILL.md), [suigar-nft](../suigar-nft/SKILL.md), or [referrals](../referrals/SKILL.md) instead.
 
-The MCP server is a thin layer over `@suigar/sdk`. It reads Suigar config, game metadata, wallet balances, coin objects, NFTs, and referral rewards; builds unsigned transactions; dry-runs unsigned transactions; and can execute only through an explicit paired-wallet approval or a user-created local session wallet.
+The MCP server uses `@suigar/sdk`. It reads Suigar config, game metadata, wallet balances, coin objects, NFTs, and referral rewards; builds unsigned transactions; dry-runs unsigned transactions; and can execute only through an explicit paired-wallet approval or a user-created local session wallet.
 
-## Install or Add the Plugin
+## Install or add the plugin
 
 Use Node.js `^24.0.0 || ^26.0.0` and `@suigar/mcp@beta` for the MCP surface described here. For direct installation across detected coding agents:
 
@@ -28,8 +28,6 @@ npx add-mcp @suigar/mcp@beta --name suigar
 ```
 
 Use manual stdio configuration only when the user needs to configure one MCP client explicitly or their environment does not support `add-mcp`:
-
-Configure MCP clients with the published package:
 
 ```json
 {
@@ -63,7 +61,7 @@ For Claude Code, add the public Suigar marketplace from GitHub and install the p
 
 For Cursor, install through the Suigar repository marketplace at `https://github.com/Suigar-Gaming/ts-sdks` and reload Cursor. Do not tell users to manually edit the generated plugin manifests or their version-pinned `.mcp.json`.
 
-## Tool Routing
+## Tool routing
 
 Start with read tools when network, coin, package, or game support is unclear:
 
@@ -117,7 +115,7 @@ SweetHouse tools build public pool deposits, staked-coin redeem requests, and de
 
 Wallet tools manage two different wallet paths. Use `suigar_login`, `suigar_logout`, and `get_connection_status` for paired browser-wallet approval flows. Use `setup_session_wallet`, `get_session_wallet`, and `fund_session_wallet` for a persistent local session wallet. For approval and session-wallet boundaries, read [references/wallets.md](references/wallets.md).
 
-## Common Inputs And Game Fields
+## Common inputs and game fields
 
 For common MCP inputs, standard game fields, PvP Coinflip fields, NFT mint inputs, referral claim inputs, and SweetHouse fields, read [references/transaction-tools.md](references/transaction-tools.md).
 
@@ -133,7 +131,7 @@ For common MCP inputs, standard game fields, PvP Coinflip fields, NFT mint input
 - `list_nfts` is read-only. Use `build_nft_v1_mint_transaction` for NFT V1 mint plans, builds, dry-runs, or explicit execute-mode requests.
 - Use `get_referral_commission` or `get_referral_level_up_usd_rewards` before presenting a claimable referral amount. Use the matching referral claim transaction tool only for a plan, build, dry-run, or explicit execute-mode request.
 - Use SweetHouse transaction tools for public pool liquidity flows. Do not route deposits or redeem requests through standard game, referral, or NFT builders.
-- Surface tool errors with the missing field, unsupported config, network, or coin detail needed for retry.
-- The server targets MCP 2026-07-28: modern clients send version and capabilities in each request’s `_meta` and may call `server/discover` without initialization. Older clients can still use the initialization handshake. For embedded stdio startup, use `startSuigarMcpServer()`; for programmatic integration, use `createSuigarMcpServer()` and connect it through the MCP SDK 2 transport.
+- Report tool errors with the missing field, unsupported config, network, or coin detail needed to retry.
+- The server targets MCP 2026-07-28: modern clients send version and capabilities in each request's `_meta` and may call `server/discover` without initialization. Older clients can still use the initialization handshake. For embedded stdio startup, use `startSuigarMcpServer()`; for programmatic integration, use `createSuigarMcpServer()` and connect it through the MCP SDK 2 transport.
 - When using the ext-apps 2 / MCP SDK 2 server, distinguish returned tool failures (`isError: true`) from rejected protocol requests. An unknown tool rejects with invalid params (`-32602`); refresh `tools/list` and use an advertised name. Schema-validation failures are tool errors, and Suigar handler failures include text and structured error details. Existing MCP Apps 1.x hosts remain compatible.
-- Invalid SDK configuration—including package/object ids, coin metadata, or missing price-info object ids—and invalid top-level partner values surface as `TypeError`; correct the affected `config` or `partner` input before retrying.
+- Invalid SDK configuration (package/object ids, coin metadata, or missing price-info object ids) and invalid top-level partner values throw `TypeError`; correct the affected `config` or `partner` input before retrying.

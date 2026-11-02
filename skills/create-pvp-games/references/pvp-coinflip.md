@@ -1,10 +1,10 @@
-# PvP Coinflip Specification
+# PvP Coinflip specification
 
 Use this specification for application code that imports `@suigar/sdk` and builds PvP Coinflip. If the user is using MCP tools instead of SDK code, use `suigar-mcp`; the MCP create input is `creatorSide`, which maps to SDK `side`.
 
-> Source constraint: Treat the SDK PvP Coinflip builders, BCS helpers, and registry lookup behavior as authoritative. Do not adapt standard bet builders for PvP.
+Use the SDK PvP Coinflip builders, BCS helpers, and registry lookup behavior. Do not adapt standard bet builders for PvP.
 
-## Default Workflow
+## Default workflow
 
 1. Identify the PvP action: `create`, `join`, or `cancel`.
 2. Use the action-specific `client.suigar.tx.pvpCoinflip` builder.
@@ -14,11 +14,11 @@ Use this specification for application code that imports `@suigar/sdk` and build
 6. Decode PvP events with generated BCS helpers.
 7. Decode any accompanying standard `BetResultEvent.game_details` with [event parsing](../../event-parsing/references/events.md).
 
-## Live Parameters
+## Live parameters
 
 Read `client.suigar.getGameParameters({ game: 'pvp-coinflip', coinType })` before presenting or validating current PvP stake limits or game settings. Results are cached for 30 minutes by default; use `ignoreCache: true` when the lobby requires a fresh on-chain read.
 
-## Public Surface
+## Public surface
 
 ```ts
 client.suigar.getPvPCoinflipGames(options?);
@@ -88,7 +88,7 @@ const tx = client.suigar.tx.pvpCoinflip.cancelGame({
 
 Keep cancellation tied to the on-chain `gameId`; do not reuse create or join payload shapes.
 
-## Lobby and Object Reads
+## Lobby and object reads
 
 `getPvPCoinflipGames()` lists unresolved matches by reading the PvP registry for the active network and loading referenced game objects with `client.core.getObjects()`.
 
@@ -119,7 +119,7 @@ const game = await client.suigar.bcs.PvPCoinflipGame.get({
 });
 ```
 
-## Event Decoding
+## Event decoding
 
 Use:
 
@@ -127,7 +127,7 @@ Use:
 - `client.suigar.bcs.PvPCoinflipGameResolvedEvent`
 - `client.suigar.bcs.PvPCoinflipGameCancelledEvent`
 
-When a flow also decodes `BetResultEvent`, use [event parsing](../../event-parsing/references/events.md) for the canonical `parseSuigarEvent`, `parseGameEvent`, and `parseGameDetails` pattern.
+When a flow also decodes `BetResultEvent`, use [event parsing](../../event-parsing/references/events.md) for the `parseSuigarEvent`, `parseGameEvent`, and `parseGameDetails` pattern.
 
 ## Gotchas
 
@@ -139,7 +139,7 @@ When a flow also decodes `BetResultEvent`, use [event parsing](../../event-parsi
 - Use `client.suigar.getConfig().coins` when the UI needs supported coin metadata.
 - Use the root-exported `SuigarCoin` type when app code needs typed supported coin keys.
 
-## Implementation Checklist
+## Implementation checklist
 
 1. Confirm whether the feature is create, join, or cancel.
 2. Wire the flow to the matching `pvpCoinflip.createGame`, `joinGame`, or `cancelGame` builder.
