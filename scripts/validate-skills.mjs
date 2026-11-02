@@ -6,7 +6,7 @@
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve } from 'node:path';
-import { glob } from 'glob';
+import { globSync } from 'glob';
 
 const ROOT = resolve(dirname(new URL(import.meta.url).pathname), '..');
 const SKILLS_ROOT = join(ROOT, 'skills');
@@ -53,7 +53,7 @@ function validateMarkdownLinks(file) {
 	}
 }
 
-const skillFiles = glob.sync(join(SKILLS_ROOT, '*/SKILL.md'));
+const skillFiles = globSync(join(SKILLS_ROOT, '*/SKILL.md'));
 const skillNames = new Set();
 
 for (const skillFile of skillFiles) {

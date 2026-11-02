@@ -217,6 +217,32 @@
 				"Explains that exactly one MoveCall must target the selected game package and module before signing",
 				"Does not suggest bypassing transaction verification or silently switching to browser execution"
 			]
+		},
+		{
+			"id": "mcp-session-tool-boundaries",
+			"prompt": "I have two named session wallets. Can I use the second one for a SweetHouse deposit and an NFT V1 mint with execute mode?",
+			"expected_output": "Uses the selected UUID for SweetHouse session execution; explains omitted IDs select the first saved wallet, and NFT mint requires owner and browser approval.",
+			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"],
+			"assertions": [
+				"Uses sessionWalletId to select the intended saved wallet for SweetHouse",
+				"Uses executionWallet: session only for supported tools",
+				"States omitting sessionWalletId selects the first saved wallet",
+				"Does not pass executionWallet or sessionWalletId to NFT mint",
+				"Explains NFT mint execute requires owner and browser approval"
+			]
+		},
+		{
+			"id": "mcp-partial-coin-config-and-units",
+			"prompt": "Show a Suigar MCP read-only plan with config.coins.sui.decimals set to 0, and explain how to pass an exact 1.5 USDC stake when I later build a transaction. Can both coins have partial metadata overrides?",
+			"expected_output": "Uses mode read-only, allows partial metadata for both SUI and USDC including zero decimals, and explains decimal currency strings versus SDK base units.",
+			"sources": ["https://github.com/Suigar-Gaming/agent-skills/tree/main/skills/suigar-mcp"],
+			"assertions": [
+				"Uses explicit mode: read-only for a plan without bytes",
+				"Preserves decimals: 0 as a concrete override",
+				"Allows partial coinType, decimals and priceInfoObjectId metadata on both sui and usdc",
+				"Uses stake: \"1.5\" for an exact MCP currency amount",
+				"Does not pass 1500000 as the MCP stake for 1.5 USDC"
+			]
 		}
 	]
 }

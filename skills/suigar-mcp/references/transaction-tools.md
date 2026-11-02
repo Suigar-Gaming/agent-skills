@@ -13,7 +13,9 @@ Use the lightest mode that answers the request:
 | `dry-run` | The user needs raw and summarized Sui simulation data for the unsigned transaction. |
 | `execute` | The user explicitly wants MCP to execute through paired browser-wallet approval or a local session wallet. |
 
-App-capable clients may render the bundled Suigar Transaction Inspector UI. All tool responses should include text `content` and `structuredContent`.
+The default mode is `build`; pass `mode: "read-only"` explicitly for a plan without bytes. Read-only plans may omit transaction-required fields; build and dry-run need them. Only game and SweetHouse tools support `executionWallet: "session"`; NFT mint and referral claims execute through paired browser-wallet approval and still require `owner`.
+
+App-capable clients may render the bundled Suigar Transaction Inspector UI. The App inspects results; signing and execution occur through the wallet paths described below. All tool responses should include text `content` and `structuredContent`.
 
 ## Common Inputs
 
@@ -24,9 +26,10 @@ App-capable clients may render the bundled Suigar Transaction Inspector UI. All 
 - Invalid package/object ids, coin metadata (`coinType`, `decimals`, or `priceInfoObjectId`), missing price-info object ids, and invalid top-level partner values throw `TypeError`. Correct the affected override or partner before retrying.
 - `owner` accepts a Sui address, SuiNS name, or SuiNS subname in build, dry-run, paired-wallet execute, NFT, wallet, SweetHouse, and referral reads.
 - `coinType` defaults to the SDK-configured SUI coin type.
-- `amount`, `stake`, and `cashStake` are currency amounts, such as `1` or `1.5`, not base units.
+- `amount`, `stake`, and `cashStake` are currency amounts, such as `1` or `1.5`, not base units. Use decimal strings for exact values (`"1.5"`); `stake: 1` means one whole coin, whereas the SDK takes base units (`1_000_000_000n` for one SUI).
+- Both `config.coins.sui` and `config.coins.usdc` accept partial `coinType`, `decimals`, and `priceInfoObjectId` overrides. Programmatic inputs omit nested `undefined` fields before SDK validation; concrete values such as `decimals: 0` are preserved. JSON callers should omit absent fields.
 - `gasBudget` is in MIST.
-- `executionWallet` is `"connected"` or `"session"` for execute mode. `"connected"` opens browser approval; `"session"` signs and submits with the local session wallet.
+- On game and SweetHouse tools, `executionWallet` is `"connected"` or `"session"` for execute mode. `"connected"` opens browser approval; `"session"` signs and submits with the local session wallet.
 - `sessionWalletId` selects a named local session wallet when supported and defaults to the first wallet.
 
 For game tools using `mode: "execute"` with `executionWallet: "session"`, omit `config`: SDK config overrides are rejected, while custom `providerUrl` and top-level `partner` are accepted. The server checks that exactly one `MoveCall` targets the selected game's package and module before signing. See [wallets.md](wallets.md) for session-wallet behavior.

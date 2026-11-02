@@ -5,7 +5,7 @@
 import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve } from 'node:path';
-import { glob } from 'glob';
+import { globSync } from 'glob';
 
 export const ROOT = resolve(dirname(new URL(import.meta.url).pathname), '../..');
 export const SKILLS_ROOT = join(ROOT, 'skills');
@@ -85,7 +85,7 @@ function skillNameFromPath(filePath) {
 
 export function discoverEvalFiles(filename = 'evals.json', { skillFilter, changedOnly } = {}) {
 	const pattern = join(SKILLS_ROOT, `*/evals/${filename}`);
-	let files = glob.sync(pattern, { ignore: ['**/node_modules/**'] });
+	let files = globSync(pattern, { ignore: ['**/node_modules/**'] });
 
 	if (skillFilter) {
 		files = files.filter((f) => skillNameFromPath(f) === skillFilter);
@@ -120,7 +120,7 @@ export function discoverEvalFiles(filename = 'evals.json', { skillFilter, change
 export function loadSkillContext(evalFilePath) {
 	const skillDir = resolve(dirname(evalFilePath), '..');
 	const skillName = basename(skillDir);
-	const mdFiles = glob.sync(join(skillDir, '**/*.md'), {
+	const mdFiles = globSync(join(skillDir, '**/*.md'), {
 		ignore: ['**/node_modules/**', '**/evals/**'],
 	});
 
