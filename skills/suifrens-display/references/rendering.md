@@ -38,6 +38,8 @@ An explicit accessory `renderOptions.assetSrc` overrides ordinary catalogue artw
 
 ## Accessories, kits and gestures
 
+Pass catalogue entries or custom `SuiFrenAccessory` objects from `/types` with `name`, `type`, `category` and `renderOptions`. Use optional access for missing slots returned by `getAccessoriesByType`.
+
 Import `accessories` and crown helpers from `/accessories`; import `buildRunnerAccessories`, `resolveRunnerKit`, `SOCCER_TEAM_KITS`, `resolveSoccerCountryCode`, and `resolveSoccerTeamKit` from `/kits`.
 
 ```tsx
