@@ -51,6 +51,8 @@ if (parsed?.event === 'BetResultEvent') {
 
 `parseGameEvent(event)` returns `{ game, event }`. Do not use the older `gameId` or `eventName` field names. `parseGameDetails({ game, gameDetails })` decodes known detail keys and preserves on-chain key names.
 
+Decoded details have a null prototype. Use `Object.hasOwn(details, key)` to check keys, including on `gameDetails` returned by `parseSuigarEvent`. Unknown keys such as `__proto__` and `constructor` decode as strings. Use `Object.entries()` or JSON serialization as usual; do not call inherited methods such as `details.hasOwnProperty()`.
+
 For PvP Coinflip, use `client.suigar.bcs.PvPCoinflipGameCreatedEvent`, `PvPCoinflipGameResolvedEvent`, and `PvPCoinflipGameCancelledEvent` when direct event parsing is needed.
 
 For SweetHouse redeem events, use `client.suigar.bcs.RedeemRequestCreatedEvent`; for referral claim events, use `client.suigar.bcs.ReferrerClaimCommissionBalanceEvent` or `client.suigar.bcs.ReferrerClaimLevelUpUsdRewardsEvent`. `parseSuigarEvent` is for supported game events. Match the event type before choosing a generated helper.

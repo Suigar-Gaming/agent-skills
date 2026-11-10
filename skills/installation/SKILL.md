@@ -169,6 +169,7 @@ For event parsing, raw generated BCS numeric conversion, and direct BCS event he
 - Keep frontends and backends on the same `owner` wallet address used to build transactions.
 - Keep amounts as `bigint` once they leave the UI layer.
 - Use `client.suigar.getConfig().coins` for supported `coinType` and `decimals`; do not duplicate decimal constants in app code unless runtime config requires it.
+- The resolved `coins` dictionary has a null prototype. Use `Object.hasOwn(coins, key)` for key checks; `Object.keys()`, `Object.values()` and JSON serialization work as usual.
 - Prefer SDK-resolved supported coin metadata from `client.suigar.getConfig()` for debugging, inspection, or UI coin selectors; simple examples can pass the expected coin type directly.
 - Standard games resolve the price-info object id from the selected coin's `priceInfoObjectId` metadata.
 - `packageIds.nftV1` is configured by network because it is not resolved from MVR. Generated game, referral, and core bindings use `@suigar/*` MVR names by default, with optional `packageIds` entries for explicit package overrides. Use `objectIds` for singleton objects such as `sweetHouse` and `nftV1Factory`.
