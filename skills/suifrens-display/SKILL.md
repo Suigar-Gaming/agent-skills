@@ -2,6 +2,16 @@
 name: suifrens-display
 description: Integrate @suigar/suifrens-display-system character rendering in React or server-side SVG exports. Use for capy and bullshark attributes, external versus inline SVG accessories, palettes, skins, expressions, static gestures, runner or football kits. Use suifrens-animation for playback and duel scripts; Suigar NFT V1 reads and minting belong to suigar-nft.
 license: MIT
+metadata:
+  author: suigar
+  version: '1.0.0'
+  short-description: Render Suifrens characters
+  tags:
+    - suigar
+    - sui
+    - suifrens
+    - react
+    - svg
 ---
 
 # Suifrens display

@@ -2,6 +2,16 @@
 name: suifrens-animation
 description: Add Suifrens animation playback, custom part sequences, battle sprites, health bars, and scripted duels using @suigar/suifrens-display-system. Use for animation configuration, iterations, play state, triggers, timing helpers, or useDuelScript attack and victory steps. Static portraits, accessories and gestures belong to suifrens-display.
 license: MIT
+metadata:
+  author: suigar
+  version: '1.0.0'
+  short-description: Animate Suifrens and scripted duels
+  tags:
+    - suigar
+    - sui
+    - suifrens
+    - animation
+    - duels
 ---
 
 # Suifrens animation and duels
