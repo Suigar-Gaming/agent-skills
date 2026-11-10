@@ -2,17 +2,17 @@
 	"skill_name": "suifrens-display",
 	"evals": [
 		{
-			"id": "suifrens-display-archive-generation",
-			"prompt": "Our Suigar frontend uses the compiled v1.2.2 GitHub archive. Add a thumbs-up capy; should I install npm beta and use gesture=\"thumbs_up\"?",
+			"id": "suifrens-display-attributes-and-gesture",
+			"prompt": "Render a happy capy with a static thumbs-up using @suigar/suifrens-display-system. Which imports and attributes should I use?",
 			"assertions": [
-				"Inspects the archive declarations and keeps the pinned dependency unless migration is authorized",
-				"Uses historical capyGesture=\"thumbsUp\" when supported by that archive",
-				"Does not claim the npm beta is published or require an unrelated upgrade"
+				"Imports SuiFrenImage from the package root and CapyAttributes from /types",
+				"Uses valid palette keys without a leading #, a skin, an expression and earShape",
+				"Uses gesture=\"thumbs_up\" on a full-body character without requiring animation"
 			]
 		},
 		{
 			"id": "suifrens-display-inline-export",
-			"prompt": "On the ts-sdks migration source, create a standalone SVG with a custom accessory whose assetSrc points to a remote SVG.",
+			"prompt": "Create a standalone SVG with a custom accessory whose assetSrc points to a remote SVG.",
 			"assertions": [
 				"Uses SuiFrenImageInline from /image-inline",
 				"Explains a remote assetSrc remains an external reference even with the inline renderer",
@@ -21,12 +21,11 @@
 		},
 		{
 			"id": "suifrens-display-runner-and-gesture",
-			"prompt": "Using the ts-sdks migration checkout, show how to add a mirrored pink runner kit and a thumbs-down bullshark.",
+			"prompt": "Show how to add a mirrored pink runner kit and a thumbs-down bullshark.",
 			"assertions": [
 				"Imports buildRunnerAccessories from /kits",
 				"Uses a six-digit hex color and mirrorBib: true",
-				"Uses the shared gesture prop and thumbs_down only after checking it exists in the checkout",
-				"Does not promise unpublished source changes are available in the historical archive"
+				"Uses the shared gesture prop with thumbs_down"
 			]
 		}
 	]

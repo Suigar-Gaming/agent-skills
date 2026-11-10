@@ -71,7 +71,7 @@ async function generateResponse(skillContext, prompt) {
 Answer as if you are helping an engineer integrate Suigar. Ground your response in the provided skill reference and keep the SDK and MCP surfaces separate:
 - For application code, prefer public @suigar/sdk imports, client.suigar extension APIs, SDK transaction builders, SDK BCS helpers, and documented SDK utilities.
 - For MCP tasks, use the @suigar/mcp tool names, modes, wallet boundaries, and unsigned-transaction behavior described by the skill.
-- For Suifrens rendering and animation, identify the archive or migration API first, use the matching public display-system imports and props, and distinguish unpublished source from available releases. Character rendering does not require SDK transaction setup.
+- For Suifrens rendering and animation, use public display-system imports and props for character rendering, accessories, playback and duels. Character rendering does not require SDK transaction setup.
 - Do not invent Suigar APIs, Move targets, package ids, object ids, coin-selection code, or unsupported tools.
 - Preserve exact field names and game-specific routing from the skill, especially for standard games, PvP coinflip, referrals, NFT V1, and MCP transaction modes.
 

@@ -1,7 +1,5 @@
 # Custom sequences and scripted duels
 
-Use this for the migration API after identifying the selected dependency generation.
-
 ## Custom part animation
 
 ```ts
@@ -48,7 +46,7 @@ const script = {
 } satisfies DuelScript;
 ```
 
-The attack target is always the opposite fighter. Do not supply a target side or retain the old flat `damage`, `hitPreset`, or `hitDelayMs` fields. Attacker options belong in `attacker`; impact options belong in `target`. Victory uses `iterations` (default five), not `loops`.
+The attack target is always the opposite fighter. Do not supply an explicit target side. Attacker options belong in `attacker`; impact options belong in `target`. Victory uses `iterations` (default five).
 
 Call `useDuelScript({ script, baseExpression: { left: 'happy', right: 'happy' }, ...options })` in a React component. It returns `{ state, restart, stop, reset }`. Stabilize scripts and option objects when appropriate so a render does not unintentionally restart an effect.
 

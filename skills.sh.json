@@ -22,7 +22,7 @@
 		},
 		{
 			"title": "Suifrens",
-			"description": "Skills for character rendering, archive compatibility, accessories, animation playback and scripted duels.",
+			"description": "Skills for character rendering, accessories, animation playback and scripted duels.",
 			"skills": ["suifrens-display", "suifrens-animation"]
 		}
 	]

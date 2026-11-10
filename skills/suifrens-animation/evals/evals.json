@@ -2,8 +2,8 @@
 	"skill_name": "suifrens-animation",
 	"evals": [
 		{
-			"id": "suifrens-animation-playback-migration",
-			"prompt": "Migrate a walk animation to the ts-sdks API: start idle, play two alternating passes, and restart when an action counter changes.",
+			"id": "suifrens-animation-playback",
+			"prompt": "Configure a walk animation: start idle, play two alternating passes, and restart when an action counter changes.",
 			"assertions": [
 				"Uses one animation object with preset walk",
 				"Uses playState idle and playback iterations 2 with alternate true",
@@ -12,8 +12,8 @@
 			]
 		},
 		{
-			"id": "suifrens-animation-duel-migration",
-			"prompt": "In the migration checkout, script a left-side punch with 2 damage after 140ms then three victory passes. How do I connect it to the health bars?",
+			"id": "suifrens-animation-duel",
+			"prompt": "Script a left-side punch with 2 damage after 140ms then three victory passes. How do I connect it to the health bars?",
 			"assertions": [
 				"Uses attacker side left and preset punch in a nested attacker object",
 				"Uses target damage 2 and delayMs 140 without an explicit target side",
@@ -24,9 +24,9 @@
 		},
 		{
 			"id": "suifrens-animation-static-gesture",
-			"prompt": "I only want a static thumbs-up portrait on my old GitHub archive. Should I wrap it in AnimationProvider and add a custom sequence?",
+			"prompt": "I only want a static thumbs-up character. Should I wrap it in AnimationProvider and add a custom sequence?",
 			"assertions": [
-				"Routes static appearance to suifrens-display and checks archive generation",
+				"Routes static appearance to suifrens-display",
 				"Does not require an animation timeline or provider for a static gesture",
 				"Notes that head-only portraits ignore the gesture"
 			]

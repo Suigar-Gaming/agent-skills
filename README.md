@@ -127,11 +127,11 @@ Use when:
 
 ### suifrens-display
 
-Integrate capy and bullshark rendering, palettes, accessories, static gestures, runner and football kits, and standalone SVG exports. Distinguishes the historical GitHub archives from the upcoming `ts-sdks` migration API; checks publication status before recommending a beta install.
+Integrate capy and bullshark rendering, palettes, accessories, static gestures, runner and football kits, and standalone SVG exports.
 
 ### suifrens-animation
 
-Configure animation playback, custom part sequences, battle sprites and scripted duels. Covers the migration to one animation object, iteration counts, play state, replay triggers, and nested duel attack steps.
+Configure animation playback, custom part sequences, battle sprites and scripted duels. Covers the animation object, iteration counts, play state, replay triggers, and nested duel attack steps.
 
 ## Usage
 
@@ -196,11 +196,11 @@ Use Suigar MCP to set up a local session wallet and show its balances
 ```
 
 ```text
-Render a Suifren from our pinned GitHub archive without changing the dependency
+Render a Suifren with a runner kit and a thumbs-up gesture
 ```
 
 ```text
-Migrate Suifrens animation playback and duel scripts to the ts-sdks API
+Add Suifrens animation playback and a scripted duel
 ```
 
 ## Development checks

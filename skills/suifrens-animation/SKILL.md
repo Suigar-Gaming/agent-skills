@@ -1,12 +1,12 @@
 ---
 name: suifrens-animation
-description: Add or migrate Suifrens animation playback, custom part sequences, battle sprites, health bars, and scripted duels using @suigar/suifrens-display-system. Use for animation configuration, iterations, play state, triggers, timing helpers, or useDuelScript attack and victory steps. Static portraits, accessories and gestures belong to suifrens-display.
+description: Add Suifrens animation playback, custom part sequences, battle sprites, health bars, and scripted duels using @suigar/suifrens-display-system. Use for animation configuration, iterations, play state, triggers, timing helpers, or useDuelScript attack and victory steps. Static portraits, accessories and gestures belong to suifrens-display.
 license: MIT
 ---
 
 # Suifrens animation and duels
 
-First use [suifrens-display](../suifrens-display/SKILL.md) to identify the dependency generation and publication status. The API here describes the `ts-sdks` migration source; do not apply it to an archive consumer without an authorized migration.
+Use [suifrens-display](../suifrens-display/SKILL.md) for character attributes, renderers and accessories.
 
 ## Image playback
 
@@ -26,7 +26,6 @@ Both `SuiFrenImage` and `SuiFrenImageInline` accept a single `animation` object.
 - `playback.iterations` counts directional passes; it defaults to one and accepts `'infinite'`. `alternate: true` reverses every other pass. Keep `speed` in `playback`.
 - Changing `trigger` restarts the timeline. Use it to replay repeated actions rather than remounting the whole character.
 - Keep `direction`, `startAt`, `holdOnComplete`, and `transitionMs` inside `animation` when used.
-- Remove former top-level animation options and replace `autoPlay` / `playback.loop` with play state / iterations during migration.
 
 Import `AnimationConfig`, `AnimationSequence`, `PlaybackOptions` and other public types from `/types`. Import `AnimationProvider`, hooks, `getPresetSequence`, `getPresetDurationMs`, and `normalizePlayback` from `/animation`. The image components already provide their animation context when `animation` is set; do not wrap them in another provider without a specific low-level need.
 
