@@ -4,7 +4,7 @@ description: Set up, scaffold, or fix the base @suigar/sdk integration for Suiga
 license: MIT
 metadata:
   author: suigar
-  version: '1.10.0'
+  version: '1.10.1'
   short-description: Set up the Suigar SDK
   tags:
     - suigar
@@ -16,6 +16,8 @@ metadata:
 # Suigar SDK installation
 
 Use this skill for application code that imports `@suigar/sdk`. If the task is about installing, configuring, operating, or troubleshooting `@suigar/mcp`, its bundled MCP App, or its plugin bundle, use the `suigar-mcp` skill instead.
+
+For `@suigar/suifrens-display-system`, use [suifrens-display](../suifrens-display/SKILL.md) for rendering and [suifrens-animation](../suifrens-animation/SKILL.md) for playback or duels. Character rendering does not require registering `suigar()` on a Sui client.
 
 Prefer public Suigar SDK entrypoints and installed package documentation or source when available. Do not guess private exports or copy internal helpers into app code.
 

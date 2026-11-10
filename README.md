@@ -1,6 +1,6 @@
 # Suigar agent skills
 
-Skills for coding agents building with Suigar on Sui.
+Skills for coding agents building with Suigar on Sui and rendering Suifrens characters.
 
 Skills follow the [Agent Skills](https://agentskills.io/) format.
 
@@ -125,6 +125,14 @@ Use when:
 - Building, dry-running, or explicitly executing transactions in read-only, build, dry-run, or execute mode
 - Explaining MCP support boundaries for Suigar games
 
+### suifrens-display
+
+Integrate capy and bullshark rendering, palettes, accessories, static gestures, runner and football kits, and standalone SVG exports. Distinguishes the historical GitHub archives from the upcoming `ts-sdks` migration API; checks publication status before recommending a beta install.
+
+### suifrens-animation
+
+Configure animation playback, custom part sequences, battle sprites and scripted duels. Covers the migration to one animation object, iteration counts, play state, replay triggers, and nested duel attack steps.
+
 ## Usage
 
 Once installed, agents can use the skills for matching tasks.
@@ -185,6 +193,14 @@ Use Suigar MCP to build an unsigned PvP Coinflip create transaction for 1 SUI on
 
 ```text
 Use Suigar MCP to set up a local session wallet and show its balances
+```
+
+```text
+Render a Suifren from our pinned GitHub archive without changing the dependency
+```
+
+```text
+Migrate Suifrens animation playback and duel scripts to the ts-sdks API
 ```
 
 ## Development checks

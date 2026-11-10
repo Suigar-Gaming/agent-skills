@@ -4,7 +4,7 @@ description: Read or mint Suigar NFT V1 objects with @suigar/sdk. Use when readi
 license: MIT
 metadata:
   author: suigar
-  version: '1.4.1'
+  version: '1.4.2'
   short-description: Read and mint Suigar NFT V1 objects
   tags:
     - suigar
@@ -16,6 +16,8 @@ metadata:
 # Suigar NFT V1
 
 Use this skill for application code that imports `@suigar/sdk` and reads the NFT V1 catalog, lists NFTs directly owned by an address, or builds an NFT V1 mint transaction. If the app has not configured the SDK client yet, use `installation` first.
+
+For capy or bullshark SVG rendering, use [suifrens-display](../suifrens-display/SKILL.md). Suigar NFT V1 ownership and minting do not define the Suifrens character appearance schema.
 
 Use the active client's resolved `packageIds.nftV1`, `objectIds.nftV1Factory`, and `bcs.NftV1.typeTag()`; do not hard-code a mainnet or testnet package, factory id, or Move type string.
 
