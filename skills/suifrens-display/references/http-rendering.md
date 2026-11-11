@@ -31,14 +31,14 @@ Use the individual NFT's full object ID from the selected network for `:suifrenI
 | Parameter | Formats     | Default | Accepted values                                              |
 | --------- | ----------- | ------- | ------------------------------------------------------------ |
 | `width`   | PNG         | 1024 px | Integer from 1 to 4096; height follows the SVG's proportions |
-| `logo`    | SVG and PNG | `false` | `true` or `false` to show or hide the Sui logo               |
+| `logo`    | SVG and PNG | omitted | `sui` or `suigar`; omit for no logo                          |
 | `shadow`  | SVG and PNG | `true`  | `true` or `false` to show or hide the shadow                 |
 
 Defaults apply to both accessories and Suifrens. PNG backgrounds are transparent. SVG responses use `image/svg+xml`; PNG responses use `image/png`.
 
 ```text
-http://localhost:3000/accessories/soccer%20team%20shirt/png?width=512&logo=false&shadow=false
-http://localhost:3000/suifrens/OBJECT_ID/svg?logo=true&shadow=false
+http://localhost:3000/accessories/soccer%20team%20shirt/png?width=512&shadow=false
+http://localhost:3000/suifrens/OBJECT_ID/svg?logo=suigar&shadow=false
 ```
 
 Replace `OBJECT_ID` with a verified NFT object ID. Invalid query values return `400`, missing or deleted objects and unknown accessory names return `404`, and read or rendering failures return `500`.
