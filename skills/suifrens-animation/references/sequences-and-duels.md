@@ -1,5 +1,7 @@
 # Custom sequences and scripted duels
 
+Import `AnimationPresetName` from `/types` to validate built-in core and battle preset names with `satisfies AnimationPresetName`. The union follows the preset catalogues; lookup APIs still accept dynamic strings and return no sequence for unknown names.
+
 ## Custom part animation
 
 ```ts

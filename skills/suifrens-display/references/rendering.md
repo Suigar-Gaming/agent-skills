@@ -28,7 +28,7 @@ The root exports only `SuiFrenImage`, `CapyImage`, and `BullsharkImage`. All pub
 
 `SuiFrenAttributes` is a union distinguished by `earShape` for capys and `finStyle` for bullsharks. Do not add a synthetic `species` property to the attributes. `SuiFrenSpecies` is the separate `'capy' | 'bullshark'` union used by APIs that request a species.
 
-Use palette keys from `colors` in `/colors`, without a leading `#`, for `mainColor` and `secondaryColor`. Use `SUIFREN_SKINS` and `earGeneToEarShape` from `/attributes`, and `ALL_EXPRESSIONS`, `POSITIVE_EXPRESSIONS`, or `NEGATIVE_EXPRESSIONS` from `/expressions`. Both species share `SuiFrenSkin` and `SuiFrenExpression` types. Preserve the original spelling of catalogue values.
+Use palette keys from `colors` in `/colors`, without a leading `#`, for `mainColor` and `secondaryColor`. Use `SUIFREN_SKINS` and `earGeneToEarShape` from `/attributes`, and `ALL_EXPRESSIONS`, `POSITIVE_EXPRESSIONS`, or `NEGATIVE_EXPRESSIONS` from `/expressions`. Both species share `SuiFrenSkin` and `SuiFrenExpression` types. Import `SuiFrenAppearance` from `/types` for their shared color, skin and expression fields. Preserve the original spelling of catalogue values.
 
 ## External assets and SVG exports
 
