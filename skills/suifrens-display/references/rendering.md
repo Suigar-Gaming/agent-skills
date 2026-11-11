@@ -8,8 +8,8 @@ import { SuiFrenImageInline } from '@suigar/suifrens-display-system/image-inline
 import type { CapyAttributes } from '@suigar/suifrens-display-system/types';
 
 const attributes = {
-	mainColor: 'A17E52',
-	secondaryColor: 'D5CBB1',
+	mainColor: 'a17e52',
+	secondaryColor: 'd5cbb1',
 	skin: 'basic',
 	expression: 'happy',
 	earShape: 'default',
@@ -28,7 +28,7 @@ The root exports only `SuiFrenImage`, `CapyImage`, and `BullsharkImage`. All pub
 
 `SuiFrenAttributes` is a union distinguished by `earShape` for capys and `finStyle` for bullsharks. Do not add a synthetic `species` property to the attributes. `SuiFrenSpecies` is the separate `'capy' | 'bullshark'` union used by APIs that request a species.
 
-Use palette keys from `colors` in `/colors`, without a leading `#`, for `mainColor` and `secondaryColor`. Use `SUIFREN_SKINS` and `earGeneToEarShape` from `/attributes`, and `ALL_EXPRESSIONS`, `POSITIVE_EXPRESSIONS`, or `NEGATIVE_EXPRESSIONS` from `/expressions`. Both species share `SuiFrenSkin` and `SuiFrenExpression` types. Import `SuiFrenAppearance` from `/types` for their shared color, skin and expression fields. Preserve the original spelling of catalogue values.
+Use palette keys from `COLORS` in `/colors`, without a leading `#`, for `mainColor` and `secondaryColor`. Write hexadecimal color literals in lowercase, including values without `#`. Use `SUIFREN_SKINS` and `EAR_GENE_TO_EAR_SHAPE` from `/attributes`, and `ALL_EXPRESSIONS`, `POSITIVE_EXPRESSIONS`, or `NEGATIVE_EXPRESSIONS` from `/expressions`. Both species share `SuiFrenSkin` and `SuiFrenExpression` types. Import `SuiFrenAppearance` from `/types` for their shared color, skin and expression fields. Preserve the original spelling of catalogue values.
 
 ## External assets and SVG exports
 
@@ -40,7 +40,7 @@ An explicit accessory `renderOptions.assetSrc` overrides ordinary catalogue artw
 
 Pass catalogue entries or custom `SuiFrenAccessory` objects from `/types` with `name`, `type`, `category` and `renderOptions`. Use optional access for missing slots returned by `getAccessoriesByType`.
 
-Import `accessories` and crown helpers from `/accessories`; import `buildRunnerAccessories`, `resolveRunnerKit`, `SOCCER_TEAM_KITS`, `resolveSoccerCountryCode`, and `resolveSoccerTeamKit` from `/kits`.
+Import `ACCESSORIES`, `VIP_CROWN_ACCESSORIES` and crown helpers from `/accessories`; import `buildRunnerAccessories`, `resolveRunnerKit`, `SOCCER_TEAM_KITS`, `resolveSoccerCountryCode`, and `resolveSoccerTeamKit` from `/kits`.
 
 ```tsx
 import { buildRunnerAccessories } from '@suigar/suifrens-display-system/kits';
