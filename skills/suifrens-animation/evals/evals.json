@@ -1,0 +1,35 @@
+{
+	"skill_name": "suifrens-animation",
+	"evals": [
+		{
+			"id": "suifrens-animation-playback",
+			"prompt": "Configure a walk animation: start idle, play two alternating passes, and restart when an action counter changes.",
+			"assertions": [
+				"Uses one animation object with preset walk",
+				"Uses playState idle and playback iterations 2 with alternate true",
+				"Uses trigger for the changing counter",
+				"Does not use autoPlay or playback.loop"
+			]
+		},
+		{
+			"id": "suifrens-animation-duel",
+			"prompt": "Script a left-side punch with 2 damage after 140ms then three victory passes. How do I connect it to the health bars?",
+			"assertions": [
+				"Uses attacker side left and preset punch in a nested attacker object",
+				"Uses target damage 2 and delayMs 140 without an explicit target side",
+				"Uses victory iterations 3 rather than loops",
+				"Reads health and animation from useDuelScript state rather than a second health counter",
+				"Imports battle runtime from /battle and types from /types"
+			]
+		},
+		{
+			"id": "suifrens-animation-static-gesture",
+			"prompt": "I only want a static thumbs-up character. Should I wrap it in AnimationProvider and add a custom sequence?",
+			"assertions": [
+				"Routes static appearance to suifrens-display",
+				"Does not require an animation timeline or provider for a static gesture",
+				"Notes that head-only portraits ignore the gesture"
+			]
+		}
+	]
+}
