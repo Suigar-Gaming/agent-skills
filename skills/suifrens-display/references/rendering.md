@@ -53,4 +53,4 @@ Runner colors use six-digit hex values and bib numbers use integers 1–99; inva
 
 For custom metadata, outfit options belong in `renderOptions.kit`: `{ type: 'runner', color: '#ec7da6', number: 3 }` or `{ type: 'soccer', country: 'FR', side: 'away' }`. A soccer kit may use a custom `team` instead of `country`; do not set both. Read the selected `SoccerTeamKit` type for custom team metadata instead of inventing fields. Keep football game country IDs separate from visual kit country codes.
 
-The shared static `gesture` prop accepts `'thumbs_up'`, `'thumbs_down'`, `'wave'`, and `'point'`. Gestures work on both full-body species and both image renderers. A held object takes precedence, and head portraits ignore gestures. Static gestures do not require an animation timeline.
+The shared static `gesture` prop accepts `'thumbs_up'`, `'thumbs_down'`, and `'point'`. Gestures work on both full-body species and both image renderers. A held object takes precedence, and head portraits ignore gestures. Static gestures do not require an animation timeline.

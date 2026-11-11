@@ -3,11 +3,12 @@
 	"evals": [
 		{
 			"id": "suifrens-display-attributes-and-gesture",
-			"prompt": "Render a happy capy with a static thumbs-up using @suigar/suifrens-display-system. Which imports and attributes should I use?",
+			"prompt": "Render a happy capy with a static thumbs-up using @suigar/suifrens-display-system. Which imports and attributes should I use? Can I also use wave as a static gesture?",
 			"assertions": [
 				"Imports SuiFrenImage from the package root and CapyAttributes from /types",
 				"Uses valid palette keys without a leading #, a skin, an expression and earShape",
-				"Uses gesture=\"thumbs_up\" on a full-body character without requiring animation"
+				"Uses gesture=\"thumbs_up\" on a full-body character without requiring animation",
+				"Explains wave is not a supported static gesture; the shared type accepts thumbs_up, thumbs_down and point"
 			]
 		},
 		{
@@ -26,6 +27,17 @@
 				"Imports buildRunnerAccessories from /kits",
 				"Uses a six-digit hex color and mirrorBib: true",
 				"Uses the shared gesture prop with thumbs_down"
+			]
+		},
+		{
+			"id": "suifrens-display-http-png",
+			"prompt": "I cloned ts-sdks and want to run its Fastify image example on testnet. Give me a localhost URL for the soccer team shirt as a transparent 512px PNG with no logo or shadow, and explain the default options. For a Suifren image I only have a collection URL with a package address: can I put that address into the route?",
+			"assertions": [
+				"Builds the display library and starts @suigar/suifrens-fastify with --network testnet from the repository root",
+				"Uses /accessories/soccer%20team%20shirt/png?width=512&logo=false&shadow=false on localhost port 3000, allowing a different query parameter order",
+				"Explains mainnet is the default network, PNG width defaults to 1024 and accepts integers 1 through 4096, logo defaults to false and shadow defaults to true for both image types",
+				"Requires an individual Suifren NFT object ID on testnet instead of the collection package address",
+				"Does not require the HTTP consumer to install the TypeScript SDK, connect a wallet or submit a transaction"
 			]
 		}
 	]

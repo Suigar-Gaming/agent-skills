@@ -127,7 +127,7 @@ Use when:
 
 ### suifrens-display
 
-Integrate capy and bullshark rendering, palettes, accessories, static gestures, runner and football kits, and standalone SVG exports.
+Integrate capy and bullshark rendering, palettes, accessories, static gestures, runner and football kits, standalone SVG exports, and the Fastify SVG/PNG example.
 
 ### suifrens-animation
 

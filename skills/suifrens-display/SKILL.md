@@ -1,6 +1,6 @@
 ---
 name: suifrens-display
-description: Integrate @suigar/suifrens-display-system character rendering in React or server-side SVG exports. Use for capy and bullshark attributes, external versus inline SVG accessories, palettes, skins, expressions, static gestures, runner or football kits. Use suifrens-animation for playback and duel scripts; Suigar NFT V1 reads and minting belong to suigar-nft.
+description: Integrate @suigar/suifrens-display-system character rendering in React, standalone SVG exports, or its Fastify SVG/PNG server. Use for capy and bullshark attributes, external versus inline SVG accessories, palettes, skins, expressions, static gestures, runner or football kits. Use suifrens-animation for playback and duel scripts; Suigar NFT V1 reads and minting belong to suigar-nft.
 license: MIT
 metadata:
   author: suigar
@@ -21,6 +21,8 @@ Render the native SVG characters through `@suigar/suifrens-display-system`. Keep
 ## Rendering workflow
 
 Use the public exports and types of `@suigar/suifrens-display-system`. Read [references/rendering.md](references/rendering.md) for attributes, renderer selection, accessories, kits and gestures.
+
+For the Fastify example, HTTP image URLs, network selection, PNG dimensions, logos or shadows, read [references/http-rendering.md](references/http-rendering.md).
 
 For motion, playback or battles, use [suifrens-animation](../suifrens-animation/SKILL.md).
 
