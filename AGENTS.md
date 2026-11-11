@@ -2,7 +2,7 @@
 
 ## Repository overview
 
-This repository contains skills for coding agents building with Suigar on Sui. They cover SDK integration, MCP server operation, and game-specific transaction rules.
+This repository contains skills for coding agents building with Suigar on Sui. They cover SDK integration, MCP server operation, game-specific transaction rules, and Suifrens rendering and animation.
 
 ## Creating or updating a skill
 
@@ -46,6 +46,8 @@ The `description` tells agents when to use the skill. Name the Suigar task: SDK 
 - Use `sweethouse` for public pool deposits, redeem requests, and delayed self-claims.
 - Use `referrals` for SDK partner attribution and referral reward claims.
 - Use `suigar-mcp` for installing, configuring, operating, or troubleshooting the `@suigar/mcp` server, bundled MCP App, or its Codex, Claude Code, and Cursor plugin bundle.
+- Use `suifrens-display` for character rendering, accessories, kits, gestures, SVG exports and the Fastify SVG/PNG example.
+- Use `suifrens-animation` for playback, custom sequences, battle sprites and duel scripts. Keep presentation separate from on-chain outcomes.
 - Keep SDK and MCP guidance separate. MCP skills should describe tool usage, read-only/build/dry-run modes, and unsigned transaction behavior. SDK skills should describe application code that imports `@suigar/sdk`.
 
 ### Context efficiency

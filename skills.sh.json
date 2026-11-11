@@ -16,6 +16,11 @@
 			]
 		},
 		{
+			"title": "Suigar Suifrens",
+			"description": "Skills for character rendering, accessories, animation playback and scripted duels.",
+			"skills": ["suifrens-display", "suifrens-animation"]
+		},
+		{
 			"title": "Suigar MCP",
 			"description": "Skills for configuring and operating the @suigar/mcp server, MCP App, wallet tools, and plugin bundle.",
 			"skills": ["suigar-mcp"]
